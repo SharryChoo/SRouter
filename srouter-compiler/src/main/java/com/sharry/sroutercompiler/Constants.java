@@ -9,10 +9,9 @@ package com.sharry.sroutercompiler;
  */
 class Constants {
 
-    // Generate java file folder.
-    static final String PACKAGE_OF_GENERATE_FILE = "com.sharry.android.srouter";
-
-    // Base element
+    /**
+     * Base element will be used verify component name.
+     */
     static final String KEY_MODULE_NAME = "moduleName";
 
     /**
@@ -28,6 +27,7 @@ class Constants {
     /**
      * Sub element for simple class name.
      */
+    static final String PACKAGE_NAME_OF_GENERATE_FILE = "com.sharry.android.srouter";
     private static final String SIMPLE_NAME_SUB_PROJECT = "SRouter";
     private static final String SIMPLE_NAME_SUB_SEPARATOR = "$$";
 
@@ -46,7 +46,7 @@ class Constants {
     /**
      * Description parents for generation classes.
      */
-    static final String TEMPLATE_PACKAGE_NAME = "com.sharry.sroutersupport.template";
+    static final String PACKAGE_NAME_TEMPLATE = "com.sharry.sroutersupport.template";
     static final String SIMPLE_NAME_IROUTE = "IRoute";
     static final String SIMPLE_NAME_IROUTE_INTERCEPTOR = "IRouteInterceptor";
 
@@ -54,11 +54,13 @@ class Constants {
      * IRoute override method name.
      */
     static final String METHOD_LOAD_INTO = "loadInto";
+    static final String METHOD_LOAD_INTO_PARAMETER_NAME_ROUTE_CACHES = "caches";
+    static final String METHOD_LOAD_INTO_PARAMETER_NAME_INTERCEPTION_CACHES = "caches";
 
     /**
      * Write data class name
      */
-    static final String DATA_PACKAGE_NAME = "com.sharry.sroutersupport.data";
+    static final String PACKAGE_NAME_DATA = "com.sharry.sroutersupport.data";
     static final String SIMPLE_NAME_ROUTE_META = "RouteMeta";
     static final String SIMPLE_NAME_ROUTE_INTERCEPTOR_META = "RouteInterceptorMeta";
 

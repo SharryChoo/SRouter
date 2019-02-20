@@ -40,7 +40,7 @@ import static javax.lang.model.element.Modifier.PUBLIC;
 @AutoService(Processor.class)
 public class RouteInterceptorCompiler extends AbstractProcessor {
 
-    private Filer mFiler;                // File write util
+    private Filer mFiler;
     private Logger mLogger;
     private Types mTypeUtils;
     private TypeMirror mTypeInterceptor;
@@ -50,8 +50,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
         super.init(processingEnvironment);
         mFiler = processingEnvironment.getFiler();
         mLogger = new Logger(processingEnv.getMessager());
-        mTypeUtils = processingEnv.getTypeUtils();            // Get type utils.
-        // Find base type.
+        mTypeUtils = processingEnv.getTypeUtils();
         mTypeInterceptor = processingEnv.getElementUtils().getTypeElement(Constants.CLASS_NAME_IINTERCEPTOR).asType();
         mLogger.i(">>>>>>>>>>>>>>>>>>>>> init <<<<<<<<<<<<<<<<<<<<<<<");
     }
@@ -72,10 +71,11 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         // Find module name.
         String moduleName = findModuleName();
-
         // Validate elements
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(RouteInterceptor.class);
-        if (null == elements || elements.isEmpty()) return false;
+        if (null == elements || elements.isEmpty()) {
+            return false;
+        }
         mLogger.i("elements size is " + elements.size());
         /*
           ```Map<String, SIMPLE_NAME_ROUTE_INTERCEPTOR_META>```
@@ -83,12 +83,15 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
         ParameterizedTypeName inputMapTypeName = ParameterizedTypeName.get(
                 ClassName.get(Map.class),
                 ClassName.get(String.class),
-                ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_INTERCEPTOR_META)
+                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_INTERCEPTOR_META)
         );
         /*
            Build input param name.
         */
-        ParameterSpec rootParamSpec = ParameterSpec.builder(inputMapTypeName, "interceptorAuthorities").build();
+        ParameterSpec rootParamSpec = ParameterSpec.builder(
+                inputMapTypeName,
+                Constants.METHOD_LOAD_INTO_PARAMETER_NAME_INTERCEPTION_CACHES
+        ).build();
         /*
           Build method : 'loadInto'
         */
@@ -103,7 +106,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
           Build class : SRouter$$Route$$xxx
           public class SRouter$$Route$$module_name implements IRouter
         */
-        ClassName superClassName = ClassName.get(Constants.TEMPLATE_PACKAGE_NAME,
+        ClassName superClassName = ClassName.get(Constants.PACKAGE_NAME_TEMPLATE,
                 Constants.SIMPLE_NAME_IROUTE_INTERCEPTOR);
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(
                 Constants.SIMPLE_NAME_PREFIX_OF_INTERCEPTOR + moduleName)
@@ -112,7 +115,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
                 .addMethod(loadIntoMethodSpec.build());
         // Perform generate java file
         try {
-            JavaFile.builder(Constants.PACKAGE_OF_GENERATE_FILE, classBuilder.build())
+            JavaFile.builder(Constants.PACKAGE_NAME_OF_GENERATE_FILE, classBuilder.build())
                     .addFileComment("SRouter-Compiler auto generate.")
                     .build()
                     .writeTo(mFiler);
@@ -178,13 +181,11 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
      * Write code to method loadInto.
      *
      * <pre>
-     *         interceptorAuthorities.put(
-     *                 "component1/LoginInterceptor",
-     *                 RouteWrapper.create(
-     *                         RouteType.CLASS_NAME_ACTIVITY,
-     *                         ThreadMode.MAIN,
-     *                         Component1Activity.class,
-     *                         new String[]{..., ...}
+     *         interceptorCaches.put(
+     *                 "component2/PermissionInterceptor",
+     *                 RouteInterceptorMeta.create(
+     *                         PermissionInterceptor.class,
+     *                         10
      *                 )
      *         );
      * </pre>
@@ -195,7 +196,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
             loadInto.addStatement(
                     getLoadIntoMethodCode(priority),
                     authority,
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_INTERCEPTOR_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_INTERCEPTOR_META),
                     element
             );
         } else {
@@ -209,7 +210,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
      * Build loadInto method code.
      */
     private String getLoadIntoMethodCode(int priority) {
-        return "interceptorAuthorities.put(" + "\n" +
+        return Constants.METHOD_LOAD_INTO_PARAMETER_NAME_INTERCEPTION_CACHES + ".put(" + "\n" +
                 "      $S, " + "\n" +
                 "      $T.create(" + "\n" +
                 "          $T.class," + "\n" +

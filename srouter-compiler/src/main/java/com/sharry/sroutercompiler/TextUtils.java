@@ -5,9 +5,9 @@ package com.sharry.sroutercompiler;
  * @version 1.0
  * @since 2018/8/17 23:43
  */
-public class TextUtils {
+class TextUtils {
 
-    public static boolean isEmpty(CharSequence str) {
+    static boolean isEmpty(CharSequence str) {
         return null == str || str.length() == 0;
     }
 

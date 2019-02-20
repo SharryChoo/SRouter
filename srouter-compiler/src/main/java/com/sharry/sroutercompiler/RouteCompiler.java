@@ -98,12 +98,15 @@ public class RouteCompiler extends AbstractProcessor {
         ParameterizedTypeName inputMapTypeName = ParameterizedTypeName.get(
                 ClassName.get(Map.class),
                 ClassName.get(String.class),
-                ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META)
+                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META)
         );
         /*
            Build input param name.
         */
-        ParameterSpec rootParamSpec = ParameterSpec.builder(inputMapTypeName, "routes").build();
+        ParameterSpec rootParamSpec = ParameterSpec.builder(
+                inputMapTypeName,
+                Constants.METHOD_LOAD_INTO_PARAMETER_NAME_ROUTE_CACHES
+        ).build();
         /*
           Build method : 'loadInto'
         */
@@ -118,14 +121,14 @@ public class RouteCompiler extends AbstractProcessor {
           Build class : SRouter$$Route$$xxx
           public class SRouter$$Route$$module_name implements IRouter
         */
-        ClassName superClassName = ClassName.get(Constants.TEMPLATE_PACKAGE_NAME, Constants.SIMPLE_NAME_IROUTE);
+        ClassName superClassName = ClassName.get(Constants.PACKAGE_NAME_TEMPLATE, Constants.SIMPLE_NAME_IROUTE);
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(Constants.SIMPLE_NAME_PREFIX_OF_ROUTERS + moduleName)
                 .addModifiers(Modifier.FINAL, PUBLIC)
                 .addSuperinterface(superClassName)
                 .addMethod(loadIntoMethodSpec.build());
         // Perform generate java file
         try {
-            JavaFile.builder(Constants.PACKAGE_OF_GENERATE_FILE, classBuilder.build())
+            JavaFile.builder(Constants.PACKAGE_NAME_OF_GENERATE_FILE, classBuilder.build())
                     .addFileComment("SRouter-Compiler auto generate.")
                     .build()
                     .writeTo(mFiler);
@@ -205,7 +208,7 @@ public class RouteCompiler extends AbstractProcessor {
      * Write code to method loadInto.
      *
      * <pre>
-     *         routes.put(
+     *         routeCaches.put(
      *                 "component1/Component1Activity",
      *                 RouteMeta.create(
      *                         RouteMeta.Type.CLASS_NAME_ACTIVITY,
@@ -214,6 +217,7 @@ public class RouteCompiler extends AbstractProcessor {
      *                         new String[]{..., ...}
      *                 )
      *         );
+     *         ......
      * </pre>
      */
     private void writeToMethodLoadInto(MethodSpec.Builder loadInto, String routeAuthority,
@@ -225,8 +229,8 @@ public class RouteCompiler extends AbstractProcessor {
             loadInto.addStatement(
                     getLoadIntoMethodCode("ACTIVITY", threadMode, interceptorAuthorities),
                     routeAuthority,
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(ThreadMode.class),
                     element
             );
@@ -236,8 +240,8 @@ public class RouteCompiler extends AbstractProcessor {
             loadInto.addStatement(
                     getLoadIntoMethodCode("CLASS_NAME_SERVICE", threadMode, interceptorAuthorities),
                     routeAuthority,
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(ThreadMode.class),
                     element
             );
@@ -247,8 +251,8 @@ public class RouteCompiler extends AbstractProcessor {
             loadInto.addStatement(
                     getLoadIntoMethodCode("FRAGMENT", threadMode, interceptorAuthorities),
                     routeAuthority,
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(ThreadMode.class),
                     element
             );
@@ -258,8 +262,8 @@ public class RouteCompiler extends AbstractProcessor {
             loadInto.addStatement(
                     getLoadIntoMethodCode("FRAGMENT_V4", threadMode, interceptorAuthorities),
                     routeAuthority,
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(ThreadMode.class),
                     element
             );
@@ -269,8 +273,8 @@ public class RouteCompiler extends AbstractProcessor {
             loadInto.addStatement(
                     getLoadIntoMethodCode("IPROVIDER", threadMode, interceptorAuthorities),
                     routeAuthority,
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(ThreadMode.class),
                     element
             );
@@ -280,8 +284,8 @@ public class RouteCompiler extends AbstractProcessor {
             loadInto.addStatement(
                     getLoadIntoMethodCode("UNKNOWN", threadMode, interceptorAuthorities),
                     routeAuthority,
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.DATA_PACKAGE_NAME, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(ThreadMode.class),
                     element
             );
@@ -294,7 +298,7 @@ public class RouteCompiler extends AbstractProcessor {
     private String getLoadIntoMethodCode(String routeType, ThreadMode threadMode, List<String> interceptorClassNames) {
         // append prefix
         StringBuilder builder = new StringBuilder(
-                "routes.put(" + "\n" +
+                Constants.METHOD_LOAD_INTO_PARAMETER_NAME_ROUTE_CACHES + ".put(" + "\n" +
                         "      $S, " + "\n" +
                         "      $T.create(" + "\n" +
                         "          $T.Type." + routeType + "," + "\n" +
