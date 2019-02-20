@@ -92,7 +92,7 @@ class SRouterImpl {
         }
         // Add finalize navigation Interceptor.
         interceptors.add(new NavigationInterceptor());
-        return RealChain.build(interceptors, null == context ? sContext : context, request).dispatch();
+        return RealChain.create(interceptors, null == context ? sContext : context, request, 0).dispatch();
     }
 
 

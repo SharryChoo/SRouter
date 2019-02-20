@@ -17,19 +17,20 @@ import java.util.List;
  */
 class RealChain implements IInterceptor.Chain {
 
-    static RealChain build(List<IInterceptor> handles, Context context, Request request) {
-        return new RealChain(handles, context, request);
+    static RealChain create(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
+        return new RealChain(handles, context, request, handleIndex);
     }
 
     private final List<IInterceptor> handles;
     private final Context context;
     private final Request request;
-    private int index = 0;
+    private final int index;
 
-    private RealChain(List<IInterceptor> handles, Context context, Request request) {
+    private RealChain(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
         this.handles = handles;
         this.context = context;
         this.request = request;
+        this.index = handleIndex;
     }
 
     @Override
@@ -43,12 +44,15 @@ class RealChain implements IInterceptor.Chain {
     }
 
     @Override
-    public IInterceptor next() {
-        return handles.get(index);
-    }
-
-    Result dispatch() {
-        return handles.get(index++).process(this);
+    public Result dispatch() {
+        return handles.get(index).process(
+                RealChain.create(
+                        handles,
+                        context,
+                        request,
+                        index + 1
+                )
+        );
     }
 
 }

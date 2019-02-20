@@ -21,7 +21,7 @@ public class PermissionInterceptor implements IInterceptor {
     @Override
     public Result process(Chain chain) {
         Log.e("TAG", "PermissionInterceptor");
-        return chain.next().process(chain);
+        return chain.dispatch();
     }
 
 }

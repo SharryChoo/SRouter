@@ -23,7 +23,7 @@ public class LoginInterceptor implements IInterceptor {
     public Result process(Chain chain) {
         Log.e("TAG", "LoginInterceptor");
         Toast.makeText(chain.context(), "请先登录.", Toast.LENGTH_SHORT).show();
-        return chain.next().process(chain);
+        return null;
     }
 
 }

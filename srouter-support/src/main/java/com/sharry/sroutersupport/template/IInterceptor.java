@@ -23,7 +23,7 @@ public interface IInterceptor {
 
         Context context();
 
-        IInterceptor next();
+        Result dispatch();
     }
 
 }
