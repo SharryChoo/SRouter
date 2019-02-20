@@ -1,0 +1,1 @@
+include ':app', ':lib-core', ':lib-base', ':srouter-support', ':srouter-compiler', ':srouter-annotation', ':component1', ':component2'

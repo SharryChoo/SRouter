@@ -1,0 +1,19 @@
+apply plugin: 'java-library'
+
+// 用于支持中文显示
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // google support annotation service
+    implementation "com.google.auto.service:auto-service:$googleAutoService"
+    // out put java file
+    implementation "com.squareup:javapoet:$javaPoet"
+    // api frouter-annotation module
+    implementation project(path: ':srouter-annotation')
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"

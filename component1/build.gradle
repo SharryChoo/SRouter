@@ -1,0 +1,29 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        /**
+         * Java 的 Module 使用该方式进行编译时注解扫描, 不兼容 Kotlin 文件
+         */
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["moduleName": project.getName()]
+            }
+        }
+    }
+}
+
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // 依赖基础库
+    api project(path: ':lib-base')
+    // Java 的编译时注解处理依赖
+    annotationProcessor project(path: ':srouter-compiler')
+}
