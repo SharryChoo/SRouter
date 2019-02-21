@@ -3,7 +3,7 @@ package com.sharry.sroutersupport.interceptors;
 import android.content.Context;
 
 import com.sharry.sroutersupport.data.Request;
-import com.sharry.sroutersupport.data.Result;
+import com.sharry.sroutersupport.data.Response;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
@@ -12,7 +12,7 @@ import com.sharry.sroutersupport.data.Result;
  */
 public interface IInterceptor {
 
-    Result process(Chain chain);
+    Response process(Chain chain);
 
     /**
      * The chain for once navigation.
@@ -23,7 +23,7 @@ public interface IInterceptor {
 
         Context context();
 
-        Result dispatch();
+        Response dispatch();
     }
 
 }

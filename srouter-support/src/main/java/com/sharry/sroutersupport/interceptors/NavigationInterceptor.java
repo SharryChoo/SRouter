@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.sharry.sroutersupport.data.Request;
-import com.sharry.sroutersupport.data.Result;
+import com.sharry.sroutersupport.data.Response;
 import com.sharry.sroutersupport.utils.Logger;
 import com.sharry.sroutersupport.providers.IProvider;
 
@@ -19,15 +19,15 @@ import com.sharry.sroutersupport.providers.IProvider;
 public class NavigationInterceptor implements IInterceptor {
 
     @Override
-    public Result process(Chain chain) {
+    public Response process(Chain chain) {
         return navigationActual(chain.context(), chain.request());
     }
 
     /**
      * Actual perform navigation.
      */
-    private Result navigationActual(@NonNull Context context, Request request) {
-        Result result = new Result();
+    private Response navigationActual(@NonNull Context context, Request request) {
+        Response response = new Response();
         switch (request.getType()) {
             case ACTIVITY:
                 Intent intent = new Intent(context, request.getRouteClass());
@@ -52,7 +52,7 @@ public class NavigationInterceptor implements IInterceptor {
                     android.app.Fragment fragment = (android.app.Fragment) request.getRouteClass().newInstance();
                     fragment.setArguments(request.getBundle());
                     // Inject fragment to request provider.
-                    result.setFragment(fragment);
+                    response.setFragment(fragment);
                 } catch (InstantiationException e) {
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
                             + " failed.", e);
@@ -67,7 +67,7 @@ public class NavigationInterceptor implements IInterceptor {
                     Fragment fragmentV4 = (Fragment) request.getRouteClass().newInstance();
                     fragmentV4.setArguments(request.getBundle());
                     // Inject fragment to request provider.
-                    result.setFragmentV4(fragmentV4);
+                    response.setFragmentV4(fragmentV4);
                 } catch (InstantiationException e) {
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
                             + " failed.", e);
@@ -79,7 +79,7 @@ public class NavigationInterceptor implements IInterceptor {
             case PROVIDER:
                 try {
                     IProvider provider = (IProvider) request.getRouteClass().newInstance();
-                    result.setProvider(provider);
+                    response.setProvider(provider);
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
@@ -92,7 +92,7 @@ public class NavigationInterceptor implements IInterceptor {
             default:
                 break;
         }
-        return result;
+        return response;
     }
 
     /**

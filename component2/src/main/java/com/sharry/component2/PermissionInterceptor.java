@@ -1,9 +1,10 @@
 package com.sharry.component2;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.sharry.srouterannotation.RouteInterceptor;
-import com.sharry.sroutersupport.data.Result;
+import com.sharry.sroutersupport.data.Response;
 import com.sharry.sroutersupport.interceptors.IInterceptor;
 
 /**
@@ -13,14 +14,15 @@ import com.sharry.sroutersupport.interceptors.IInterceptor;
  */
 @RouteInterceptor(
         path = "component2/PermissionInterceptor",
-        priority = 10
+        priority = 9
 )
 public class PermissionInterceptor implements IInterceptor {
 
     @Override
-    public Result process(Chain chain) {
+    public Response process(Chain chain) {
         Log.e("TAG", "PermissionInterceptor");
-        return chain.dispatch();
+        Toast.makeText(chain.context(), "请先获取权限.", Toast.LENGTH_SHORT).show();
+        return null;
     }
 
 }

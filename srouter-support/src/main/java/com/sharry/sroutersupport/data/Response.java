@@ -11,11 +11,11 @@ import com.sharry.sroutersupport.providers.IProvider;
  * @version 1.0
  * @since 2/20/2019 10:41 AM
  */
-public class Result {
+public class Response {
 
-    Fragment fragmentV4;
-    android.app.Fragment fragment;
-    IProvider provider;
+    private Fragment fragmentV4;
+    private android.app.Fragment fragment;
+    private IProvider provider;
 
     public Fragment getFragmentV4() {
         return fragmentV4;

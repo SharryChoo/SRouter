@@ -5,7 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.sharry.sroutersupport.data.Request;
-import com.sharry.sroutersupport.data.Result;
+import com.sharry.sroutersupport.data.Response;
 import com.sharry.sroutersupport.utils.Logger;
 
 /**
@@ -58,7 +58,7 @@ public class SRouter {
     /**
      * perform navigation.
      */
-    public Result navigation(Context context, @NonNull Request request) {
+    public Response navigation(Context context, @NonNull Request request) {
         return SRouterImpl.getInstance().navigation(context, request);
     }
 }

@@ -7,16 +7,17 @@ import android.text.TextUtils;
 
 import com.sharry.sroutersupport.data.LogisticsCenter;
 import com.sharry.sroutersupport.data.Request;
-import com.sharry.sroutersupport.data.Result;
+import com.sharry.sroutersupport.data.Response;
 import com.sharry.sroutersupport.data.RouteInterceptorMeta;
 import com.sharry.sroutersupport.data.Warehouse;
 import com.sharry.sroutersupport.exceptions.NoRouteFoundException;
-import com.sharry.sroutersupport.utils.Logger;
-import com.sharry.sroutersupport.interceptors.NavigationInterceptor;
 import com.sharry.sroutersupport.interceptors.IInterceptor;
+import com.sharry.sroutersupport.interceptors.NavigationInterceptor;
 import com.sharry.sroutersupport.thread.DefaultPoolExecutor;
+import com.sharry.sroutersupport.utils.Logger;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -61,8 +62,8 @@ class SRouterImpl {
     /**
      * Initiatory perform navigation.
      */
-    public Result navigation(final Context context, final Request request) {
-        // load data to request.
+    public Response navigation(final Context context, final Request request) {
+        // 1. load data to request.
         try {
             LogisticsCenter.completion(request);
         } catch (NoRouteFoundException e) {
@@ -70,29 +71,45 @@ class SRouterImpl {
             return null;
         }
         final List<IInterceptor> interceptors = new ArrayList<>();
-        // TODO: 添加前置 拦截器
-        // Add navigation interceptors.
+
+        // TODO: 2. 添加前置 拦截器
+
+        // 3. Add route interceptors.
         if (!request.isGreenChannel()) {
-            for (String interceptorAuthority : request.getInterceptors()) {
-                IInterceptor iInterceptor = null;
-                RouteInterceptorMeta meta = Warehouse.INTERCEPTORS.get(interceptorAuthority);
-                if (meta != null) {
-                    try {
-                        iInterceptor = (IInterceptor) meta.getInterceptorClass().newInstance();
-                    } catch (IllegalAccessException e) {
-                        Logger.e(interceptorAuthority + " cannot access, please ensure this class " +
-                                "have public and no args Constructor", e);
-                    } catch (InstantiationException e) {
-                        Logger.e(interceptorAuthority + " instantiation failed.", e);
-                    }
-                } else {
-                    Logger.e("Cannot find interceptors, path is: " + interceptorAuthority);
-                    return null;
+            // 3.1 Sort route interceptors by priority.
+            final List<RouteInterceptorMeta> orderedMetas = new LinkedList<>();
+            for (String interceptorPath : request.getInterceptors()) {
+                // Get meta data associated with the path.
+                RouteInterceptorMeta meta = Warehouse.INTERCEPTORS.get(interceptorPath);
+                if (null == meta) {
+                    continue;
                 }
-                interceptors.add(iInterceptor);
+                // Add meta data to comfortable position.
+                int insertIndex = 0;
+                for (RouteInterceptorMeta orderedMeta : orderedMetas) {
+                    if (orderedMeta.getPriority() < meta.getPriority()) {
+                        break;
+                    } else {
+                        insertIndex++;
+                    }
+                }
+                orderedMetas.add(insertIndex, meta);
+            }
+            // Put Instantiation interceptor to interceptors.
+            for (RouteInterceptorMeta meta : orderedMetas) {
+                IInterceptor interceptor = null;
+                try {
+                    interceptor = (IInterceptor) meta.getInterceptorClass().newInstance();
+                    interceptors.add(interceptor);
+                } catch (IllegalAccessException e) {
+                    Logger.e(meta.getInterceptorClass().getName() + " cannot access, please ensure this class " +
+                            "have public and no args Constructor", e);
+                } catch (InstantiationException e) {
+                    Logger.e(meta.getInterceptorClass().getName() + " instantiation failed.", e);
+                }
             }
         }
-        // Add finalize navigation Interceptor.
+        // 4. Add finalize navigation Interceptor.
         interceptors.add(new NavigationInterceptor());
         return RealChain.create(interceptors, null == context ? sContext : context, request, 0).dispatch();
     }
@@ -135,7 +152,7 @@ class SRouterImpl {
         }
 
         @Override
-        public Result dispatch() {
+        public Response dispatch() {
             return handles.get(index).process(
                     RealChain.create(
                             handles,

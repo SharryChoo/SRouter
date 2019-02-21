@@ -1,6 +1,7 @@
 package com.sharry.sroutercompiler;
 
 import com.google.auto.service.AutoService;
+import com.sharry.srouterannotation.PriorityRange;
 import com.sharry.srouterannotation.RouteInterceptor;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -161,7 +162,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
         List<String> authorities = new ArrayList<>();
         for (Element element : elements) {
             RouteInterceptor annotation = element.getAnnotation(RouteInterceptor.class);
-            // Get path
+            // Setup1: Get path
             String path = annotation.path();
             if (!path.startsWith(moduleName)) {
                 throw new IllegalArgumentException("Found error @RouteInterceptor(path = \"" + path + "\" ) at "
@@ -172,8 +173,17 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
                         "\", Unsupported define duplicate path.");
             }
             authorities.add(path);
-            // Write code into method loadInto.
-            writeToMethodLoadInto(element, loadInto, path, annotation.priority());
+            // Setup2: Get priority
+            int validPriority;
+            if (annotation.priority() < PriorityRange.MINIMUM.value()) {
+                validPriority = PriorityRange.MINIMUM.value();
+            } else if (annotation.priority() > PriorityRange.MAXIMUM.value()) {
+                validPriority = PriorityRange.MAXIMUM.value();
+            } else {
+                validPriority = annotation.priority();
+            }
+            // Setup3: Write code into method loadInto.
+            writeToMethodLoadInto(element, loadInto, path, validPriority);
         }
     }
 

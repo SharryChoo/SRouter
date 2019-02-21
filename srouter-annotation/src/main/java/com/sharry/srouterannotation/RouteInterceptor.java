@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for class, will auto generate target java file when build.
+ * {@link RouteInterceptor} for class, will auto generate target java file when build.
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
@@ -23,6 +23,15 @@ public @interface RouteInterceptor {
 
     /**
      * Priority for the interceptor.
+     * <pre>
+     * Priority value Range in
+     *      [
+     *           {@link PriorityRange#MINIMUM},
+     *           {@link PriorityRange#MAXIMUM}
+     *      ].
+     * </pre>
+     * If two priority value is equivalent, the path mapper special IInterceptor
+     * will be performed in {@link Route#interceptorPaths()} add order.
      */
     int priority() default 1;
 

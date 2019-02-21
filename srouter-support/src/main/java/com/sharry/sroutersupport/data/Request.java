@@ -132,11 +132,11 @@ public class Request extends RouteMeta {
         return requestCode;
     }
 
-    public Result navigation() {
+    public Response navigation() {
         return this.navigation(null);
     }
 
-    public Result navigation(Context context) {
+    public Response navigation(Context context) {
         return SRouter.getInstance().navigation(context, this);
     }
 
