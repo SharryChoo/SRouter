@@ -3,13 +3,16 @@ package com.sharry.sroutersupport.interceptors;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 
 import com.sharry.sroutersupport.data.NavigationRequest;
 import com.sharry.sroutersupport.data.NavigationResponse;
-import com.sharry.sroutersupport.utils.Logger;
 import com.sharry.sroutersupport.providers.IProvider;
+import com.sharry.sroutersupport.utils.Logger;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
@@ -40,7 +43,7 @@ public class NavigationInterceptor implements IInterceptor {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
                 // Real perform activity launch.
-                performStartActivity(context, intent, request.getRequestCode());
+                performLaunchActivity(context, intent, request.getRequestCode(), request.getActivityOptions());
                 break;
             case SERVICE:
                 intent = new Intent(context, request.getRouteClass());
@@ -98,9 +101,38 @@ public class NavigationInterceptor implements IInterceptor {
     /**
      * Perform launch target activity.
      */
-    private void performStartActivity(Context context, Intent intent, int requestCode) {
-        if (requestCode != NavigationRequest.NON_REQUEST_CODE && context instanceof Activity) {
-            ((Activity) context).startActivityForResult(intent, requestCode);
+    private void performLaunchActivity(@NonNull Context context, @NonNull Intent intent,
+                                       int requestCode, @Nullable ActivityOptionsCompat activityOptions) {
+        if (requestCode != NavigationRequest.NON_REQUEST_CODE) {
+            if (context instanceof Activity) {
+                launchActivityForResultActual((Activity) context, intent, requestCode, activityOptions);
+            } else {
+                launchActivityActual(context, intent, activityOptions);
+            }
+        } else {
+            launchActivityActual(context, intent, activityOptions);
+        }
+    }
+
+    /**
+     * Perform launch activity for result actual.
+     */
+    private void launchActivityForResultActual(@NonNull Activity activity, @NonNull Intent intent,
+                                               int requestCode, @Nullable ActivityOptionsCompat activityOptions) {
+        if (activityOptions != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            activity.startActivityForResult(intent, requestCode, activityOptions.toBundle());
+        } else {
+            activity.startActivityForResult(intent, requestCode);
+        }
+    }
+
+    /**
+     * Perform launch activity actual.
+     */
+    private void launchActivityActual(@NonNull Context context, @NonNull Intent intent,
+                                      @Nullable ActivityOptionsCompat activityOptions) {
+        if (activityOptions != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            context.startActivity(intent, activityOptions.toBundle());
         } else {
             context.startActivity(intent);
         }

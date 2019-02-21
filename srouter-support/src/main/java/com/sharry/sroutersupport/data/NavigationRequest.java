@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.util.SparseArray;
 
 import com.sharry.sroutersupport.facade.SRouter;
@@ -39,6 +40,11 @@ public class NavigationRequest extends RouteMeta {
     private final String path;
 
     /**
+     * The datum for the route navigation.
+     */
+    private Bundle bundle;
+
+    /**
      * The Flag for the route navigation.
      */
     private int flags = -1;
@@ -49,19 +55,14 @@ public class NavigationRequest extends RouteMeta {
     private int requestCode = NON_REQUEST_CODE;
 
     /**
-     * The datum for the route navigation.
+     * The jump activity options for the request.
      */
-    private Bundle bundle;
+    private ActivityOptionsCompat activityOptions;
 
     /**
      * Navigation timeout, TimeUnit.Second.
      */
     private int timeout = 300;
-
-    /**
-     * It will be set value, if this postcard was provider.
-     */
-    private Object provider;
 
     /**
      * if true, it will ignore interceptor.
@@ -138,6 +139,13 @@ public class NavigationRequest extends RouteMeta {
         return this;
     }
 
+    /**
+     * Set activity options when jump to other page.
+     */
+    public NavigationRequest setActivityOptions(ActivityOptionsCompat options) {
+        this.activityOptions = options;
+        return this;
+    }
 
     /**
      * Get NavigationRequest data.
@@ -162,6 +170,10 @@ public class NavigationRequest extends RouteMeta {
         return requestCode;
     }
 
+    public ActivityOptionsCompat getActivityOptions() {
+        return activityOptions;
+    }
+
     public List<IInterceptor> getInterceptors() {
         return interceptors;
     }
@@ -170,6 +182,9 @@ public class NavigationRequest extends RouteMeta {
         return navigationInterceptors;
     }
 
+    /**
+     * Start navigation.
+     */
     public NavigationResponse navigation() {
         return this.navigation(null);
     }
