@@ -1,4 +1,4 @@
-package com.sharry.sroutersupport.template;
+package com.sharry.sroutersupport.templates;
 
 import com.sharry.sroutersupport.data.RouteMeta;
 

@@ -8,9 +8,8 @@ import android.support.v4.app.Fragment;
 
 import com.sharry.sroutersupport.data.Request;
 import com.sharry.sroutersupport.data.Result;
-import com.sharry.sroutersupport.frame.Logger;
-import com.sharry.sroutersupport.template.IInterceptor;
-import com.sharry.sroutersupport.template.IProvider;
+import com.sharry.sroutersupport.utils.Logger;
+import com.sharry.sroutersupport.providers.IProvider;
 
 /**
  * @author Sharry <a href="xiaoyu.zhu@1hai.cn">Contact me.</a>

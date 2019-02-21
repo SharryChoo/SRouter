@@ -2,16 +2,18 @@ package com.sharry.sroutersupport.facade;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.sharry.sroutersupport.data.LogisticsCenter;
 import com.sharry.sroutersupport.data.Request;
+import com.sharry.sroutersupport.data.Result;
 import com.sharry.sroutersupport.data.RouteInterceptorMeta;
 import com.sharry.sroutersupport.data.Warehouse;
 import com.sharry.sroutersupport.exceptions.NoRouteFoundException;
-import com.sharry.sroutersupport.frame.Logger;
+import com.sharry.sroutersupport.utils.Logger;
 import com.sharry.sroutersupport.interceptors.NavigationInterceptor;
-import com.sharry.sroutersupport.template.IInterceptor;
+import com.sharry.sroutersupport.interceptors.IInterceptor;
 import com.sharry.sroutersupport.thread.DefaultPoolExecutor;
 
 import java.util.ArrayList;
@@ -47,19 +49,19 @@ class SRouterImpl {
     }
 
     /**
-     * Build navigation postcard by authority.
+     * Build navigation postcard by path.
      */
-    public Request build(String path) {
+    public Request build(@NonNull String path) {
         if (TextUtils.isEmpty(path)) {
-            throw new IllegalArgumentException("Parameter authority cannot be null!");
+            throw new IllegalArgumentException("Navigation path must be nonnull!");
         }
-        return new Request(path);
+        return Request.create(path);
     }
 
     /**
      * Initiatory perform navigation.
      */
-    public Object navigation(final Context context, final Request request) {
+    public Result navigation(final Context context, final Request request) {
         // load data to request.
         try {
             LogisticsCenter.completion(request);
@@ -84,7 +86,7 @@ class SRouterImpl {
                         Logger.e(interceptorAuthority + " instantiation failed.", e);
                     }
                 } else {
-                    Logger.e("Cannot find interceptors, authority is: " + interceptorAuthority);
+                    Logger.e("Cannot find interceptors, path is: " + interceptorAuthority);
                     return null;
                 }
                 interceptors.add(iInterceptor);
@@ -95,10 +97,54 @@ class SRouterImpl {
         return RealChain.create(interceptors, null == context ? sContext : context, request, 0).dispatch();
     }
 
-
     private static class InstanceHolder {
 
         private static final SRouterImpl INSTANCE = new SRouterImpl();
+
+    }
+
+    /**
+     * Real chain for the interceptor.
+     */
+    private static class RealChain implements IInterceptor.Chain {
+
+        static RealChain create(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
+            return new RealChain(handles, context, request, handleIndex);
+        }
+
+        private final List<IInterceptor> handles;
+        private final Context context;
+        private final Request request;
+        private final int index;
+
+        private RealChain(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
+            this.handles = handles;
+            this.context = context;
+            this.request = request;
+            this.index = handleIndex;
+        }
+
+        @Override
+        public Request request() {
+            return request;
+        }
+
+        @Override
+        public Context context() {
+            return context;
+        }
+
+        @Override
+        public Result dispatch() {
+            return handles.get(index).process(
+                    RealChain.create(
+                            handles,
+                            context,
+                            request,
+                            index + 1
+                    )
+            );
+        }
 
     }
 

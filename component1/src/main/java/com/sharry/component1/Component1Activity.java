@@ -16,7 +16,7 @@ import com.sharry.sroutersupport.facade.SRouter;
  * @since 2018/8/22 20:15
  */
 @Route(
-        authority = "component1/Component1Activity",
+        path = "component1/Component1Activity",
         mode = ThreadMode.MAIN,
         desc = "组件1的入口页面"
 )

@@ -5,9 +5,9 @@ import android.content.SharedPreferences;
 
 import com.sharry.sroutersupport.BuildConfig;
 import com.sharry.sroutersupport.exceptions.NoRouteFoundException;
-import com.sharry.sroutersupport.frame.Logger;
-import com.sharry.sroutersupport.template.IRoute;
-import com.sharry.sroutersupport.template.IRouteInterceptor;
+import com.sharry.sroutersupport.utils.Logger;
+import com.sharry.sroutersupport.templates.IRoute;
+import com.sharry.sroutersupport.templates.IRouteInterceptor;
 import com.sharry.sroutersupport.utils.ClassUtils;
 
 import java.util.Collection;
@@ -89,7 +89,7 @@ public class LogisticsCenter {
         request.setThreadMode(routeMeta.getThreadMode());
         request.setInterceptors(routeMeta.getInterceptors());
         // If Type is PROVIDER, the request cannot be intercepted.
-        request.setIsGreenChannel(routeMeta.getType() == RouteMeta.Type.PROVIDER);
+        request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.PROVIDER);
     }
 
 }

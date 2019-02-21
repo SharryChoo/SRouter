@@ -3,9 +3,8 @@ package com.sharry.component2;
 import android.util.Log;
 
 import com.sharry.srouterannotation.RouteInterceptor;
-import com.sharry.sroutersupport.data.Request;
 import com.sharry.sroutersupport.data.Result;
-import com.sharry.sroutersupport.template.IInterceptor;
+import com.sharry.sroutersupport.interceptors.IInterceptor;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
@@ -13,7 +12,7 @@ import com.sharry.sroutersupport.template.IInterceptor;
  * @since 2019/2/19 20:15
  */
 @RouteInterceptor(
-        authority = "component2/PermissionInterceptor",
+        path = "component2/PermissionInterceptor",
         priority = 10
 )
 public class PermissionInterceptor implements IInterceptor {

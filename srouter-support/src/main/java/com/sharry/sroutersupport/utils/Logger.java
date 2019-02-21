@@ -1,4 +1,4 @@
-package com.sharry.sroutersupport.frame;
+package com.sharry.sroutersupport.utils;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -10,13 +10,8 @@ import android.util.Log;
  */
 public class Logger {
 
-    // 静态常量
     private static final String TAG_DEFAULT = Logger.class.getSimpleName();
-
-    // 外界可控变量
     private static String TAG = Logger.class.getSimpleName();
-
-    // 网络加载引擎
     private static ILoggerEngine sLoggerEngine;
 
     private Logger() {

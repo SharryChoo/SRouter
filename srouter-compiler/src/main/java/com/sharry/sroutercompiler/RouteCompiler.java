@@ -182,25 +182,25 @@ public class RouteCompiler extends AbstractProcessor {
      * @param loadInto   Need generate method.
      */
     private void parseElements(Set<? extends Element> elements, String moduleName, MethodSpec.Builder loadInto) {
-        List<String> authorities = new ArrayList<>();
+        List<String> paths = new ArrayList<>();
         for (Element element : elements) {
             Route routeAnnotation = element.getAnnotation(Route.class);
             // Setup routeAuthority.
-            String routeAuthority = routeAnnotation.authority();
-            if (!routeAuthority.startsWith(moduleName)) {
-                throw new IllegalArgumentException("Found error @Route(routeAuthority = \"" + routeAuthority + "\" ) at "
-                        + element + ".class, @Route routeAuthority must start with : " + moduleName);
+            String routePath = routeAnnotation.path();
+            if (!routePath.startsWith(moduleName)) {
+                throw new IllegalArgumentException("Found error @Route(route path = \"" + routePath + "\" ) at "
+                        + element + ".class, @Route route path must start with : " + moduleName);
             }
-            if (authorities.contains(routeAuthority)) {
-                throw new IllegalArgumentException("Found duplicate routeAuthority \"" + routeAuthority +
+            if (paths.contains(routePath)) {
+                throw new IllegalArgumentException("Found duplicate route path \"" + routePath +
                         "\", Unsupported define duplicate routeAuthority.");
             }
-            authorities.add(routeAuthority);
+            paths.add(routePath);
             // Setup ThreadMode.
             ThreadMode threadMode = routeAnnotation.mode();
             // Write code into method loadInto.
-            writeToMethodLoadInto(loadInto, routeAuthority, threadMode, Arrays.asList(
-                    routeAnnotation.interceptorAuthorities()), element);
+            writeToMethodLoadInto(loadInto, routePath, threadMode, Arrays.asList(
+                    routeAnnotation.interceptorPaths()), element);
         }
     }
 
@@ -221,13 +221,13 @@ public class RouteCompiler extends AbstractProcessor {
      * </pre>
      */
     private void writeToMethodLoadInto(MethodSpec.Builder loadInto, String routeAuthority,
-                                       ThreadMode threadMode, List<String> interceptorAuthorities, Element element) {
+                                       ThreadMode threadMode, List<String> interceptorPaths, Element element) {
         TypeMirror tm = element.asType();
         // @Route bind class is child for Activity.
         if (mTypeUtils.isSubtype(tm, mTypeActivity)) {
             mLogger.i("Found activity route: " + tm.toString() + " <<<");
             loadInto.addStatement(
-                    getLoadIntoMethodCode("ACTIVITY", threadMode, interceptorAuthorities),
+                    getLoadIntoMethodCode("ACTIVITY", threadMode, interceptorPaths),
                     routeAuthority,
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
@@ -238,7 +238,7 @@ public class RouteCompiler extends AbstractProcessor {
             // @Route bind class is child for Service.
             mLogger.i("Found service route: " + tm.toString() + " <<<");
             loadInto.addStatement(
-                    getLoadIntoMethodCode("CLASS_NAME_SERVICE", threadMode, interceptorAuthorities),
+                    getLoadIntoMethodCode("CLASS_NAME_SERVICE", threadMode, interceptorPaths),
                     routeAuthority,
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
@@ -249,7 +249,7 @@ public class RouteCompiler extends AbstractProcessor {
             // @Route bind class is child for Fragment.
             mLogger.i("Found fragment route: " + tm.toString() + " <<<");
             loadInto.addStatement(
-                    getLoadIntoMethodCode("FRAGMENT", threadMode, interceptorAuthorities),
+                    getLoadIntoMethodCode("FRAGMENT", threadMode, interceptorPaths),
                     routeAuthority,
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
@@ -260,7 +260,7 @@ public class RouteCompiler extends AbstractProcessor {
             // @Route bind class is child for Fragment.
             mLogger.i("Found fragment v4 route: " + tm.toString() + " <<<");
             loadInto.addStatement(
-                    getLoadIntoMethodCode("FRAGMENT_V4", threadMode, interceptorAuthorities),
+                    getLoadIntoMethodCode("FRAGMENT_V4", threadMode, interceptorPaths),
                     routeAuthority,
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
@@ -271,7 +271,7 @@ public class RouteCompiler extends AbstractProcessor {
             // @Route bind class is child for IProvider.
             mLogger.i("Found provider route: " + tm.toString() + " <<<");
             loadInto.addStatement(
-                    getLoadIntoMethodCode("IPROVIDER", threadMode, interceptorAuthorities),
+                    getLoadIntoMethodCode("IPROVIDER", threadMode, interceptorPaths),
                     routeAuthority,
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
@@ -282,7 +282,7 @@ public class RouteCompiler extends AbstractProcessor {
             mLogger.i("Found other route: " + tm.toString() + " <<<");
             // @Route bind class is child for others.
             loadInto.addStatement(
-                    getLoadIntoMethodCode("UNKNOWN", threadMode, interceptorAuthorities),
+                    getLoadIntoMethodCode("UNKNOWN", threadMode, interceptorPaths),
                     routeAuthority,
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
@@ -306,7 +306,7 @@ public class RouteCompiler extends AbstractProcessor {
                         "          $T.class," + "\n" +
                         "          new String[]{" + "\n"
         );
-        // Add interceptorAuthorities
+        // Add interceptorPaths
         int size = interceptorClassNames.size();
         for (int i = 0; i < size; i++) {
             builder.append(

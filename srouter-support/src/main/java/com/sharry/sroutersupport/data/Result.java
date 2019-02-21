@@ -2,7 +2,7 @@ package com.sharry.sroutersupport.data;
 
 import android.support.v4.app.Fragment;
 
-import com.sharry.sroutersupport.template.IProvider;
+import com.sharry.sroutersupport.providers.IProvider;
 
 /**
  * The result associated with a navigation.

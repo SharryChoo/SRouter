@@ -1,4 +1,4 @@
-package com.sharry.sroutersupport.template;
+package com.sharry.sroutersupport.providers;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>

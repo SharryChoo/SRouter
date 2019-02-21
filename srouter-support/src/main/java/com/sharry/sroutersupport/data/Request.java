@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
@@ -26,18 +27,46 @@ public class Request extends RouteMeta {
 
     public static final int NON_REQUEST_CODE = -1;
 
+    public static Request create(@NonNull String path) {
+        return new Request(path);
+    }
+
     /**
-     * Base
+     * Navigation path.
      */
-    private String path;            // navigation authority in module.
-    private Bundle bundle;          // Data to transform
-    private int flags = -1;         // Intent Flags of route
-    private int timeout = 300;      // Navigation timeout, TimeUnit.Second
-    private Object provider;        // It will be set value, if this postcard was provider.
-    private boolean isGreenChannel; // if true, it will ignore interceptor.
+    private final String path;
+
+    /**
+     * The Flag for the route navigation.
+     */
+    private int flags = -1;
+
+    /**
+     * The requestCode for the requestCode.
+     */
     private int requestCode = NON_REQUEST_CODE;
 
-    public Request(String path) {
+    /**
+     * The datum for the route navigation.
+     */
+    private Bundle bundle;
+
+    /**
+     * Navigation timeout, TimeUnit.Second.
+     */
+    private int timeout = 300;
+
+    /**
+     * It will be set value, if this postcard was provider.
+     */
+    private Object provider;
+
+    /**
+     * if true, it will ignore interceptor.
+     */
+    private boolean isGreenChannel;
+
+    private Request(String path) {
         this.path = path;
         bundle = new Bundle();
     }
@@ -52,21 +81,29 @@ public class Request extends RouteMeta {
         return this;
     }
 
+    /**
+     * Set timeout time when navigation process.
+     * <p>
+     * Unit is{@link java.util.concurrent.TimeUnit#MILLISECONDS}
+     */
     public Request setTimeout(int timeout) {
         this.timeout = timeout;
         return this;
     }
 
-    public <T> Request setProvider(T provider) {
-        this.provider = provider;
+    /**
+     * Set green channel associated with this Request.
+     *
+     * @param isGreenChannel if true will ignore Route interceptors.
+     */
+    public Request setGreenChannel(boolean isGreenChannel) {
+        this.isGreenChannel = isGreenChannel;
         return this;
     }
 
-    public Request setIsGreenChannel(boolean mIsGreenChannel) {
-        this.isGreenChannel = mIsGreenChannel;
-        return this;
-    }
-
+    /**
+     * Set request code for the navigation.
+     */
     public Request setRequestCode(int requestCode) {
         this.requestCode = requestCode;
         return this;
@@ -87,10 +124,6 @@ public class Request extends RouteMeta {
         return timeout;
     }
 
-    public <T> T getProvider() {
-        return (T) provider;
-    }
-
     public boolean isGreenChannel() {
         return isGreenChannel;
     }
@@ -99,11 +132,11 @@ public class Request extends RouteMeta {
         return requestCode;
     }
 
-    public Object navigation() {
+    public Result navigation() {
         return this.navigation(null);
     }
 
-    public Object navigation(Context context) {
+    public Result navigation(Context context) {
         return SRouter.getInstance().navigation(context, this);
     }
 

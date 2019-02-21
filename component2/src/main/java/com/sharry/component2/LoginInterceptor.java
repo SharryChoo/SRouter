@@ -4,9 +4,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.sharry.srouterannotation.RouteInterceptor;
-import com.sharry.sroutersupport.data.Request;
 import com.sharry.sroutersupport.data.Result;
-import com.sharry.sroutersupport.template.IInterceptor;
+import com.sharry.sroutersupport.interceptors.IInterceptor;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
@@ -14,7 +13,7 @@ import com.sharry.sroutersupport.template.IInterceptor;
  * @since 2019/2/19 20:15
  */
 @RouteInterceptor(
-        authority = "component2/LoginInterceptor",
+        path = "component2/LoginInterceptor",
         priority = 10
 )
 public class LoginInterceptor implements IInterceptor {

@@ -19,7 +19,7 @@ import com.sharry.srouterannotation.Route;
  * Use the {@link Component2Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-@Route(authority = "component2/Component2Fragment")
+@Route(path = "component2/Component2Fragment")
 public class Component2Fragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

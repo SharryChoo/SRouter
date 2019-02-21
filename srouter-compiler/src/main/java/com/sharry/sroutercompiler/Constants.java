@@ -21,8 +21,8 @@ class Constants {
     static final String CLASS_NAME_FRAGMENT = "android.app.Fragment";
     static final String CLASS_NAME_FRAGMENT_V4 = "android.support.v4.app.Fragment";
     static final String CLASS_NAME_SERVICE = "android.app.Service";
-    static final String CLASS_NAME_IPROVIDER = "com.sharry.sroutersupport.template.IProvider";
-    static final String CLASS_NAME_IINTERCEPTOR = "com.sharry.sroutersupport.template.IInterceptor";
+    static final String CLASS_NAME_IPROVIDER = "com.sharry.sroutersupport.providers.IProvider";
+    static final String CLASS_NAME_IINTERCEPTOR = "com.sharry.sroutersupport.interceptors.IInterceptor";
 
     /**
      * Sub element for simple class name.
@@ -46,7 +46,7 @@ class Constants {
     /**
      * Description parents for generation classes.
      */
-    static final String PACKAGE_NAME_TEMPLATE = "com.sharry.sroutersupport.template";
+    static final String PACKAGE_NAME_TEMPLATE = "com.sharry.sroutersupport.templates";
     static final String SIMPLE_NAME_IROUTE = "IRoute";
     static final String SIMPLE_NAME_IROUTE_INTERCEPTOR = "IRouteInterceptor";
 

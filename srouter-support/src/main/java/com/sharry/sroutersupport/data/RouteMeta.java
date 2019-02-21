@@ -1,6 +1,7 @@
 package com.sharry.sroutersupport.data;
 
 import com.sharry.srouterannotation.ThreadMode;
+import com.sharry.sroutersupport.providers.IProvider;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
@@ -44,7 +45,7 @@ public class RouteMeta {
         BROADCAST,
 
         /**
-         * Type of {@link com.sharry.sroutersupport.template.IProvider}.
+         * Type of {@link IProvider}.
          */
         PROVIDER,
 
@@ -81,7 +82,7 @@ public class RouteMeta {
      */
     private ThreadMode threadMode;
     /**
-     * Navigation interceptorAuthorities.
+     * Navigation interceptorPaths.
      */
     private String[] interceptors;
 

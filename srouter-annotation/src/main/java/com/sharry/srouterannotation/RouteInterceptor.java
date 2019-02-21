@@ -17,9 +17,9 @@ import java.lang.annotation.Target;
 public @interface RouteInterceptor {
 
     /**
-     * Route authority in module.
+     * Interceptor path in module.
      */
-    String authority();
+    String path();
 
     /**
      * Priority for the interceptor.

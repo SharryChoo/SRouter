@@ -13,9 +13,9 @@ import com.sharry.srouterannotation.ThreadMode
  * @since 2018/8/22 20:14
  */
 @Route(
-        authority = "component2/Component2Activity",
+        path = "component2/Component2Activity",
         mode = ThreadMode.MAIN,
-        interceptorAuthorities = ["component2/LoginInterceptor"],
+        interceptorPaths = ["component2/LoginInterceptor"],
         desc = "第二个 Module 中的 Activity"
 )
 class Component2Activity : AppCompatActivity() {

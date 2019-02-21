@@ -162,18 +162,18 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
         for (Element element : elements) {
             RouteInterceptor annotation = element.getAnnotation(RouteInterceptor.class);
             // Get path
-            String authority = annotation.authority();
-            if (!authority.startsWith(moduleName)) {
-                throw new IllegalArgumentException("Found error @Route(authority = \"" + authority + "\" ) at "
-                        + element + ".class, @Route authority must start with : " + moduleName);
+            String path = annotation.path();
+            if (!path.startsWith(moduleName)) {
+                throw new IllegalArgumentException("Found error @RouteInterceptor(path = \"" + path + "\" ) at "
+                        + element + ".class, @RouteInterceptor path must start with : " + moduleName);
             }
-            if (authorities.contains(authority)) {
-                throw new IllegalArgumentException("Found duplicate authority \"" + authority +
-                        "\", Unsupported define duplicate authority.");
+            if (authorities.contains(path)) {
+                throw new IllegalArgumentException("Found duplicate path \"" + path +
+                        "\", Unsupported define duplicate path.");
             }
-            authorities.add(authority);
+            authorities.add(path);
             // Write code into method loadInto.
-            writeToMethodLoadInto(element, loadInto, authority, annotation.priority());
+            writeToMethodLoadInto(element, loadInto, path, annotation.priority());
         }
     }
 
@@ -190,20 +190,19 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
      *         );
      * </pre>
      */
-    private void writeToMethodLoadInto(Element element, MethodSpec.Builder loadInto, String authority, int priority) {
+    private void writeToMethodLoadInto(Element element, MethodSpec.Builder loadInto, String path, int priority) {
         TypeMirror tm = element.asType();
         if (mTypeUtils.isSubtype(tm, mTypeInterceptor)) {
             loadInto.addStatement(
                     getLoadIntoMethodCode(priority),
-                    authority,
+                    path,
                     ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_INTERCEPTOR_META),
                     element
             );
         } else {
-            throw new IllegalArgumentException("Please ensure @Interceptor marked class is sub class for "
+            throw new IllegalArgumentException("Please ensure @RouteInterceptor marked class is sub class for "
                     + Constants.CLASS_NAME_IINTERCEPTOR);
         }
-
     }
 
     /**

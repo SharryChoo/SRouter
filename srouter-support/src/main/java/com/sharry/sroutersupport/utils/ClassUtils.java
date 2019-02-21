@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.sharry.sroutersupport.BuildConfig;
-import com.sharry.sroutersupport.frame.Logger;
 import com.sharry.sroutersupport.thread.DefaultPoolExecutor;
 
 import java.io.File;
@@ -76,7 +75,7 @@ public class ClassUtils {
 
                     try {
                         if (path.endsWith(EXTRACTED_SUFFIX)) {
-                            //NOT use new DexFile(authority), because it will throw "permission error in /data/dalvik-cache"
+                            //NOT use new DexFile(path), because it will throw "permission error in /data/dalvik-cache"
                             dexfile = DexFile.loadDex(path, path + ".tmp", 0);
                         } else {
                             dexfile = new DexFile(path);
@@ -110,10 +109,10 @@ public class ClassUtils {
     }
 
     /**
-     * get all the dex authority
+     * get all the dex path
      *
      * @param context the application context
-     * @return all the dex authority
+     * @return all the dex path
      * @throws PackageManager.NameNotFoundException
      * @throws IOException
      */
@@ -122,7 +121,7 @@ public class ClassUtils {
         File sourceApk = new File(applicationInfo.sourceDir);
 
         List<String> sourcePaths = new ArrayList<>();
-        sourcePaths.add(applicationInfo.sourceDir); //add the default apk authority
+        sourcePaths.add(applicationInfo.sourceDir); //add the default apk path
 
         //the prefix of extracted file, ie: test.classes
         String extractedFilePrefix = sourceApk.getName() + EXTRACTED_NAME_EXT;
@@ -154,7 +153,7 @@ public class ClassUtils {
     }
 
     /**
-     * Get instant run dex authority, used to catch the branch usingApkSplits=false.
+     * Get instant run dex path, used to catch the branch usingApkSplits=false.
      */
     private static List<String> tryLoadInstantRunDexFile(ApplicationInfo applicationInfo) {
         List<String> instantRunSourcePaths = new ArrayList<>();

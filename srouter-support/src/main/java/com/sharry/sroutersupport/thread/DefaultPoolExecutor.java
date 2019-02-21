@@ -2,7 +2,7 @@ package com.sharry.sroutersupport.thread;
 
 import android.support.annotation.NonNull;
 
-import com.sharry.sroutersupport.frame.Logger;
+import com.sharry.sroutersupport.utils.Logger;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;

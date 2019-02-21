@@ -17,9 +17,9 @@ import java.lang.annotation.Target;
 public @interface Route {
 
     /**
-     * Route authority in module.
+     * Route path in module.
      */
-    String authority();
+    String path();
 
     /**
      * Thread mode for this Route.
@@ -27,9 +27,9 @@ public @interface Route {
     ThreadMode mode() default ThreadMode.MAIN;
 
     /**
-     * The interceptorAuthorities name for this Route.
+     * The interceptor Paths for this Route.
      */
-    String[] interceptorAuthorities() default {};
+    String[] interceptorPaths() default {};
 
     /**
      * Description for this Route.
