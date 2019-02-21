@@ -1,5 +1,8 @@
 package com.sharry.sroutersupport.data;
 
+import com.sharry.srouterannotation.Route;
+import com.sharry.srouterannotation.RouteInterceptor;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,13 +15,18 @@ import java.util.Map;
  */
 public class Warehouse {
 
+    /**
+     * Key is path of the route request.{@link Route#path()}
+     * <p>
+     * The key mapper special value is data associated with @Route marked class.
+     */
     public static final Map<String, RouteMeta> ROUTES = new HashMap<>();
 
-    public static final Map<String, RouteInterceptorMeta> INTERCEPTORS = new HashMap<>();
-
-    public static void clear() {
-        ROUTES.clear();
-        INTERCEPTORS.clear();
-    }
+    /**
+     * Key is path of the route interceptor.{@link RouteInterceptor#path()}
+     * <p>
+     * The key mapper special value is data associated with @RouteInterceptor marked class.
+     */
+    public static final Map<String, RouteInterceptorMeta> ROUTES_INTERCEPTORS = new HashMap<>();
 
 }

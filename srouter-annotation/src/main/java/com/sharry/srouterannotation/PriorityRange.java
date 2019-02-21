@@ -1,10 +1,11 @@
 package com.sharry.srouterannotation;
 
 /**
- * description: thanks EventBus
- * author: Darren on 2018/1/23 08:57
- * email: 240336124@qq.com
- * version: 1.0
+ * The priority range of RouteInterceptor.
+ *
+ * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
+ * @version 1.0
+ * @since 2/21/2019 7:45 PM
  */
 public enum PriorityRange {
 

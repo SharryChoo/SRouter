@@ -4,7 +4,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.sharry.srouterannotation.RouteInterceptor;
-import com.sharry.sroutersupport.data.Response;
+import com.sharry.sroutersupport.data.NavigationResponse;
 import com.sharry.sroutersupport.interceptors.IInterceptor;
 
 /**
@@ -14,12 +14,12 @@ import com.sharry.sroutersupport.interceptors.IInterceptor;
  */
 @RouteInterceptor(
         path = "component2/PermissionInterceptor",
-        priority = 9
+        priority = 2
 )
 public class PermissionInterceptor implements IInterceptor {
 
     @Override
-    public Response process(Chain chain) {
+    public NavigationResponse process(Chain chain) {
         Log.e("TAG", "PermissionInterceptor");
         Toast.makeText(chain.context(), "请先获取权限.", Toast.LENGTH_SHORT).show();
         return null;

@@ -2,8 +2,8 @@ package com.sharry.sroutersupport.interceptors;
 
 import android.content.Context;
 
-import com.sharry.sroutersupport.data.Request;
-import com.sharry.sroutersupport.data.Response;
+import com.sharry.sroutersupport.data.NavigationRequest;
+import com.sharry.sroutersupport.data.NavigationResponse;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
@@ -12,18 +12,18 @@ import com.sharry.sroutersupport.data.Response;
  */
 public interface IInterceptor {
 
-    Response process(Chain chain);
+    NavigationResponse process(Chain chain);
 
     /**
      * The chain for once navigation.
      */
     interface Chain {
 
-        Request request();
+        NavigationRequest request();
 
         Context context();
 
-        Response dispatch();
+        NavigationResponse dispatch();
     }
 
 }

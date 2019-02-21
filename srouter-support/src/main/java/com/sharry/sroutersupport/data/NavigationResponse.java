@@ -7,11 +7,11 @@ import com.sharry.sroutersupport.providers.IProvider;
 /**
  * The result associated with a navigation.
  *
- * @author Sharry <a href="xiaoyu.zhu@1hai.cn">Contact me.</a>
+ * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2/20/2019 10:41 AM
  */
-public class Response {
+public class NavigationResponse {
 
     private Fragment fragmentV4;
     private android.app.Fragment fragment;

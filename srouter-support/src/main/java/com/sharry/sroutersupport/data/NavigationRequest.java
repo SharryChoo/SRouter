@@ -10,11 +10,13 @@ import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
 import com.sharry.sroutersupport.facade.SRouter;
+import com.sharry.sroutersupport.interceptors.IInterceptor;
 
 import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The request associated with a navigation.
@@ -23,12 +25,12 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 2018/8/13
  */
-public class Request extends RouteMeta {
+public class NavigationRequest extends RouteMeta {
 
     public static final int NON_REQUEST_CODE = -1;
 
-    public static Request create(@NonNull String path) {
-        return new Request(path);
+    public static NavigationRequest create(@NonNull String path) {
+        return new NavigationRequest(path);
     }
 
     /**
@@ -66,7 +68,18 @@ public class Request extends RouteMeta {
      */
     private boolean isGreenChannel;
 
-    private Request(String path) {
+    /**
+     * The interceptors will be process before {@link Warehouse#ROUTES_INTERCEPTORS}
+     */
+    private final List<IInterceptor> interceptors = new ArrayList<>();
+
+    /**
+     * The interceptors will be process after {@link Warehouse#ROUTES_INTERCEPTORS} and
+     * before {@link com.sharry.sroutersupport.interceptors.NavigationInterceptor}
+     */
+    private final List<IInterceptor> navigationInterceptors = new ArrayList<>();
+
+    private NavigationRequest(String path) {
         this.path = path;
         bundle = new Bundle();
     }
@@ -74,7 +87,7 @@ public class Request extends RouteMeta {
     /**
      * BE ATTENTION TO THIS METHOD WAS <P>SET, NOT ADD!</P>
      */
-    public Request setBundle(Bundle bundle) {
+    public NavigationRequest setBundle(Bundle bundle) {
         if (bundle != null) {
             this.bundle = bundle;
         }
@@ -86,17 +99,17 @@ public class Request extends RouteMeta {
      * <p>
      * Unit is{@link java.util.concurrent.TimeUnit#MILLISECONDS}
      */
-    public Request setTimeout(int timeout) {
+    public NavigationRequest setTimeout(int timeout) {
         this.timeout = timeout;
         return this;
     }
 
     /**
-     * Set green channel associated with this Request.
+     * Set green channel associated with this NavigationRequest.
      *
-     * @param isGreenChannel if true will ignore Route interceptors.
+     * @param isGreenChannel if true will ignore Route INTERCEPTORS.
      */
-    public Request setGreenChannel(boolean isGreenChannel) {
+    public NavigationRequest setGreenChannel(boolean isGreenChannel) {
         this.isGreenChannel = isGreenChannel;
         return this;
     }
@@ -104,13 +117,30 @@ public class Request extends RouteMeta {
     /**
      * Set request code for the navigation.
      */
-    public Request setRequestCode(int requestCode) {
+    public NavigationRequest setRequestCode(int requestCode) {
         this.requestCode = requestCode;
         return this;
     }
 
     /**
-     * Get Request data.
+     * Add interceptor for the request.
+     */
+    public NavigationRequest addInterceptor(@NonNull IInterceptor interceptor) {
+        interceptors.add(interceptor);
+        return this;
+    }
+
+    /**
+     * Add navigation interceptor for the request.
+     */
+    public NavigationRequest addNavigationInterceptor(@NonNull IInterceptor interceptor) {
+        navigationInterceptors.add(interceptor);
+        return this;
+    }
+
+
+    /**
+     * Get NavigationRequest data.
      */
     public String getPath() {
         return path;
@@ -132,11 +162,19 @@ public class Request extends RouteMeta {
         return requestCode;
     }
 
-    public Response navigation() {
+    public List<IInterceptor> getInterceptors() {
+        return interceptors;
+    }
+
+    public List<IInterceptor> getNavigationInterceptors() {
+        return navigationInterceptors;
+    }
+
+    public NavigationResponse navigation() {
         return this.navigation(null);
     }
 
-    public Response navigation(Context context) {
+    public NavigationResponse navigation(Context context) {
         return SRouter.getInstance().navigation(context, this);
     }
 
@@ -174,7 +212,7 @@ public class Request extends RouteMeta {
      * FLAG_RECEIVER_* flags are all for use with
      * {@link Context#sendBroadcast(Intent) Context.sendBroadcast()}.
      */
-    public Request withFlags(@FlagInt int flag) {
+    public NavigationRequest withFlags(@FlagInt int flag) {
         this.flags = flag;
         return this;
     }
@@ -193,7 +231,7 @@ public class Request extends RouteMeta {
      * @param value a String, or null
      * @return current
      */
-    public Request withString(@Nullable String key, @Nullable String value) {
+    public NavigationRequest withString(@Nullable String key, @Nullable String value) {
         bundle.putString(key, value);
         return this;
     }
@@ -206,7 +244,7 @@ public class Request extends RouteMeta {
      * @param value a boolean
      * @return current
      */
-    public Request withBoolean(@Nullable String key, boolean value) {
+    public NavigationRequest withBoolean(@Nullable String key, boolean value) {
         bundle.putBoolean(key, value);
         return this;
     }
@@ -219,7 +257,7 @@ public class Request extends RouteMeta {
      * @param value a short
      * @return current
      */
-    public Request withShort(@Nullable String key, short value) {
+    public NavigationRequest withShort(@Nullable String key, short value) {
         bundle.putShort(key, value);
         return this;
     }
@@ -232,7 +270,7 @@ public class Request extends RouteMeta {
      * @param value an int
      * @return current
      */
-    public Request withInt(@Nullable String key, int value) {
+    public NavigationRequest withInt(@Nullable String key, int value) {
         bundle.putInt(key, value);
         return this;
     }
@@ -245,7 +283,7 @@ public class Request extends RouteMeta {
      * @param value a long
      * @return current
      */
-    public Request withLong(@Nullable String key, long value) {
+    public NavigationRequest withLong(@Nullable String key, long value) {
         bundle.putLong(key, value);
         return this;
     }
@@ -258,7 +296,7 @@ public class Request extends RouteMeta {
      * @param value a double
      * @return current
      */
-    public Request withDouble(@Nullable String key, double value) {
+    public NavigationRequest withDouble(@Nullable String key, double value) {
         bundle.putDouble(key, value);
         return this;
     }
@@ -271,7 +309,7 @@ public class Request extends RouteMeta {
      * @param value a byte
      * @return current
      */
-    public Request withByte(@Nullable String key, byte value) {
+    public NavigationRequest withByte(@Nullable String key, byte value) {
         bundle.putByte(key, value);
         return this;
     }
@@ -284,7 +322,7 @@ public class Request extends RouteMeta {
      * @param value a char
      * @return current
      */
-    public Request withChar(@Nullable String key, char value) {
+    public NavigationRequest withChar(@Nullable String key, char value) {
         bundle.putChar(key, value);
         return this;
     }
@@ -297,7 +335,7 @@ public class Request extends RouteMeta {
      * @param value a float
      * @return current
      */
-    public Request withFloat(@Nullable String key, float value) {
+    public NavigationRequest withFloat(@Nullable String key, float value) {
         bundle.putFloat(key, value);
         return this;
     }
@@ -310,7 +348,7 @@ public class Request extends RouteMeta {
      * @param value a CharSequence, or null
      * @return current
      */
-    public Request withCharSequence(@Nullable String key, @Nullable CharSequence value) {
+    public NavigationRequest withCharSequence(@Nullable String key, @Nullable CharSequence value) {
         bundle.putCharSequence(key, value);
         return this;
     }
@@ -323,7 +361,7 @@ public class Request extends RouteMeta {
      * @param value a Parcelable object, or null
      * @return current
      */
-    public Request withParcelable(@Nullable String key, @Nullable Parcelable value) {
+    public NavigationRequest withParcelable(@Nullable String key, @Nullable Parcelable value) {
         bundle.putParcelable(key, value);
         return this;
     }
@@ -337,7 +375,7 @@ public class Request extends RouteMeta {
      * @param value an array of Parcelable objects, or null
      * @return current
      */
-    public Request withParcelableArray(@Nullable String key, @Nullable Parcelable[] value) {
+    public NavigationRequest withParcelableArray(@Nullable String key, @Nullable Parcelable[] value) {
         bundle.putParcelableArray(key, value);
         return this;
     }
@@ -351,7 +389,7 @@ public class Request extends RouteMeta {
      * @param value an ArrayList of Parcelable objects, or null
      * @return current
      */
-    public Request withParcelableArrayList(@Nullable String key, @Nullable ArrayList<? extends Parcelable> value) {
+    public NavigationRequest withParcelableArrayList(@Nullable String key, @Nullable ArrayList<? extends Parcelable> value) {
         bundle.putParcelableArrayList(key, value);
         return this;
     }
@@ -365,7 +403,7 @@ public class Request extends RouteMeta {
      * @param value a SparseArray of Parcelable objects, or null
      * @return current
      */
-    public Request withSparseParcelableArray(@Nullable String key, @Nullable SparseArray<? extends Parcelable> value) {
+    public NavigationRequest withSparseParcelableArray(@Nullable String key, @Nullable SparseArray<? extends Parcelable> value) {
         bundle.putSparseParcelableArray(key, value);
         return this;
     }
@@ -378,7 +416,7 @@ public class Request extends RouteMeta {
      * @param value an ArrayList object, or null
      * @return current
      */
-    public Request withIntegerArrayList(@Nullable String key, @Nullable ArrayList<Integer> value) {
+    public NavigationRequest withIntegerArrayList(@Nullable String key, @Nullable ArrayList<Integer> value) {
         bundle.putIntegerArrayList(key, value);
         return this;
     }
@@ -391,7 +429,7 @@ public class Request extends RouteMeta {
      * @param value an ArrayList object, or null
      * @return current
      */
-    public Request withStringArrayList(@Nullable String key, @Nullable ArrayList<String> value) {
+    public NavigationRequest withStringArrayList(@Nullable String key, @Nullable ArrayList<String> value) {
         bundle.putStringArrayList(key, value);
         return this;
     }
@@ -404,7 +442,7 @@ public class Request extends RouteMeta {
      * @param value an ArrayList object, or null
      * @return current
      */
-    public Request withCharSequenceArrayList(@Nullable String key, @Nullable ArrayList<CharSequence> value) {
+    public NavigationRequest withCharSequenceArrayList(@Nullable String key, @Nullable ArrayList<CharSequence> value) {
         bundle.putCharSequenceArrayList(key, value);
         return this;
     }
@@ -417,7 +455,7 @@ public class Request extends RouteMeta {
      * @param value a Serializable object, or null
      * @return current
      */
-    public Request withSerializable(@Nullable String key, @Nullable Serializable value) {
+    public NavigationRequest withSerializable(@Nullable String key, @Nullable Serializable value) {
         bundle.putSerializable(key, value);
         return this;
     }
@@ -430,7 +468,7 @@ public class Request extends RouteMeta {
      * @param value a byte array object, or null
      * @return current
      */
-    public Request withByteArray(@Nullable String key, @Nullable byte[] value) {
+    public NavigationRequest withByteArray(@Nullable String key, @Nullable byte[] value) {
         bundle.putByteArray(key, value);
         return this;
     }
@@ -443,7 +481,7 @@ public class Request extends RouteMeta {
      * @param value a short array object, or null
      * @return current
      */
-    public Request withShortArray(@Nullable String key, @Nullable short[] value) {
+    public NavigationRequest withShortArray(@Nullable String key, @Nullable short[] value) {
         bundle.putShortArray(key, value);
         return this;
     }
@@ -456,7 +494,7 @@ public class Request extends RouteMeta {
      * @param value a char array object, or null
      * @return current
      */
-    public Request withCharArray(@Nullable String key, @Nullable char[] value) {
+    public NavigationRequest withCharArray(@Nullable String key, @Nullable char[] value) {
         bundle.putCharArray(key, value);
         return this;
     }
@@ -469,7 +507,7 @@ public class Request extends RouteMeta {
      * @param value a float array object, or null
      * @return current
      */
-    public Request withFloatArray(@Nullable String key, @Nullable float[] value) {
+    public NavigationRequest withFloatArray(@Nullable String key, @Nullable float[] value) {
         bundle.putFloatArray(key, value);
         return this;
     }
@@ -482,7 +520,7 @@ public class Request extends RouteMeta {
      * @param value a CharSequence array object, or null
      * @return current
      */
-    public Request withCharSequenceArray(@Nullable String key, @Nullable CharSequence[] value) {
+    public NavigationRequest withCharSequenceArray(@Nullable String key, @Nullable CharSequence[] value) {
         bundle.putCharSequenceArray(key, value);
         return this;
     }
@@ -495,7 +533,7 @@ public class Request extends RouteMeta {
      * @param value a Bundle object, or null
      * @return current
      */
-    public Request withBundle(@Nullable String key, @Nullable Bundle value) {
+    public NavigationRequest withBundle(@Nullable String key, @Nullable Bundle value) {
         bundle.putBundle(key, value);
         return this;
     }

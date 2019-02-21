@@ -65,7 +65,7 @@ public class LogisticsCenter {
                 } else if (className.startsWith(PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_INTERCEPTOR)) {
                     // 加载拦截器标签元素(com.sharry.android.srouter.SRouter$$Interceptors$$XXX)
                     IRouteInterceptor routeInterceptor = (IRouteInterceptor) (Class.forName(className).getConstructor().newInstance());
-                    routeInterceptor.loadInto(Warehouse.INTERCEPTORS);
+                    routeInterceptor.loadInto(Warehouse.ROUTES_INTERCEPTORS);
                 }
                 Logger.e(className);
             }
@@ -77,7 +77,7 @@ public class LogisticsCenter {
     /**
      * Fetch data from warehouse and then inject to request.
      */
-    public static void completion(Request request) throws NoRouteFoundException {
+    public static void completion(NavigationRequest request) throws NoRouteFoundException {
         String authority = request.getPath();
         RouteMeta routeMeta = Warehouse.ROUTES.get(authority);
         if (null == routeMeta) {
@@ -87,7 +87,7 @@ public class LogisticsCenter {
         request.setType(routeMeta.getType());
         request.setRouteClass(routeMeta.getRouteClass());
         request.setThreadMode(routeMeta.getThreadMode());
-        request.setInterceptors(routeMeta.getInterceptors());
+        request.setRouteInterceptors(routeMeta.getRouteInterceptors());
         // If Type is PROVIDER, the request cannot be intercepted.
         request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.PROVIDER);
     }

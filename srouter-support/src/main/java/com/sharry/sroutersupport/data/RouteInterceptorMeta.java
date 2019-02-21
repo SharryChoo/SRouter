@@ -1,6 +1,10 @@
 package com.sharry.sroutersupport.data;
 
+import com.sharry.srouterannotation.RouteInterceptor;
+
 /**
+ * Save data associated with {@link RouteInterceptor} marked class.
+ *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2018/8/13

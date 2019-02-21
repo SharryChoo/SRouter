@@ -6,28 +6,28 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
-import com.sharry.sroutersupport.data.Request;
-import com.sharry.sroutersupport.data.Response;
+import com.sharry.sroutersupport.data.NavigationRequest;
+import com.sharry.sroutersupport.data.NavigationResponse;
 import com.sharry.sroutersupport.utils.Logger;
 import com.sharry.sroutersupport.providers.IProvider;
 
 /**
- * @author Sharry <a href="xiaoyu.zhu@1hai.cn">Contact me.</a>
+ * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2/20/2019 9:29 AM
  */
 public class NavigationInterceptor implements IInterceptor {
 
     @Override
-    public Response process(Chain chain) {
+    public NavigationResponse process(Chain chain) {
         return navigationActual(chain.context(), chain.request());
     }
 
     /**
      * Actual perform navigation.
      */
-    private Response navigationActual(@NonNull Context context, Request request) {
-        Response response = new Response();
+    private NavigationResponse navigationActual(@NonNull Context context, NavigationRequest request) {
+        NavigationResponse response = new NavigationResponse();
         switch (request.getType()) {
             case ACTIVITY:
                 Intent intent = new Intent(context, request.getRouteClass());
@@ -99,7 +99,7 @@ public class NavigationInterceptor implements IInterceptor {
      * Perform launch target activity.
      */
     private void performStartActivity(Context context, Intent intent, int requestCode) {
-        if (requestCode != Request.NON_REQUEST_CODE && context instanceof Activity) {
+        if (requestCode != NavigationRequest.NON_REQUEST_CODE && context instanceof Activity) {
             ((Activity) context).startActivityForResult(intent, requestCode);
         } else {
             context.startActivity(intent);

@@ -4,7 +4,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.sharry.srouterannotation.RouteInterceptor;
-import com.sharry.sroutersupport.data.Response;
+import com.sharry.sroutersupport.data.NavigationResponse;
 import com.sharry.sroutersupport.interceptors.IInterceptor;
 
 /**
@@ -14,12 +14,12 @@ import com.sharry.sroutersupport.interceptors.IInterceptor;
  */
 @RouteInterceptor(
         path = "component2/LoginInterceptor",
-        priority = 10
+        priority = 9
 )
 public class LoginInterceptor implements IInterceptor {
 
     @Override
-    public Response process(Chain chain) {
+    public NavigationResponse process(Chain chain) {
         Log.e("TAG", "LoginInterceptor");
         Toast.makeText(chain.context(), "请先登录.", Toast.LENGTH_SHORT).show();
         return null;

@@ -1,9 +1,12 @@
 package com.sharry.sroutersupport.data;
 
+import com.sharry.srouterannotation.Route;
 import com.sharry.srouterannotation.ThreadMode;
 import com.sharry.sroutersupport.providers.IProvider;
 
 /**
+ * Save data associated with {@link Route} marked class.
+ *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2018/8/13
@@ -63,7 +66,7 @@ public class RouteMeta {
         result.type = type;
         result.threadMode = mode;
         result.routeClass = routeCls;
-        result.interceptors = interceptors;
+        result.routeInterceptors = interceptors;
         return result;
     }
 
@@ -84,7 +87,7 @@ public class RouteMeta {
     /**
      * Navigation interceptorPaths.
      */
-    private String[] interceptors;
+    private String[] routeInterceptors;
 
     RouteMeta() {
     }
@@ -101,8 +104,8 @@ public class RouteMeta {
         return threadMode;
     }
 
-    public String[] getInterceptors() {
-        return interceptors;
+    public String[] getRouteInterceptors() {
+        return routeInterceptors;
     }
 
     public void setType(Type type) {
@@ -117,7 +120,7 @@ public class RouteMeta {
         this.threadMode = threadMode;
     }
 
-    public void setInterceptors(String[] interceptors) {
-        this.interceptors = interceptors;
+    public void setRouteInterceptors(String[] routeInterceptors) {
+        this.routeInterceptors = routeInterceptors;
     }
 }
