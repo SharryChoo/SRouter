@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.sharry.sroutersupport.data.NavigationRequest;
 import com.sharry.sroutersupport.data.NavigationResponse;
+import com.sharry.sroutersupport.exceptions.RouteUninitializedException;
 import com.sharry.sroutersupport.utils.Logger;
 
 /**
@@ -52,6 +53,9 @@ public class SRouter {
      * Build router navigation path.
      */
     public NavigationRequest build(String path) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
         return SRouterImpl.getInstance().build(path);
     }
 
@@ -59,6 +63,9 @@ public class SRouter {
      * perform navigation.
      */
     public NavigationResponse navigation(Context context, @NonNull NavigationRequest request) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
         return SRouterImpl.getInstance().navigation(context, request);
     }
 }

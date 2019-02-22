@@ -5,10 +5,10 @@ import android.content.SharedPreferences;
 
 import com.sharry.sroutersupport.BuildConfig;
 import com.sharry.sroutersupport.exceptions.NoRouteFoundException;
-import com.sharry.sroutersupport.utils.Logger;
 import com.sharry.sroutersupport.templates.IRoute;
 import com.sharry.sroutersupport.templates.IRouteInterceptor;
 import com.sharry.sroutersupport.utils.ClassUtils;
+import com.sharry.sroutersupport.utils.Logger;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -70,7 +70,7 @@ public class LogisticsCenter {
                 Logger.e(className);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.e(e.getMessage(), e);
         }
     }
 
@@ -78,10 +78,10 @@ public class LogisticsCenter {
      * Fetch data from warehouse and then inject to request.
      */
     public static void completion(NavigationRequest request) throws NoRouteFoundException {
-        String authority = request.getPath();
-        RouteMeta routeMeta = Warehouse.ROUTES.get(authority);
+        String path = request.getPath();
+        RouteMeta routeMeta = Warehouse.ROUTES.get(path);
         if (null == routeMeta) {
-            throw new NoRouteFoundException("SRouter cannot found: " + authority);
+            throw new NoRouteFoundException("SRouter cannot found: " + path);
         }
         // Load data to request before navigation
         request.setType(routeMeta.getType());
