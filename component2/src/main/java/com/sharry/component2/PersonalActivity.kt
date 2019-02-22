@@ -13,16 +13,16 @@ import com.sharry.srouterannotation.ThreadMode
  * @since 2018/8/22 20:14
  */
 @Route(
-        path = "component2/Component2Activity",
+        path = "component2/PersonalActivity",
         mode = ThreadMode.MAIN,
         interceptorPaths = ["component2/PermissionInterceptor", "component2/LoginInterceptor"],
-        desc = "第二个 Module 中的 Activity"
+        desc = "个人中心页面"
 )
-class Component2Activity : AppCompatActivity() {
+class PersonalActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_component_second)
+        setContentView(R.layout.component2_activity_personal)
     }
 
 }

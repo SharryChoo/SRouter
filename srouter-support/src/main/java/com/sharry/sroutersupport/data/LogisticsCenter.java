@@ -61,11 +61,11 @@ public class LogisticsCenter {
                 if (className.startsWith(PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_ROUTERS)) {
                     // 加载根元素(com.sharry.android.srouter.SRouter$$Routes$$XXX)
                     IRoute route = (IRoute) (Class.forName(className).getConstructor().newInstance());
-                    route.loadInto(Warehouse.ROUTES);
+                    route.loadInto(Warehouse.TABLE_ROUTES);
                 } else if (className.startsWith(PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_INTERCEPTOR)) {
                     // 加载拦截器标签元素(com.sharry.android.srouter.SRouter$$Interceptors$$XXX)
                     IRouteInterceptor routeInterceptor = (IRouteInterceptor) (Class.forName(className).getConstructor().newInstance());
-                    routeInterceptor.loadInto(Warehouse.ROUTES_INTERCEPTORS);
+                    routeInterceptor.loadInto(Warehouse.TABLE_ROUTES_INTERCEPTORS);
                 }
                 Logger.e(className);
             }
@@ -77,11 +77,11 @@ public class LogisticsCenter {
     /**
      * Fetch data from warehouse and then inject to request.
      */
-    public static void completion(NavigationRequest request) throws NoRouteFoundException {
+    public static void completion(Request request) throws NoRouteFoundException {
         String path = request.getPath();
-        RouteMeta routeMeta = Warehouse.ROUTES.get(path);
+        RouteMeta routeMeta = Warehouse.TABLE_ROUTES.get(path);
         if (null == routeMeta) {
-            throw new NoRouteFoundException("SRouter cannot found: " + path);
+            throw new NoRouteFoundException("SRouter cannot found path: " + path);
         }
         // Load data to request before navigation
         request.setType(routeMeta.getType());

@@ -6,8 +6,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.sharry.sroutersupport.data.LogisticsCenter;
-import com.sharry.sroutersupport.data.NavigationRequest;
-import com.sharry.sroutersupport.data.NavigationResponse;
+import com.sharry.sroutersupport.data.Request;
+import com.sharry.sroutersupport.data.Response;
 import com.sharry.sroutersupport.data.RouteInterceptorMeta;
 import com.sharry.sroutersupport.data.Warehouse;
 import com.sharry.sroutersupport.exceptions.NoRouteFoundException;
@@ -52,17 +52,17 @@ class SRouterImpl {
     /**
      * Build navigation postcard by path.
      */
-    NavigationRequest build(@NonNull String path) {
+    Request build(@NonNull String path) {
         if (TextUtils.isEmpty(path)) {
             throw new IllegalArgumentException("Navigation path must be nonnull!");
         }
-        return NavigationRequest.create(path);
+        return Request.create(path);
     }
 
     /**
      * Initiatory perform navigation.
      */
-    NavigationResponse navigation(final Context context, final NavigationRequest request) {
+    Response navigation(final Context context, final Request request) {
         // 1. load data to request.
         try {
             LogisticsCenter.completion(request);
@@ -79,7 +79,7 @@ class SRouterImpl {
             final List<RouteInterceptorMeta> orderedMetas = new LinkedList<>();
             for (String interceptorPath : request.getRouteInterceptors()) {
                 // Get meta data associated with the path.
-                RouteInterceptorMeta meta = Warehouse.ROUTES_INTERCEPTORS.get(interceptorPath);
+                RouteInterceptorMeta meta = Warehouse.TABLE_ROUTES_INTERCEPTORS.get(interceptorPath);
                 if (null == meta) {
                     continue;
                 }
@@ -125,16 +125,16 @@ class SRouterImpl {
      */
     private static class RealChain implements IInterceptor.Chain {
 
-        static RealChain create(List<IInterceptor> handles, Context context, NavigationRequest request, int handleIndex) {
+        static RealChain create(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
             return new RealChain(handles, context, request, handleIndex);
         }
 
         private final List<IInterceptor> handles;
         private final Context context;
-        private final NavigationRequest request;
+        private final Request request;
         private final int index;
 
-        private RealChain(List<IInterceptor> handles, Context context, NavigationRequest request, int handleIndex) {
+        private RealChain(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
             this.handles = handles;
             this.context = context;
             this.request = request;
@@ -142,7 +142,7 @@ class SRouterImpl {
         }
 
         @Override
-        public NavigationRequest request() {
+        public Request request() {
             return request;
         }
 
@@ -152,7 +152,7 @@ class SRouterImpl {
         }
 
         @Override
-        public NavigationResponse dispatch() {
+        public Response dispatch() {
             return handles.get(index).process(
                     RealChain.create(
                             handles,

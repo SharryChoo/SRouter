@@ -3,7 +3,7 @@
     package="com.sharry.component2">
 
     <application>
-        <activity android:name="com.sharry.component2.Component2Activity"></activity>
+        <activity android:name="com.sharry.component2.PersonalActivity"></activity>
     </application>
 
 </manifest>

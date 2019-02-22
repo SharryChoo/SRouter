@@ -20,13 +20,13 @@ public class Warehouse {
      * <p>
      * The key mapper special value is data associated with @Route marked class.
      */
-    public static final Map<String, RouteMeta> ROUTES = new HashMap<>();
+    public static final Map<String, RouteMeta> TABLE_ROUTES = new HashMap<>();
 
     /**
      * Key is path of the route interceptor.{@link RouteInterceptor#path()}
      * <p>
      * The key mapper special value is data associated with @RouteInterceptor marked class.
      */
-    public static final Map<String, RouteInterceptorMeta> ROUTES_INTERCEPTORS = new HashMap<>();
+    public static final Map<String, RouteInterceptorMeta> TABLE_ROUTES_INTERCEPTORS = new HashMap<>();
 
 }

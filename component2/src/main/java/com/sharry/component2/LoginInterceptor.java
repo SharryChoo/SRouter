@@ -1,11 +1,16 @@
 package com.sharry.component2;
 
-import android.util.Log;
-import android.widget.Toast;
+import android.content.Intent;
+import android.support.annotation.Nullable;
 
+import com.sharry.libbase.AppConstants;
 import com.sharry.srouterannotation.RouteInterceptor;
-import com.sharry.sroutersupport.data.NavigationResponse;
+import com.sharry.sroutersupport.data.ActivityConfigs;
+import com.sharry.sroutersupport.data.Response;
+import com.sharry.sroutersupport.facade.SRouter;
 import com.sharry.sroutersupport.interceptors.IInterceptor;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
@@ -19,10 +24,30 @@ import com.sharry.sroutersupport.interceptors.IInterceptor;
 public class LoginInterceptor implements IInterceptor {
 
     @Override
-    public NavigationResponse process(Chain chain) {
-        Log.e("TAG", "LoginInterceptor");
-        Toast.makeText(chain.context(), "请先登录.", Toast.LENGTH_SHORT).show();
-        return null;
+    public Response process(final Chain chain) {
+        // 若没有登录, 则先跳转到登录页面
+        if (!AppConstants.isLogin) {
+            // 构建 Activity 的配置
+            ActivityConfigs configs = new ActivityConfigs.Builder()
+                    .setRequestCode(100)
+                    .setActivityCallback(new ActivityConfigs.Callback() {
+                        @Override
+                        public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+                            if (resultCode == RESULT_OK) {
+                                // 重新执行当前的导航请求
+                                SRouter.getInstance().navigation(chain.context(), chain.request());
+                            }
+                        }
+                    })
+                    .build();
+            // 跳转到登录页面
+            SRouter.getInstance()
+                    .build("app/LoginActivity")
+                    .setActivityConfigs(configs)
+                    .navigation(chain.context());
+            return null;
+        }
+        return chain.dispatch();
     }
 
 }

@@ -9,8 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 
-import com.sharry.sroutersupport.data.NavigationRequest;
-import com.sharry.sroutersupport.data.NavigationResponse;
+import com.sharry.sroutersupport.data.ActivityConfigs;
+import com.sharry.sroutersupport.data.Request;
+import com.sharry.sroutersupport.data.Response;
 import com.sharry.sroutersupport.providers.IProvider;
 import com.sharry.sroutersupport.utils.Logger;
 
@@ -22,28 +23,32 @@ import com.sharry.sroutersupport.utils.Logger;
 public class NavigationInterceptor implements IInterceptor {
 
     @Override
-    public NavigationResponse process(Chain chain) {
+    public Response process(Chain chain) {
         return navigationActual(chain.context(), chain.request());
     }
 
     /**
      * Actual perform navigation.
      */
-    private NavigationResponse navigationActual(@NonNull Context context, NavigationRequest request) {
-        NavigationResponse response = new NavigationResponse();
+    private Response navigationActual(@NonNull Context context, Request request) {
+        Response response = new Response();
         switch (request.getType()) {
             case ACTIVITY:
                 Intent intent = new Intent(context, request.getRouteClass());
                 // Inject user extra info to intent.
-                intent.putExtras(request.getBundle());
+                intent.putExtras(request.getDatum());
                 // Inject user config flags to intent.
-                if (-1 != request.getFlags()) {
-                    intent.setFlags(request.getFlags());
+                ActivityConfigs configs = request.getActivityConfigs();
+                if (configs == null) {
+                    configs = new ActivityConfigs.Builder().build();
+                }
+                if (ActivityConfigs.NON_FLAGS != configs.getFlags()) {
+                    intent.setFlags(configs.getFlags());
                 } else if (!(context instanceof Activity)) {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
                 // Real perform activity launch.
-                performLaunchActivity(context, intent, request.getRequestCode(), request.getActivityOptions());
+                performLaunchActivity(context, intent, configs.getRequestCode(), configs.getActivityOptions());
                 break;
             case SERVICE:
                 intent = new Intent(context, request.getRouteClass());
@@ -53,7 +58,7 @@ public class NavigationInterceptor implements IInterceptor {
                 try {
                     // Instantiation fragment by class name.
                     android.app.Fragment fragment = (android.app.Fragment) request.getRouteClass().newInstance();
-                    fragment.setArguments(request.getBundle());
+                    fragment.setArguments(request.getDatum());
                     // Inject fragment to request provider.
                     response.setFragment(fragment);
                 } catch (InstantiationException e) {
@@ -68,7 +73,7 @@ public class NavigationInterceptor implements IInterceptor {
                 try {
                     // Instantiation fragment by class name.
                     Fragment fragmentV4 = (Fragment) request.getRouteClass().newInstance();
-                    fragmentV4.setArguments(request.getBundle());
+                    fragmentV4.setArguments(request.getDatum());
                     // Inject fragment to request provider.
                     response.setFragmentV4(fragmentV4);
                 } catch (InstantiationException e) {
@@ -103,7 +108,7 @@ public class NavigationInterceptor implements IInterceptor {
      */
     private void performLaunchActivity(@NonNull Context context, @NonNull Intent intent,
                                        int requestCode, @Nullable ActivityOptionsCompat activityOptions) {
-        if (requestCode != NavigationRequest.NON_REQUEST_CODE) {
+        if (requestCode != ActivityConfigs.NON_REQUEST_CODE) {
             if (context instanceof Activity) {
                 launchActivityForResultActual((Activity) context, intent, requestCode, activityOptions);
             } else {

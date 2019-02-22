@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -13,11 +12,23 @@ android {
     }
 }
 
+/**
+ * Kotlin 的 Module 使用该方式进行编译时注解扫描, 兼容 Java 文夹
+ */
+kapt {
+    arguments {
+        arg("moduleName", project.getName())
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation 'com.android.support:design:28.0.0'
     // 依赖库
     implementation project(path: ':component2')
     implementation project(path: ':component1')
     api project(path: ':lib-base')
+    // Kotlin 的编译时注解处理依赖
+    kapt project(path: ':srouter-compiler')
 }

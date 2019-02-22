@@ -11,7 +11,7 @@ import com.sharry.sroutersupport.providers.IProvider;
  * @version 1.0
  * @since 2/20/2019 10:41 AM
  */
-public class NavigationResponse {
+public class Response {
 
     private Fragment fragmentV4;
     private android.app.Fragment fragment;
