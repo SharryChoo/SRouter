@@ -16,20 +16,20 @@ import com.sharry.sroutersupport.data.ActivityConfigs;
  * @version 1.0
  * @since 2018/11/30 15:46
  */
-public class CallbackFragment extends Fragment {
+public class RouterCallbackFragment extends Fragment {
 
-    public static final String TAG = CallbackFragment.class.getSimpleName();
+    public static final String TAG = RouterCallbackFragment.class.getSimpleName();
 
     /**
      * 获取一个添加到 Activity 中的 Fragment 的实例
      *
      * @param bind The activity associated with this fragment.
-     * @return an instance of CallbackFragment.
+     * @return an instance of RouterCallbackFragment.
      */
-    public static CallbackFragment getInstance(@NonNull Activity bind) {
-        CallbackFragment callbackFragment = findFragmentFromActivity(bind);
+    public static RouterCallbackFragment getInstance(@NonNull Activity bind) {
+        RouterCallbackFragment callbackFragment = findFragmentFromActivity(bind);
         if (callbackFragment == null) {
-            callbackFragment = CallbackFragment.newInstance();
+            callbackFragment = RouterCallbackFragment.newInstance();
             FragmentManager fragmentManager = bind.getFragmentManager();
             fragmentManager.beginTransaction()
                     .add(callbackFragment, TAG)
@@ -39,12 +39,12 @@ public class CallbackFragment extends Fragment {
         return callbackFragment;
     }
 
-    private static CallbackFragment findFragmentFromActivity(@NonNull Activity activity) {
-        return (CallbackFragment) activity.getFragmentManager().findFragmentByTag(TAG);
+    private static RouterCallbackFragment findFragmentFromActivity(@NonNull Activity activity) {
+        return (RouterCallbackFragment) activity.getFragmentManager().findFragmentByTag(TAG);
     }
 
-    private static CallbackFragment newInstance() {
-        return new CallbackFragment();
+    private static RouterCallbackFragment newInstance() {
+        return new RouterCallbackFragment();
     }
 
     private ActivityConfigs.Callback mCallback;

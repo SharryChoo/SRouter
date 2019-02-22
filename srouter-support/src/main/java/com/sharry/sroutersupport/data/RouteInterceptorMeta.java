@@ -14,9 +14,9 @@ public class RouteInterceptorMeta {
     /**
      * Get an instance of RouteInterceptorMeta
      */
-    public static RouteInterceptorMeta create(Class<?> routeCls, int priority) {
+    public static RouteInterceptorMeta create(Class<?> interceptorClass, int priority) {
         RouteInterceptorMeta result = new RouteInterceptorMeta();
-        result.interceptorClass = routeCls;
+        result.interceptorClass = interceptorClass;
         result.priority = priority;
         return result;
     }

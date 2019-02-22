@@ -3,7 +3,6 @@ package com.sharry.sroutersupport.facade;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
 import com.sharry.sroutersupport.data.LogisticsCenter;
 import com.sharry.sroutersupport.data.Request;
@@ -53,9 +52,6 @@ class SRouterImpl {
      * Build navigation postcard by path.
      */
     Request build(@NonNull String path) {
-        if (TextUtils.isEmpty(path)) {
-            throw new IllegalArgumentException("Navigation path must be nonnull!");
-        }
         return Request.create(path);
     }
 

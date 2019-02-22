@@ -27,6 +27,9 @@ import java.util.List;
  */
 public class Request extends RouteMeta {
 
+    /**
+     * U can get an instance of Request from this method.
+     */
     public static Request create(@NonNull String path) {
         return new Request(path);
     }

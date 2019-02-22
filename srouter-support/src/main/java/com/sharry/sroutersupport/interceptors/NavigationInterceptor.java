@@ -13,7 +13,7 @@ import com.sharry.sroutersupport.data.ActivityConfigs;
 import com.sharry.sroutersupport.data.Request;
 import com.sharry.sroutersupport.data.Response;
 import com.sharry.sroutersupport.providers.IProvider;
-import com.sharry.sroutersupport.utils.CallbackFragment;
+import com.sharry.sroutersupport.utils.RouterCallbackFragment;
 import com.sharry.sroutersupport.utils.Logger;
 
 /**
@@ -139,7 +139,7 @@ public class NavigationInterceptor implements IInterceptor {
         if (activityOptions != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             // Observer activity onActivityResult Callback.
             if (callback != null) {
-                CallbackFragment callbackFragment = CallbackFragment.getInstance(activity);
+                RouterCallbackFragment callbackFragment = RouterCallbackFragment.getInstance(activity);
                 callbackFragment.setCallback(callback);
                 callbackFragment.startActivityForResult(intent, requestCode, activityOptions.toBundle());
             } else {
@@ -148,7 +148,7 @@ public class NavigationInterceptor implements IInterceptor {
         } else { // Launch activity without Activity options.
             // Observer activity onActivityResult Callback.
             if (callback != null) {
-                CallbackFragment callbackFragment = CallbackFragment.getInstance(activity);
+                RouterCallbackFragment callbackFragment = RouterCallbackFragment.getInstance(activity);
                 callbackFragment.setCallback(callback);
                 callbackFragment.startActivityForResult(intent, requestCode);
             } else {

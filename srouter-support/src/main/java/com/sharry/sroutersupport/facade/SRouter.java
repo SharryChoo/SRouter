@@ -3,6 +3,8 @@ package com.sharry.sroutersupport.facade;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.sharry.sroutersupport.data.Request;
 import com.sharry.sroutersupport.data.Response;
@@ -52,9 +54,12 @@ public class SRouter {
     /**
      * Build router navigation path.
      */
-    public Request build(String path) {
+    public Request build(@NonNull String path) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
+        }
+        if (TextUtils.isEmpty(path)) {
+            throw new IllegalArgumentException("Navigation path must be nonnull!");
         }
         return SRouterImpl.getInstance().build(path);
     }
@@ -62,9 +67,12 @@ public class SRouter {
     /**
      * perform navigation.
      */
-    public Response navigation(Context context, @NonNull Request request) {
+    public Response navigation(@Nullable Context context, @NonNull Request request) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
+        }
+        if (null == request) {
+            throw new NullPointerException();
         }
         return SRouterImpl.getInstance().navigation(context, request);
     }
