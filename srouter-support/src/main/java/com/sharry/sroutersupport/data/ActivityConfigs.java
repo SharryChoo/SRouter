@@ -58,6 +58,10 @@ public class ActivityConfigs {
         this.callback = callback;
     }
 
+    public Callback getCallback() {
+        return callback;
+    }
+
     public static class Builder {
 
         ActivityConfigs configs;

@@ -13,6 +13,7 @@ import com.sharry.sroutersupport.data.ActivityConfigs;
 import com.sharry.sroutersupport.data.Request;
 import com.sharry.sroutersupport.data.Response;
 import com.sharry.sroutersupport.providers.IProvider;
+import com.sharry.sroutersupport.utils.CallbackFragment;
 import com.sharry.sroutersupport.utils.Logger;
 
 /**
@@ -37,18 +38,12 @@ public class NavigationInterceptor implements IInterceptor {
                 Intent intent = new Intent(context, request.getRouteClass());
                 // Inject user extra info to intent.
                 intent.putExtras(request.getDatum());
-                // Inject user config flags to intent.
-                ActivityConfigs configs = request.getActivityConfigs();
-                if (configs == null) {
-                    configs = new ActivityConfigs.Builder().build();
-                }
-                if (ActivityConfigs.NON_FLAGS != configs.getFlags()) {
-                    intent.setFlags(configs.getFlags());
-                } else if (!(context instanceof Activity)) {
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                }
                 // Real perform activity launch.
-                performLaunchActivity(context, intent, configs.getRequestCode(), configs.getActivityOptions());
+                performLaunchActivity(
+                        context,
+                        intent,
+                        request.getActivityConfigs()
+                );
                 break;
             case SERVICE:
                 intent = new Intent(context, request.getRouteClass());
@@ -106,28 +101,59 @@ public class NavigationInterceptor implements IInterceptor {
     /**
      * Perform launch target activity.
      */
-    private void performLaunchActivity(@NonNull Context context, @NonNull Intent intent,
-                                       int requestCode, @Nullable ActivityOptionsCompat activityOptions) {
-        if (requestCode != ActivityConfigs.NON_REQUEST_CODE) {
+    private void performLaunchActivity(@NonNull Context context,
+                                       @NonNull Intent intent,
+                                       @Nullable ActivityConfigs configs) {
+        // Inject user config flags to intent.
+        if (configs == null) {
+            configs = new ActivityConfigs.Builder().build();
+        }
+        // Verify flags.
+        if (ActivityConfigs.NON_FLAGS != configs.getFlags()) {
+            intent.setFlags(configs.getFlags());
+        } else if (!(context instanceof Activity)) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        // perform launch activity.
+        if (ActivityConfigs.NON_REQUEST_CODE != configs.getRequestCode()) {
             if (context instanceof Activity) {
-                launchActivityForResultActual((Activity) context, intent, requestCode, activityOptions);
+                launchActivityForResultActual((Activity) context, intent, configs.getRequestCode(),
+                        configs.getActivityOptions(), configs.getCallback());
             } else {
-                launchActivityActual(context, intent, activityOptions);
+                launchActivityActual(context, intent, configs.getActivityOptions());
             }
         } else {
-            launchActivityActual(context, intent, activityOptions);
+            launchActivityActual(context, intent, configs.getActivityOptions());
         }
     }
 
     /**
      * Perform launch activity for result actual.
      */
-    private void launchActivityForResultActual(@NonNull Activity activity, @NonNull Intent intent,
-                                               int requestCode, @Nullable ActivityOptionsCompat activityOptions) {
+    private void launchActivityForResultActual(@NonNull Activity activity,
+                                               @NonNull Intent intent,
+                                               int requestCode,
+                                               @Nullable ActivityOptionsCompat activityOptions,
+                                               @Nullable ActivityConfigs.Callback callback) {
+        // Launch activity with Activity options.
         if (activityOptions != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            activity.startActivityForResult(intent, requestCode, activityOptions.toBundle());
-        } else {
-            activity.startActivityForResult(intent, requestCode);
+            // Observer activity onActivityResult Callback.
+            if (callback != null) {
+                CallbackFragment callbackFragment = CallbackFragment.getInstance(activity);
+                callbackFragment.setCallback(callback);
+                callbackFragment.startActivityForResult(intent, requestCode, activityOptions.toBundle());
+            } else {
+                activity.startActivityForResult(intent, requestCode, activityOptions.toBundle());
+            }
+        } else { // Launch activity without Activity options.
+            // Observer activity onActivityResult Callback.
+            if (callback != null) {
+                CallbackFragment callbackFragment = CallbackFragment.getInstance(activity);
+                callbackFragment.setCallback(callback);
+                callbackFragment.startActivityForResult(intent, requestCode);
+            } else {
+                activity.startActivityForResult(intent, requestCode);
+            }
         }
     }
 

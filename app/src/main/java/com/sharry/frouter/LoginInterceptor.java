@@ -1,4 +1,4 @@
-package com.sharry.component2;
+package com.sharry.frouter;
 
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -18,7 +18,7 @@ import static android.app.Activity.RESULT_OK;
  * @since 2019/2/19 20:15
  */
 @RouteInterceptor(
-        path = "component2/LoginInterceptor",
+        path = "app/LoginInterceptor",
         priority = 9
 )
 public class LoginInterceptor implements IInterceptor {
