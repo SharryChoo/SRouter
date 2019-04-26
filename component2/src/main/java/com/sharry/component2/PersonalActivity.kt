@@ -2,8 +2,8 @@ package com.sharry.component2
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.sharry.srouterannotation.Route
-import com.sharry.srouterannotation.ThreadMode
+import com.sharry.srouter.annotation.Route
+import com.sharry.srouter.annotation.ThreadMode
 
 /**
  * 第二个 Module 中的 Activity.

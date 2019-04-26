@@ -2,9 +2,9 @@ package com.sharry.component2;
 
 import android.util.Log;
 
-import com.sharry.srouterannotation.RouteInterceptor;
-import com.sharry.sroutersupport.data.Response;
-import com.sharry.sroutersupport.interceptors.IInterceptor;
+import com.sharry.srouter.annotation.RouteInterceptor;
+import com.sharry.srouter.support.data.Response;
+import com.sharry.srouter.support.interceptors.IInterceptor;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>

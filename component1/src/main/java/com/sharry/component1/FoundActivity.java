@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.sharry.srouterannotation.Route;
-import com.sharry.srouterannotation.ThreadMode;
+import com.sharry.srouter.annotation.Route;
+import com.sharry.srouter.annotation.ThreadMode;
 
 /**
  * 第一个 Module 中的 Activity.
