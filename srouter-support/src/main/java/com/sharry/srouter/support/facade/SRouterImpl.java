@@ -12,7 +12,7 @@ import com.sharry.srouter.support.data.Warehouse;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.interceptors.IInterceptor;
 import com.sharry.srouter.support.interceptors.NavigationInterceptor;
-import com.sharry.srouter.support.thread.DefaultPoolExecutor;
+import com.sharry.srouter.support.thread.RouterPoolExecutor;
 import com.sharry.srouter.support.utils.Logger;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 class SRouterImpl {
 
     private static Context sContext;
-    private volatile static ThreadPoolExecutor sExecutor = DefaultPoolExecutor.getInstance();
+    private volatile static ThreadPoolExecutor sExecutor = RouterPoolExecutor.getInstance();
 
     /**
      * Get instance of router implementation. S

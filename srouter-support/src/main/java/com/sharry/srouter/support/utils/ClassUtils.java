@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.sharry.srouter.support.BuildConfig;
-import com.sharry.srouter.support.thread.DefaultPoolExecutor;
+import com.sharry.srouter.support.thread.RouterPoolExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class ClassUtils {
         final CountDownLatch parserCtl = new CountDownLatch(paths.size());
 
         for (final String path : paths) {
-            DefaultPoolExecutor.getInstance().execute(new Runnable() {
+            RouterPoolExecutor.getInstance().execute(new Runnable() {
                 @Override
                 public void run() {
                     DexFile dexfile = null;

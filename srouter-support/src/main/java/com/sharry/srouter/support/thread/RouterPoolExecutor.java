@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @since 2018/8/13
  */
-public class DefaultPoolExecutor extends ThreadPoolExecutor {
+public class RouterPoolExecutor extends ThreadPoolExecutor {
 
     //    Thread args
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
@@ -29,10 +29,10 @@ public class DefaultPoolExecutor extends ThreadPoolExecutor {
     private static final int MAX_THREAD_COUNT = INIT_THREAD_COUNT;
     private static final long SURPLUS_THREAD_LIFE = 30L;
 
-    private static DefaultPoolExecutor sInstance = null;
+    private static RouterPoolExecutor sInstance = null;
 
     static {
-        sInstance = new DefaultPoolExecutor(
+        sInstance = new RouterPoolExecutor(
                 INIT_THREAD_COUNT,
                 MAX_THREAD_COUNT,
                 SURPLUS_THREAD_LIFE,
@@ -41,7 +41,7 @@ public class DefaultPoolExecutor extends ThreadPoolExecutor {
                 new ThreadFactory() {
                     @Override
                     public Thread newThread(@NonNull Runnable r) {
-                        Thread thread = new Thread(r, DefaultPoolExecutor.class.getSimpleName());
+                        Thread thread = new Thread(r, RouterPoolExecutor.class.getSimpleName());
                         thread.setDaemon(false);
                         return thread;
                     }
@@ -49,12 +49,12 @@ public class DefaultPoolExecutor extends ThreadPoolExecutor {
         );
     }
 
-    public static DefaultPoolExecutor getInstance() {
+    public static RouterPoolExecutor getInstance() {
         return sInstance;
     }
 
-    private DefaultPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                                BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {
+    private RouterPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
+                               BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory,
                 new RejectedExecutionHandler() {
                     @Override
