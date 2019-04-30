@@ -5,11 +5,11 @@ group = 'com.github.SharryChoo'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // google support annotation service
-    implementation "com.google.auto.service:auto-service:$googleAutoService"
+    api "com.google.auto.service:auto-service:$googleAutoService"
     // out put java file
-    implementation "com.squareup:javapoet:$javaPoet"
+    api "com.squareup:javapoet:$javaPoet"
     // api frouter-annotation module
-    implementation project(path: ':srouter-annotation')
+    api project(path: ':srouter-annotation')
 }
 
 // 用于支持中文显示
