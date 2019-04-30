@@ -6,6 +6,7 @@ buildscript {
         kotlinVersion = '1.2.61'
         gradleVersion = '3.0.1'
         aptVersion = '1.8'
+        mavenVersion = '2.1'
         // sub project dependencies
         compileSdkVersion = 28
         minSdkVersion = 14
@@ -20,12 +21,14 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:3.2.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         // Add this line will generate "xxx.java" when project build.
         classpath "com.neenbedankt.gradle.plugins:android-apt:$aptVersion"
+        classpath "com.github.dcendents:android-maven-gradle-plugin:$mavenVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -35,6 +38,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 

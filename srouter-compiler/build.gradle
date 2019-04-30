@@ -1,10 +1,7 @@
 apply plugin: 'java-library'
+apply plugin: 'com.github.dcendents.android-maven'
 
-// 用于支持中文显示
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
+group = 'com.github.SharryChoo'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // google support annotation service
@@ -13,6 +10,11 @@ dependencies {
     implementation "com.squareup:javapoet:$javaPoet"
     // api frouter-annotation module
     implementation project(path: ':srouter-annotation')
+}
+
+// 用于支持中文显示
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
 
 sourceCompatibility = "7"
