@@ -1,8 +1,8 @@
 package com.sharry.srouter.app
 
 import android.os.Bundle
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
+import androidx.appcompat.app.AppCompatActivity
 import com.sharry.srouter.R
 import com.sharry.srouter.support.data.ActivityConfigs
 import com.sharry.srouter.support.facade.SRouter

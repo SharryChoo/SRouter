@@ -2,7 +2,7 @@ package com.sharry.srouter.support.facade;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.sharry.srouter.support.data.LogisticsCenter;
 import com.sharry.srouter.support.data.Request;

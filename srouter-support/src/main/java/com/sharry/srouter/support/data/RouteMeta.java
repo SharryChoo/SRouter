@@ -1,5 +1,7 @@
 package com.sharry.srouter.support.data;
 
+import androidx.fragment.app.Fragment;
+
 import com.sharry.srouter.annotation.Route;
 import com.sharry.srouter.annotation.ThreadMode;
 import com.sharry.srouter.support.providers.IProvider;
@@ -28,7 +30,7 @@ public class RouteMeta {
         FRAGMENT,
 
         /**
-         * Type of {@link android.support.v4.app.Fragment}.
+         * Type of {@link Fragment}.
          */
         FRAGMENT_V4,
 

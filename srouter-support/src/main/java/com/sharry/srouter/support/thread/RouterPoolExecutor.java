@@ -1,6 +1,6 @@
 package com.sharry.srouter.support.thread;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.sharry.srouter.support.utils.Logger;
 

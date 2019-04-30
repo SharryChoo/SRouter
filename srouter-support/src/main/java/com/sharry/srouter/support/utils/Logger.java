@@ -1,6 +1,6 @@
 package com.sharry.srouter.support.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 /**

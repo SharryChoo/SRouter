@@ -1,6 +1,6 @@
 package com.sharry.srouter.support.data;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.sharry.srouter.support.providers.IProvider;
 
