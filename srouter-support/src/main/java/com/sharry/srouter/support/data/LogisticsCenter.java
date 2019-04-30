@@ -1,24 +1,15 @@
 package com.sharry.srouter.support.data;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import com.sharry.srouter.support.BuildConfig;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.templates.IRoute;
 import com.sharry.srouter.support.templates.IRouteInterceptor;
-import com.sharry.srouter.support.utils.ClassUtils;
 import com.sharry.srouter.support.utils.Logger;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.sharry.srouter.support.utils.Constants.DOT;
 import static com.sharry.srouter.support.utils.Constants.NAME_OF_INTERCEPTOR;
 import static com.sharry.srouter.support.utils.Constants.NAME_OF_ROUTERS;
 import static com.sharry.srouter.support.utils.Constants.PACKAGE_OF_GENERATE_FILE;
+import static com.sharry.srouter.support.utils.Constants.SEPARATOR;
 
 /**
  * Perform Route logistics, it contains all of the map.
@@ -29,48 +20,28 @@ import static com.sharry.srouter.support.utils.Constants.PACKAGE_OF_GENERATE_FIL
  */
 public class LogisticsCenter {
 
-    private static Context sContext;
-    private static ThreadPoolExecutor sTpe;
-    private static final String SROUTER_SP_CACHE_KEY = "srouter_sp_cache_key";
-
     /**
-     * Warehouse data set will be load at here.
+     * Register generate classes.
      */
-    public static synchronized void init(Context context, ThreadPoolExecutor executor) {
-        sContext = context;
-        sTpe = executor;
-        try {
-            Set<String> routerMap;
-            if (BuildConfig.DEBUG) {
-                // 若为调试, 则每次都扫描包级目录, 获取路由映射信息类
-                routerMap = ClassUtils.getFileNameByPackageName(sContext, PACKAGE_OF_GENERATE_FILE);
-            } else {
-                // 若为正式环境, 则优先从缓存读
-                SharedPreferences sp = context.getSharedPreferences(SROUTER_SP_CACHE_KEY, Context.MODE_PRIVATE);
-                Collection<String> caches = sp.getStringSet(SROUTER_SP_CACHE_KEY, null);
-                if (null == caches) {
-                    routerMap = ClassUtils.getFileNameByPackageName(sContext, PACKAGE_OF_GENERATE_FILE);
-                    // 写入缓存
-                    sp.edit().putStringSet(SROUTER_SP_CACHE_KEY, routerMap).apply();
-                } else {
-                    routerMap = new HashSet<>(caches);
-                }
+    public static void registerModules(String[] moduleNames) {
+        for (String moduleName : moduleNames) {
+            // 加载根元素(com.sharry.android.srouter.SRouter$$Routes$$XXX)
+            String routesClassName = PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_ROUTERS + SEPARATOR + moduleName;
+            try {
+                IRoute route = (IRoute) (Class.forName(routesClassName).getConstructor().newInstance());
+                route.loadInto(Warehouse.TABLE_ROUTES);
+            } catch (Exception e) {
+                Logger.e(e.getMessage(), e);
             }
-            // 遍历集合, 将缓存的集合加载进相应的集合中
-            for (String className : routerMap) {
-                if (className.startsWith(PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_ROUTERS)) {
-                    // 加载根元素(com.sharry.android.srouter.SRouter$$Routes$$XXX)
-                    IRoute route = (IRoute) (Class.forName(className).getConstructor().newInstance());
-                    route.loadInto(Warehouse.TABLE_ROUTES);
-                } else if (className.startsWith(PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_INTERCEPTOR)) {
-                    // 加载拦截器标签元素(com.sharry.android.srouter.SRouter$$Interceptors$$XXX)
-                    IRouteInterceptor routeInterceptor = (IRouteInterceptor) (Class.forName(className).getConstructor().newInstance());
-                    routeInterceptor.loadInto(Warehouse.TABLE_ROUTES_INTERCEPTORS);
-                }
-                Logger.e(className);
+            // 加载拦截器标签元素(com.sharry.android.srouter.SRouter$$Interceptors$$XXX)
+            String interceptorsClassName = PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_INTERCEPTOR + SEPARATOR + moduleName;
+            try {
+                IRouteInterceptor routeInterceptor = (IRouteInterceptor) (
+                        Class.forName(interceptorsClassName).getConstructor().newInstance());
+                routeInterceptor.loadInto(Warehouse.TABLE_ROUTES_INTERCEPTORS);
+            } catch (Exception e) {
+                Logger.e(e.getMessage(), e);
             }
-        } catch (Exception e) {
-            Logger.e(e.getMessage(), e);
         }
     }
 
@@ -91,5 +62,4 @@ public class LogisticsCenter {
         // If Type is PROVIDER, the request cannot be intercepted.
         request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.PROVIDER);
     }
-
 }

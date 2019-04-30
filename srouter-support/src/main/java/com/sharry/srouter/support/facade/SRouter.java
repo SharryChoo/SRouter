@@ -2,9 +2,10 @@ package com.sharry.srouter.support.facade;
 
 import android.app.Application;
 import android.content.Context;
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
@@ -49,6 +50,15 @@ public class SRouter {
         } else {
             Logger.i("Route already has been initialized.");
         }
+    }
+
+    /**
+     * Register modules
+     *
+     * @param moduleNames the module name must be consistent of U setup module name.
+     */
+    public static void registerModules(@NonNull String... moduleNames) {
+        SRouterImpl.registerModules(moduleNames);
     }
 
     /**

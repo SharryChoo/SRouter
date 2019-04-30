@@ -43,9 +43,12 @@ class SRouterImpl {
 
     static synchronized boolean init(Application application) {
         sContext = application;
-        LogisticsCenter.init(application, sExecutor);
         Logger.i("Route initialize success.");
         return true;
+    }
+
+    static void registerModules(String[] moduleNames) {
+        LogisticsCenter.registerModules(moduleNames);
     }
 
     /**

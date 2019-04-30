@@ -15,6 +15,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         SRouter.init(this);
+        SRouter.registerModules("component1", "component2");
     }
 
 }
