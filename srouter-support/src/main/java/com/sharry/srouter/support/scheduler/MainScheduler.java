@@ -8,9 +8,9 @@ import android.os.Looper;
  * @version 1.0
  * @since 2019-05-05
  */
-public class HandlerScheduler implements Scheduler {
+public class MainScheduler implements IScheduler {
 
-    public static HandlerScheduler getInstance() {
+    public static MainScheduler getInstance() {
         return InstanceHolder.INSTANCE;
     }
 
@@ -22,7 +22,7 @@ public class HandlerScheduler implements Scheduler {
     }
 
     private static class InstanceHolder {
-        private static final HandlerScheduler INSTANCE = new HandlerScheduler();
+        private static final MainScheduler INSTANCE = new MainScheduler();
     }
 
 }

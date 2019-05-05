@@ -5,7 +5,7 @@ package com.sharry.srouter.support.scheduler;
  * @version 1.0
  * @since 2019-05-05
  */
-public interface Scheduler {
+public interface IScheduler {
 
     void schedule(Runnable runnable, long delay);
 

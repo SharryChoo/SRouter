@@ -18,29 +18,10 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @since 2019-05-05
  */
-public class AsyncScheduler extends ScheduledThreadPoolExecutor implements Scheduler {
-
-    private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
-    private static final int INIT_THREAD_COUNT = CPU_COUNT + 1;
-
-    private static AsyncScheduler sInstance;
-
-    static {
-        sInstance = new AsyncScheduler(
-                INIT_THREAD_COUNT,
-                new ThreadFactory() {
-                    @Override
-                    public Thread newThread(@NonNull Runnable r) {
-                        Thread thread = new Thread(r, AsyncScheduler.class.getSimpleName());
-                        thread.setDaemon(false);
-                        return thread;
-                    }
-                }
-        );
-    }
+public class AsyncScheduler extends ScheduledThreadPoolExecutor implements IScheduler {
 
     public static AsyncScheduler getInstance() {
-        return sInstance;
+        return InstanceHolder.INSTANCE;
     }
 
     private AsyncScheduler(int corePoolSize, ThreadFactory threadFactory) {
@@ -50,11 +31,6 @@ public class AsyncScheduler extends ScheduledThreadPoolExecutor implements Sched
                 Logger.e("Task rejected, too many task!");
             }
         });
-    }
-
-    @Override
-    public void schedule(Runnable runnable, long delay) {
-        sInstance.schedule(runnable, delay, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -82,6 +58,30 @@ public class AsyncScheduler extends ScheduledThreadPoolExecutor implements Sched
                     Thread.currentThread().getName() + "], because [" + t.getMessage() + "]\n" +
                     t.getMessage());
         }
+    }
+
+    @Override
+    public void schedule(Runnable runnable, long delay) {
+        schedule(runnable, delay, TimeUnit.MILLISECONDS);
+    }
+
+    private static class InstanceHolder {
+
+        private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
+        private static final int INIT_THREAD_COUNT = CPU_COUNT + 1;
+
+        private static AsyncScheduler INSTANCE = new AsyncScheduler(
+                INIT_THREAD_COUNT,
+                new ThreadFactory() {
+                    @Override
+                    public Thread newThread(@NonNull Runnable r) {
+                        Thread thread = new Thread(r, AsyncScheduler.class.getSimpleName());
+                        thread.setDaemon(false);
+                        return thread;
+                    }
+                }
+        );
+
     }
 
 }

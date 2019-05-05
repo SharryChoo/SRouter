@@ -9,15 +9,15 @@ import com.sharry.srouter.annotation.ThreadMode;
  */
 public class SchedulerFactory {
 
-    public static Scheduler create(ThreadMode mode) {
-        Scheduler result;
+    public static IScheduler create(ThreadMode mode) {
+        IScheduler result;
         switch (mode) {
             case ASYNC:
                 result = AsyncScheduler.getInstance();
                 break;
             case MAIN:
             default:
-                result = HandlerScheduler.getInstance();
+                result = MainScheduler.getInstance();
                 break;
         }
         return result;
