@@ -16,7 +16,7 @@ android {
  */
 kapt {
     arguments {
-        arg("moduleName", project.getName())
+        arg("moduleName", "personal")
     }
 }
 

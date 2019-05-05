@@ -46,8 +46,12 @@ class SRouterImpl {
         return true;
     }
 
-    static void registerModules(String[] moduleNames) {
-        LogisticsCenter.registerModules(moduleNames);
+    static void registerComponents(String[] names) {
+        LogisticsCenter.registerComponents(names);
+    }
+
+    public static void unregisterComponents(String[] names) {
+        LogisticsCenter.unregisterComponents(names);
     }
 
     /**

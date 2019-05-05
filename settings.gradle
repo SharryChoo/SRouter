@@ -1,6 +1,6 @@
 include ':app'
-include ':module-component1'
-include ':module-component2'
+include ':module-found'
+include ':module-personal'
 include ':module-base'
 include ':srouter-support'
 include ':srouter-annotation'

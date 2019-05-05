@@ -5,8 +5,36 @@ package com.sharry.srouter.module.base;
  * @version 1.0
  * @since 2/22/2019 3:21 PM
  */
-public class ModuleConstants {
+public final class ModuleConstants {
 
-    public static boolean isLogin = false;
+    public static final class App {
+
+        public static boolean isLogin = false;
+
+        public static final String NAME = "app";
+
+        public static final String LOGIN_ACTIVITY = "login_activity";
+
+        // interceptors
+        public static final String LOGIN_INTERCEPTOR = NAME + "/login_interceptor";
+    }
+
+    public static final class Found {
+
+        public static final String NAME = "found";
+
+        public static final String FOUND_ACTIVITY = "found_activity";
+    }
+
+    public static final class Personal {
+
+        public static final String NAME = "personal";
+
+        public static final String PERSONAL_ACTIVITY = "personal_activity";
+
+        // interceptors
+        public static final String PERMISSION_INTERCEPTOR = NAME + "/permission_interceptor";
+    }
+
 
 }

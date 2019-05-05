@@ -26,8 +26,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation 'com.google.android.material:material:1.0.0'
     // 依赖库
-    implementation project(path: ':module-component2')
-    implementation project(path: ':module-component1')
+    implementation project(path: ':module-personal')
+    implementation project(path: ':module-found')
     api project(path: ':module-base')
     // Kotlin 的编译时注解处理依赖
     kapt project(path: ':srouter-compiler')

@@ -23,11 +23,11 @@ import static com.sharry.srouter.support.utils.Constants.SEPARATOR;
 public class LogisticsCenter {
 
     /**
-     * Register generate classes.
+     * Register components.
      */
-    public static void registerModules(String[] moduleNames) {
-        for (String moduleName : moduleNames) {
-            // 加载根元素(com.sharry.android.srouter.SRouter$$Routes$$XXX)
+    public static void registerComponents(String[] names) {
+        for (String moduleName : names) {
+            // 加载根元素(com.sharry.srouter.generate.SRouter$$Routes$$XXX)
             String routesClassName = PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_ROUTERS + SEPARATOR + moduleName;
             try {
                 IRoute route = (IRoute) (Class.forName(routesClassName).getConstructor().newInstance());
@@ -35,14 +35,26 @@ public class LogisticsCenter {
             } catch (Exception e) {
                 Logger.e(e.getMessage(), e);
             }
-            // 加载拦截器标签元素(com.sharry.android.srouter.SRouter$$Interceptors$$XXX)
+            // 加载拦截器标签元素(com.sharry.srouter.generate.SRouter$$Interceptors$$XXX)
             String interceptorsClassName = PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_INTERCEPTOR + SEPARATOR + moduleName;
             try {
                 IRouteInterceptor routeInterceptor = (IRouteInterceptor) (
                         Class.forName(interceptorsClassName).getConstructor().newInstance());
                 routeInterceptor.loadInto(Warehouse.TABLE_ROUTES_INTERCEPTORS);
             } catch (Exception e) {
-                Logger.e(e.getMessage(), e);
+                Logger.e(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Unregister components.
+     */
+    public static void unregisterComponents(String[] names) {
+        for (String moduleName : names) {
+            Map<String, RouteMeta> metas = Warehouse.TABLE_ROUTES.remove(moduleName);
+            if (metas == null) {
+                Logger.i("Cannot find this module: " + moduleName);
             }
         }
     }

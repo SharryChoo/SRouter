@@ -14,14 +14,14 @@ import com.sharry.srouter.support.interceptors.IInterceptor
  * @since 2019/2/19 20:15
  */
 @RouteInterceptor(
-        value = "app/LoginInterceptor",
+        value = ModuleConstants.App.LOGIN_INTERCEPTOR,
         priority = 10
 )
 class LoginInterceptor : IInterceptor {
 
     override fun process(chain: IInterceptor.Chain): Response? {
         // 若没有登录, 则先跳转到登录页面
-        if (!ModuleConstants.isLogin) {
+        if (!ModuleConstants.App.isLogin) {
             // 构建 Activity 的配置
             val configs = ActivityConfigs.Builder()
                     .setRequestCode(100)
@@ -34,7 +34,7 @@ class LoginInterceptor : IInterceptor {
                     .build()
             // 跳转到登录页面
             SRouter.getInstance()
-                    .build("app", "LoginActivity")
+                    .build(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
                     .setActivityConfigs(configs)
                     .navigation(chain.context())
             return null

@@ -14,6 +14,6 @@ public class Constants {
     public static final String PROJECT = "SRouter";
     public static final String NAME_OF_ROUTERS = PROJECT + SEPARATOR + "Routes";
     public static final String NAME_OF_INTERCEPTOR = PROJECT + SEPARATOR + "Interceptors";
-    public static final String PACKAGE_OF_GENERATE_FILE = "com.sharry.android.srouter";
+    public static final String PACKAGE_OF_GENERATE_FILE = "com.sharry.srouter.generate";
 
 }

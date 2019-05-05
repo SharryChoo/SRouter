@@ -55,10 +55,19 @@ public class SRouter {
     /**
      * Register modules
      *
-     * @param moduleNames the module name must be consistent of U setup module name.
+     * @param names the module name must be consistent of U setup module name.
      */
-    public static void registerModules(@NonNull String... moduleNames) {
-        SRouterImpl.registerModules(moduleNames);
+    public static void registerComponents(@NonNull String... names) {
+        SRouterImpl.registerComponents(names);
+    }
+
+    /**
+     * Register modules
+     *
+     * @param names the module name must be consistent of U setup module name.
+     */
+    public static void unregisterComponents(@NonNull String... names) {
+        SRouterImpl.unregisterComponents(names);
     }
 
     /**

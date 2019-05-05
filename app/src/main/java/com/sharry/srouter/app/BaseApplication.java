@@ -2,6 +2,7 @@ package com.sharry.srouter.app;
 
 import android.app.Application;
 
+import com.sharry.srouter.module.base.ModuleConstants;
 import com.sharry.srouter.support.facade.SRouter;
 
 /**
@@ -15,7 +16,11 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         SRouter.init(this);
-        SRouter.registerModules("component1", "component2");
+        SRouter.registerComponents(
+                ModuleConstants.App.NAME,
+                ModuleConstants.Found.NAME,
+                ModuleConstants.Personal.NAME
+        );
     }
 
 }

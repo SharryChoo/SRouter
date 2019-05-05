@@ -32,8 +32,8 @@ import java.util.*
  * A login screen that offers login via email/password.
  */
 @Route(
-        authority = "app",
-        path = "LoginActivity"
+        authority = ModuleConstants.App.NAME,
+        path = ModuleConstants.App.LOGIN_ACTIVITY
 )
 class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
@@ -272,7 +272,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             showProgress(false)
 
             if (success!!) {
-                ModuleConstants.isLogin = true
+                ModuleConstants.App.isLogin = true
                 setResult(Activity.RESULT_OK)
                 finish()
             } else {

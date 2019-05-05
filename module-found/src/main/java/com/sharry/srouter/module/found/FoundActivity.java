@@ -1,4 +1,4 @@
-package com.sharry.srouter.module.component1;
+package com.sharry.srouter.module.found;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.sharry.srouter.annotation.Route;
 import com.sharry.srouter.annotation.ThreadMode;
+import com.sharry.srouter.module.base.ModuleConstants;
 
 /**
  * 第一个 Module 中的 Activity.
@@ -17,8 +18,8 @@ import com.sharry.srouter.annotation.ThreadMode;
  * @since 2018/8/22 20:15
  */
 @Route(
-        authority = "modulecomponent1",
-        path = "FoundActivity",
+        authority = ModuleConstants.Found.NAME,
+        path = ModuleConstants.Found.FOUND_ACTIVITY,
         mode = ThreadMode.MAIN,
         desc = "组件1的入口页面"
 )

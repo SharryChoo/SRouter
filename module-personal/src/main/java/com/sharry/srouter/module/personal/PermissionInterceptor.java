@@ -1,8 +1,9 @@
-package com.sharry.srouter.module.component2;
+package com.sharry.srouter.module.personal;
 
 import android.util.Log;
 
 import com.sharry.srouter.annotation.RouteInterceptor;
+import com.sharry.srouter.module.base.ModuleConstants;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.interceptors.IInterceptor;
 
@@ -12,7 +13,7 @@ import com.sharry.srouter.support.interceptors.IInterceptor;
  * @since 2019/2/19 20:15
  */
 @RouteInterceptor(
-        value = "modulecomponent2/PermissionInterceptor",
+        value = ModuleConstants.Personal.PERMISSION_INTERCEPTOR,
         priority = 2
 )
 public class PermissionInterceptor implements IInterceptor {
