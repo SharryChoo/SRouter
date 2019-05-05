@@ -24,16 +24,6 @@ public class SRouter {
     private static boolean sHasInit = false;
 
     /**
-     * Get instance of router. S
-     * All function U use, will be start here.
-     *
-     * @return Route singleton
-     */
-    public static SRouter getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
-
-    /**
      * Initialize, it must be invoke before used router.
      */
     public static synchronized void init(@NonNull Application application) {
@@ -63,6 +53,16 @@ public class SRouter {
     public static void unregisterComponents(@NonNull String... names) {
         Preconditions.checkNotNull(names);
         SRouterImpl.unregisterComponents(names);
+    }
+
+    /**
+     * Get instance of router. S
+     * All function U use, will be start here.
+     *
+     * @return Route singleton
+     */
+    public static SRouter getInstance() {
+        return InstanceHolder.INSTANCE;
     }
 
     /**

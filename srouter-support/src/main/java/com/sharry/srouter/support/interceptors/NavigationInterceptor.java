@@ -4,17 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 
+import com.sharry.srouter.annotation.ThreadMode;
 import com.sharry.srouter.support.data.ActivityConfigs;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.providers.IProvider;
-import com.sharry.srouter.support.utils.RouterCallbackFragment;
+import com.sharry.srouter.support.scheduler.SchedulerFactory;
 import com.sharry.srouter.support.utils.Logger;
+import com.sharry.srouter.support.utils.RouterCallbackFragment;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
@@ -24,14 +27,26 @@ import com.sharry.srouter.support.utils.Logger;
 public class NavigationInterceptor implements IInterceptor {
 
     @Override
-    public Response process(Chain chain) {
-        return navigationActual(chain.context(), chain.request());
+    public Response process(final Chain chain) {
+        ThreadMode threadMode = chain.request().getThreadMode();
+        // 同步的拦截器
+        if (ThreadMode.SYNC == threadMode) {
+            return navigationActual(chain.context(), chain.request());
+        }
+        // 异步调用方式
+        SchedulerFactory.create(threadMode).schedule(new Runnable() {
+            @Override
+            public void run() {
+                navigationActual(chain.context(), chain.request());
+            }
+        }, chain.request().getDelay());
+        return Response.EMPTY_RESPONSE;
     }
 
     /**
      * Actual perform navigation.
      */
-    private Response navigationActual(@NonNull Context context, Request request) {
+    private Response navigationActual(Context context, Request request) {
         Response response = new Response();
         switch (request.getType()) {
             case ACTIVITY:

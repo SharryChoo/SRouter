@@ -29,7 +29,7 @@ public @interface Route {
     /**
      * Thread mode for this Route.
      */
-    ThreadMode mode() default ThreadMode.MAIN;
+    ThreadMode mode() default ThreadMode.SYNC;
 
     /**
      * The interceptor URIs for this Route.

@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         btnFound.setOnClickListener {
             SRouter.getInstance()
                     .build(ModuleConstants.Found.NAME, ModuleConstants.Found.FOUND_ACTIVITY)
+                    .setDelay(1000)
                     .navigation(this)
         }
         // 尝试跳转到个人中心

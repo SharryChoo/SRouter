@@ -1,47 +1,37 @@
-package com.sharry.srouter.support.thread;
+package com.sharry.srouter.support.scheduler;
 
 import androidx.annotation.NonNull;
 
 import com.sharry.srouter.support.utils.Logger;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Default thread pool.
- *
- * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
+ * @author Sharry <a href="sharrychoochn@gmail.com">Contact me.</a>
  * @version 1.0
- * @since 2018/8/13
+ * @since 2019-05-05
  */
-public class RouterPoolExecutor extends ThreadPoolExecutor {
+public class AsyncScheduler extends ScheduledThreadPoolExecutor implements Scheduler {
 
-    //    Thread args
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int INIT_THREAD_COUNT = CPU_COUNT + 1;
-    private static final int MAX_THREAD_COUNT = INIT_THREAD_COUNT;
-    private static final long SURPLUS_THREAD_LIFE = 30L;
 
-    private static RouterPoolExecutor sInstance = null;
+    private static AsyncScheduler sInstance;
 
     static {
-        sInstance = new RouterPoolExecutor(
+        sInstance = new AsyncScheduler(
                 INIT_THREAD_COUNT,
-                MAX_THREAD_COUNT,
-                SURPLUS_THREAD_LIFE,
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<Runnable>(64),
                 new ThreadFactory() {
                     @Override
                     public Thread newThread(@NonNull Runnable r) {
-                        Thread thread = new Thread(r, RouterPoolExecutor.class.getSimpleName());
+                        Thread thread = new Thread(r, AsyncScheduler.class.getSimpleName());
                         thread.setDaemon(false);
                         return thread;
                     }
@@ -49,19 +39,22 @@ public class RouterPoolExecutor extends ThreadPoolExecutor {
         );
     }
 
-    public static RouterPoolExecutor getInstance() {
+    public static AsyncScheduler getInstance() {
         return sInstance;
     }
 
-    private RouterPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                               BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory,
-                new RejectedExecutionHandler() {
-                    @Override
-                    public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-                        Logger.e("Task rejected, too many task!");
-                    }
-                });
+    private AsyncScheduler(int corePoolSize, ThreadFactory threadFactory) {
+        super(corePoolSize, threadFactory, new RejectedExecutionHandler() {
+            @Override
+            public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                Logger.e("Task rejected, too many task!");
+            }
+        });
+    }
+
+    @Override
+    public void schedule(Runnable runnable, long delay) {
+        sInstance.schedule(runnable, delay, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -90,4 +83,5 @@ public class RouterPoolExecutor extends ThreadPoolExecutor {
                     t.getMessage());
         }
     }
+
 }

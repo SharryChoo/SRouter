@@ -20,7 +20,7 @@ import com.sharry.srouter.module.base.ModuleConstants;
 @Route(
         authority = ModuleConstants.Found.NAME,
         path = ModuleConstants.Found.FOUND_ACTIVITY,
-        mode = ThreadMode.MAIN,
+        mode = ThreadMode.SYNC,
         desc = "组件1的入口页面"
 )
 public class FoundActivity extends AppCompatActivity {

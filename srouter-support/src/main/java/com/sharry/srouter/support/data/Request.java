@@ -20,6 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The request associated with a navigation.
@@ -53,9 +54,11 @@ public class Request extends RouteMeta {
     private Bundle datum;
 
     /**
-     * Navigation timeout, TimeUnit.Second.
+     * Navigation delay
+     * <p>
+     * Unit is {@link TimeUnit#MILLISECONDS}
      */
-    private int timeout = 300;
+    private long delay = 0;
 
     /**
      * The Activity request params for the request.
@@ -73,8 +76,7 @@ public class Request extends RouteMeta {
     private final List<IInterceptor> interceptors = new ArrayList<>();
 
     /**
-     * The interceptorURIs will be process after {@link Warehouse#TABLE_ROUTES_INTERCEPTORS} and
-     * before {@link com.sharry.srouter.support.interceptors.NavigationInterceptor}
+     * The interceptorURIs will be process before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
      */
     private final List<String> interceptorURIs = new ArrayList<>();
 
@@ -95,12 +97,12 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Set timeout time when navigation process.
+     * Set delay time when navigation process.
      * <p>
-     * Unit is{@link java.util.concurrent.TimeUnit#MILLISECONDS}
+     * Unit is {{@link TimeUnit#MILLISECONDS}}
      */
-    public Request setTimeout(int timeout) {
-        this.timeout = timeout;
+    public Request setDelay(long delay) {
+        this.delay = delay;
         return this;
     }
 
@@ -192,8 +194,8 @@ public class Request extends RouteMeta {
         return datum;
     }
 
-    public int getTimeout() {
-        return timeout;
+    public long getDelay() {
+        return delay;
     }
 
     public boolean isGreenChannel() {

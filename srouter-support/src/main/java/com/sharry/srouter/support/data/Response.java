@@ -13,6 +13,8 @@ import com.sharry.srouter.support.providers.IProvider;
  */
 public class Response {
 
+    public static final Response EMPTY_RESPONSE = new Response();
+
     private Fragment fragmentV4;
     private android.app.Fragment fragment;
     private IProvider provider;
