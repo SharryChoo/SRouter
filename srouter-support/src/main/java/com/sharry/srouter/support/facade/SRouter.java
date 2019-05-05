@@ -21,30 +21,23 @@ import com.sharry.srouter.support.utils.Preconditions;
  */
 public class SRouter {
 
-    private static volatile SRouter sInstance = null;
     private static boolean sHasInit = false;
 
     /**
-     * Get instance of router. F
+     * Get instance of router. S
      * All function U use, will be start here.
      *
      * @return Route singleton
      */
     public static SRouter getInstance() {
-        if (null == sInstance) {
-            synchronized (SRouter.class) {
-                if (null == sInstance) {
-                    sInstance = new SRouter();
-                }
-            }
-        }
-        return sInstance;
+        return InstanceHolder.INSTANCE;
     }
 
     /**
      * Initialize, it must be invoke before used router.
      */
-    public static synchronized void init(Application application) {
+    public static synchronized void init(@NonNull Application application) {
+        Preconditions.checkNotNull(application);
         if (!sHasInit) {
             sHasInit = SRouterImpl.init(application);
         } else {
@@ -94,4 +87,9 @@ public class SRouter {
         Preconditions.checkNotNull(request);
         return SRouterImpl.getInstance().navigation(context, request);
     }
+
+    private static final class InstanceHolder {
+        private static final SRouter INSTANCE = new SRouter();
+    }
+
 }

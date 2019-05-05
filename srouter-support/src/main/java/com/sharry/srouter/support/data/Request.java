@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 
 import com.sharry.srouter.support.facade.SRouter;
 import com.sharry.srouter.support.interceptors.IInterceptor;
+import com.sharry.srouter.support.utils.Logger;
+import com.sharry.srouter.support.utils.Preconditions;
 
 import java.io.Serializable;
 import java.lang.annotation.Retention;
@@ -74,7 +76,7 @@ public class Request extends RouteMeta {
      * The interceptorURIs will be process after {@link Warehouse#TABLE_ROUTES_INTERCEPTORS} and
      * before {@link com.sharry.srouter.support.interceptors.NavigationInterceptor}
      */
-    private final List<IInterceptor> navigationInterceptors = new ArrayList<>();
+    private final List<String> interceptorURIs = new ArrayList<>();
 
     private Request(String authority, String path) {
         this.authority = authority;
@@ -85,7 +87,7 @@ public class Request extends RouteMeta {
     /**
      * BE ATTENTION TO THIS METHOD WAS <P>SET, NOT ADD!</P>
      */
-    public Request setDatum(Bundle datum) {
+    public Request setDatum(@Nullable Bundle datum) {
         if (datum != null) {
             this.datum = datum;
         }
@@ -103,6 +105,7 @@ public class Request extends RouteMeta {
     }
 
     public Request setActivityConfigs(@NonNull ActivityConfigs activityConfigs) {
+        Preconditions.checkNotNull(activityConfigs);
         this.activityConfigs = activityConfigs;
         return this;
     }
@@ -118,18 +121,56 @@ public class Request extends RouteMeta {
     }
 
     /**
+     * Add interceptors for the request.
+     * <p>
+     * it will clear before added.
+     */
+    public Request addInterceptors(@NonNull IInterceptor... interceptors) {
+        Preconditions.checkNotNull(interceptors);
+        this.interceptors.clear();
+        for (IInterceptor interceptor : interceptors) {
+            addInterceptor(interceptor);
+        }
+        return this;
+    }
+
+    /**
      * Add interceptor for the request.
      */
     public Request addInterceptor(@NonNull IInterceptor interceptor) {
+        Preconditions.checkNotNull(interceptor);
+        if (interceptors.contains(interceptor)) {
+            Logger.i("The interceptor already added: " + interceptor.toString());
+            return this;
+        }
         interceptors.add(interceptor);
         return this;
     }
 
     /**
-     * Add navigation interceptor for the request.
+     * Add interceptor URIs for the request.
+     * <p>
+     * it will clear before added.
      */
-    public Request addNavigationInterceptor(@NonNull IInterceptor interceptor) {
-        navigationInterceptors.add(interceptor);
+    public Request addInterceptorURIs(@NonNull String... interceptorURIs) {
+        Preconditions.checkNotNull(interceptorURIs);
+        this.interceptorURIs.clear();
+        for (String interceptorURI : interceptorURIs) {
+            addInterceptorURI(interceptorURI);
+        }
+        return this;
+    }
+
+    /**
+     * Add interceptor URI for the request.
+     */
+    public Request addInterceptorURI(@NonNull String interceptorURI) {
+        Preconditions.checkNotEmpty(interceptorURI);
+        if (interceptorURIs.contains(interceptorURI)) {
+            Logger.i("The interceptorURI already added: " + interceptorURI);
+            return this;
+        }
+        interceptorURIs.add(interceptorURI);
         return this;
     }
 
@@ -167,8 +208,8 @@ public class Request extends RouteMeta {
         return interceptors;
     }
 
-    public List<IInterceptor> getNavigationInterceptors() {
-        return navigationInterceptors;
+    public List<String> getInterceptorURIs() {
+        return interceptorURIs;
     }
 
     /**

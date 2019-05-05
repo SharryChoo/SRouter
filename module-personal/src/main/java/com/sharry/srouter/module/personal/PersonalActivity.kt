@@ -17,7 +17,7 @@ import com.sharry.srouter.module.base.ModuleConstants
         authority = ModuleConstants.Personal.NAME,
         path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
         mode = ThreadMode.MAIN,
-        interceptorURIs = [ModuleConstants.Personal.PERMISSION_INTERCEPTOR, ModuleConstants.App.LOGIN_INTERCEPTOR],
+        interceptorURIs = [ModuleConstants.App.LOGIN_INTERCEPTOR],
         desc = "个人中心页面"
 )
 class PersonalActivity : AppCompatActivity() {

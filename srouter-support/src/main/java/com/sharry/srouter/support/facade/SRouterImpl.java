@@ -11,13 +11,12 @@ import com.sharry.srouter.support.data.Warehouse;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.interceptors.IInterceptor;
 import com.sharry.srouter.support.interceptors.NavigationInterceptor;
-import com.sharry.srouter.support.thread.RouterPoolExecutor;
 import com.sharry.srouter.support.utils.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Route features implement.
@@ -29,7 +28,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 class SRouterImpl {
 
     private static Context sContext;
-    private volatile static ThreadPoolExecutor sExecutor = RouterPoolExecutor.getInstance();
 
     /**
      * Get instance of router implementation. S
@@ -74,11 +72,13 @@ class SRouterImpl {
         }
         // 2. Add user added interceptors before route interceptor.
         final List<IInterceptor> interceptors = new ArrayList<>(request.getInterceptors());
-        // 3. Add route interceptors.
+        // 3. Parse interceptor URIS.
+        final List<String> interceptorURIs = new ArrayList<>(request.getInterceptorURIs());
+        interceptorURIs.addAll(Arrays.asList(request.getRouteInterceptorURIs()));
         if (!request.isGreenChannel()) {
-            // 3.1 Sort route INTERCEPTORS by priority.
+            // 3.1 Sort interceptor URIs by priority.
             final List<InterceptorMeta> orderedMetas = new LinkedList<>();
-            for (String value : request.getRouteInterceptors()) {
+            for (String value : interceptorURIs) {
                 InterceptorMeta meta = Warehouse.TABLE_ROUTES_INTERCEPTORS.get(value);
                 if (null == meta) {
                     continue;
@@ -107,9 +107,7 @@ class SRouterImpl {
                 }
             }
         }
-        // 4. Add user added interceptorURIs before route interceptor.
-        interceptors.addAll(request.getNavigationInterceptors());
-        // 5. Add finalize navigation Interceptor.
+        // 4. Add finalize navigation Interceptor.
         interceptors.add(new NavigationInterceptor());
         return RealChain.create(interceptors, null == context ? sContext : context, request, 0).dispatch();
     }

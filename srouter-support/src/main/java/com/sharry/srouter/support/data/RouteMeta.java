@@ -68,7 +68,7 @@ public class RouteMeta {
         result.type = type;
         result.threadMode = mode;
         result.routeClass = routeCls;
-        result.routeInterceptors = interceptorURIs;
+        result.routeInterceptorURIs = interceptorURIs;
         return result;
     }
 
@@ -89,7 +89,7 @@ public class RouteMeta {
     /**
      * Navigation interceptorURIs.
      */
-    private String[] routeInterceptors;
+    private String[] routeInterceptorURIs;
 
     RouteMeta() {
     }
@@ -106,8 +106,8 @@ public class RouteMeta {
         return threadMode;
     }
 
-    public String[] getRouteInterceptors() {
-        return routeInterceptors;
+    public String[] getRouteInterceptorURIs() {
+        return routeInterceptorURIs;
     }
 
     public void setType(Type type) {
@@ -122,7 +122,7 @@ public class RouteMeta {
         this.threadMode = threadMode;
     }
 
-    public void setRouteInterceptors(String[] routeInterceptors) {
-        this.routeInterceptors = routeInterceptors;
+    public void setRouteInterceptorURIs(String[] routeInterceptorURIs) {
+        this.routeInterceptorURIs = routeInterceptorURIs;
     }
 }

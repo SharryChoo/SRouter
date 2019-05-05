@@ -36,6 +36,7 @@ class LoginInterceptor : IInterceptor {
             SRouter.getInstance()
                     .build(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
                     .setActivityConfigs(configs)
+                    .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
                     .navigation(chain.context())
             return null
         }

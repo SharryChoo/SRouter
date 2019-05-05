@@ -79,7 +79,7 @@ public class LogisticsCenter {
         request.setType(routeMeta.getType());
         request.setRouteClass(routeMeta.getRouteClass());
         request.setThreadMode(routeMeta.getThreadMode());
-        request.setRouteInterceptors(routeMeta.getRouteInterceptors());
+        request.setRouteInterceptorURIs(routeMeta.getRouteInterceptorURIs());
         // If Type is PROVIDER, the request cannot be intercepted.
         request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.PROVIDER);
     }

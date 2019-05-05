@@ -7,7 +7,7 @@ package com.sharry.srouter.support.exceptions;
  */
 public class RouteUninitializedException extends RuntimeException {
 
-    private static final String EXCEPTION_MSG = "SRoute uninitialized. Please invoke SRoute.getInstance.init(...) " +
+    private static final String EXCEPTION_MSG = "SRoute uninitialized. Please invoke SRoute.init(...) " +
             "first before invoke this method.";
 
     public RouteUninitializedException() {
