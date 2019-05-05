@@ -13,7 +13,11 @@ import java.util.List;
  */
 public class RealChain implements IInterceptor.Chain {
 
-    public static RealChain create(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
+    public static RealChain create(List<IInterceptor> handles, Context context, Request request) {
+        return new RealChain(handles, context, request, 0);
+    }
+
+    private static RealChain create(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
         return new RealChain(handles, context, request, handleIndex);
     }
 

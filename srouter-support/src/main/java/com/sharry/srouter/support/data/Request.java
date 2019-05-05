@@ -217,12 +217,12 @@ public class Request extends RouteMeta {
     /**
      * Start navigation.
      */
-    public Response navigation() {
-        return this.navigation(null);
+    public void navigation() {
+        this.navigation(null);
     }
 
-    public Response navigation(Context context) {
-        return SRouter.getInstance().navigation(context, this);
+    public void navigation(Context context) {
+        SRouter.getInstance().navigation(context, this);
     }
 
     // ######################### annotation @FlagInt copy from #{Intent}  ##########################

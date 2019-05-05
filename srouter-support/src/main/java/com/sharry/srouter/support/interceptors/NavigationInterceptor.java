@@ -10,12 +10,10 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 
-import com.sharry.srouter.annotation.ThreadMode;
 import com.sharry.srouter.support.data.ActivityConfigs;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.providers.IProvider;
-import com.sharry.srouter.support.scheduler.SchedulerFactory;
 import com.sharry.srouter.support.utils.Logger;
 import com.sharry.srouter.support.utils.RouterCallbackFragment;
 
@@ -28,19 +26,7 @@ public class NavigationInterceptor implements IInterceptor {
 
     @Override
     public Response process(final Chain chain) {
-        ThreadMode threadMode = chain.request().getThreadMode();
-        // 同步的拦截器
-        if (ThreadMode.SYNC == threadMode) {
-            return navigationActual(chain.context(), chain.request());
-        }
-        // 异步调用方式
-        SchedulerFactory.create(threadMode).schedule(new Runnable() {
-            @Override
-            public void run() {
-                navigationActual(chain.context(), chain.request());
-            }
-        }, chain.request().getDelay());
-        return Response.EMPTY_RESPONSE;
+        return navigationActual(chain.context(), chain.request());
     }
 
     /**

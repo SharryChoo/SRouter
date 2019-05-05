@@ -12,6 +12,8 @@ import com.sharry.srouter.support.data.Warehouse;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.interceptors.IInterceptor;
 import com.sharry.srouter.support.interceptors.NavigationInterceptor;
+import com.sharry.srouter.support.scheduler.IScheduler;
+import com.sharry.srouter.support.scheduler.SchedulerFactory;
 import com.sharry.srouter.support.utils.Logger;
 
 import java.util.ArrayList;
@@ -63,13 +65,13 @@ class SRouterImpl {
     /**
      * Initiatory perform navigation.
      */
-    Response navigation(final Context context, final Request request) {
+    void navigation(final Context context, final Request request) {
         // 1. load data to request.
         try {
             LogisticsCenter.completion(request);
         } catch (NoRouteFoundException e) {
             Logger.e(e.getMessage(), e);
-            return null;
+            return;
         }
         // 2. Add user added interceptors before route interceptor.
         final List<IInterceptor> interceptors = new ArrayList<>(request.getInterceptors());
@@ -110,7 +112,19 @@ class SRouterImpl {
         }
         // 4. Add finalize navigation Interceptor.
         interceptors.add(new NavigationInterceptor());
-        return RealChain.create(interceptors, null == context ? sContext : context, request, 0).dispatch();
+        // 5. dispatch request.
+        IScheduler scheduler = SchedulerFactory.create(request.getThreadMode());
+        scheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                Response response = RealChain.create(
+                        interceptors,
+                        null == context ? sContext : context,
+                        request
+                ).dispatch();
+                // TODO handler response.
+            }
+        }, request.getDelay());
     }
 
     private static class InstanceHolder {

@@ -80,12 +80,12 @@ public class SRouter {
     /**
      * perform navigation.
      */
-    public Response navigation(@Nullable Context context, @NonNull Request request) {
+    public void navigation(@Nullable Context context, @NonNull Request request) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
         Preconditions.checkNotNull(request);
-        return SRouterImpl.getInstance().navigation(context, request);
+        SRouterImpl.getInstance().navigation(context, request);
     }
 
     private static final class InstanceHolder {
