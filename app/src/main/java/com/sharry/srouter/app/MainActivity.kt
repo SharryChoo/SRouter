@@ -1,8 +1,8 @@
 package com.sharry.srouter.app
 
 import android.os.Bundle
-import androidx.core.app.ActivityOptionsCompat
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import com.sharry.srouter.R
 import com.sharry.srouter.support.data.ActivityConfigs
 import com.sharry.srouter.support.facade.SRouter
@@ -20,13 +20,13 @@ class MainActivity : AppCompatActivity() {
         // 尝试跳转到发现页面
         btnFound.setOnClickListener {
             SRouter.getInstance()
-                    .build("component1/FoundActivity")
+                    .build("component1", "FoundActivity")
                     .navigation(this)
         }
         // 尝试跳转到个人中心
         btnPersonal.setOnClickListener {
             SRouter.getInstance()
-                    .build("component2/PersonalActivity")
+                    .build("component2", "PersonalActivity")
                     .setActivityConfigs(
                             ActivityConfigs.Builder()
                                     .setActivityOptions(ActivityOptionsCompat.makeClipRevealAnimation(

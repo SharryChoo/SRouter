@@ -11,9 +11,7 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -79,12 +77,12 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
         }
         mLogger.i("elements size is " + elements.size());
         /*
-          ```Map<String, SIMPLE_NAME_ROUTE_INTERCEPTOR_META>```
+          ```Map<String, RouteInterceptorMeta>```
          */
         ParameterizedTypeName inputMapTypeName = ParameterizedTypeName.get(
                 ClassName.get(Map.class),
                 ClassName.get(String.class),
-                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_INTERCEPTOR_META)
+                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_INTERCEPTOR_META)
         );
         /*
            Build input param name.
@@ -102,7 +100,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
                 .addParameter(rootParamSpec);
 
         // parse elements to loadInto method.
-        parseElements(elements, moduleName, loadIntoMethodSpec);
+        completionLoadInto(elements, loadIntoMethodSpec);
         /*
           Build class : SRouter$$Route$$xxx
           public class SRouter$$Route$$module_name implements IRouter
@@ -118,6 +116,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
         try {
             JavaFile.builder(Constants.PACKAGE_NAME_OF_GENERATE_FILE, classBuilder.build())
                     .addFileComment("SRouter-Compiler auto generate.")
+                    .indent("    ")
                     .build()
                     .writeTo(mFiler);
             mLogger.i("Generated root, name is " + Constants.SIMPLE_NAME_PREFIX_OF_INTERCEPTOR + moduleName);
@@ -153,27 +152,23 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
 
     /**
      * Parse element info then inject to method.
+     * <pre>
+     *         caches.put(
+     *                 "PermissionInterceptor",
+     *                 RouteInterceptorMeta.create(
+     *                         PermissionInterceptor.class,
+     *                         10
+     *                 )
+     *         );
+     * </pre>
      *
-     * @param elements   Elements is mark at @Route class.
-     * @param moduleName Component module name.
-     * @param loadInto   Need generate method.
+     * @param elements Elements is mark at @Route class.
+     * @param loadInto Need generate method.
      */
-    private void parseElements(Set<? extends Element> elements, String moduleName, MethodSpec.Builder loadInto) {
-        List<String> authorities = new ArrayList<>();
+    private void completionLoadInto(Set<? extends Element> elements, MethodSpec.Builder loadInto) {
         for (Element element : elements) {
             RouteInterceptor annotation = element.getAnnotation(RouteInterceptor.class);
-            // Setup1: Get path
-            String path = annotation.path();
-            if (!path.startsWith(moduleName)) {
-                throw new IllegalArgumentException("Found error @RouteInterceptor(path = \"" + path + "\" ) at "
-                        + element + ".class, @RouteInterceptor path must start with : " + moduleName);
-            }
-            if (authorities.contains(path)) {
-                throw new IllegalArgumentException("Found duplicate path \"" + path +
-                        "\", Unsupported define duplicate path.");
-            }
-            authorities.add(path);
-            // Setup2: Get priority
+            // Verify priority
             int validPriority;
             if (annotation.priority() < PriorityRange.MINIMUM.value()) {
                 validPriority = PriorityRange.MINIMUM.value();
@@ -182,50 +177,31 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
             } else {
                 validPriority = annotation.priority();
             }
-            // Setup3: Write code into method loadInto.
-            writeToMethodLoadInto(element, loadInto, path, validPriority);
+            // Write code into method loadInto.
+            writeToMethodLoadInto(loadInto, annotation.value(), validPriority, element);
         }
     }
 
-    /**
-     * Write code to method loadInto.
-     *
-     * <pre>
-     *         interceptorCaches.put(
-     *                 "component2/PermissionInterceptor",
-     *                 RouteInterceptorMeta.create(
-     *                         PermissionInterceptor.class,
-     *                         10
-     *                 )
-     *         );
-     * </pre>
-     */
-    private void writeToMethodLoadInto(Element element, MethodSpec.Builder loadInto, String path, int priority) {
+    private void writeToMethodLoadInto(MethodSpec.Builder loadInto, String value, int priority, Element element) {
+        loadInto.addComment("------------------ @RouteInterceptor(value = \"" + value + "\") ------------------");
         TypeMirror tm = element.asType();
         if (mTypeUtils.isSubtype(tm, mTypeInterceptor)) {
-            loadInto.addStatement(
-                    getLoadIntoMethodCode(priority),
-                    path,
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_INTERCEPTOR_META),
+            loadInto.addCode(
+                    Constants.METHOD_LOAD_INTO_PARAMETER_NAME_INTERCEPTION_CACHES + ".put(" + "\n" +
+                            "      $S, " + "\n" +
+                            "      $T.create(" + "\n" +
+                            "          $T.class," + "\n" +
+                            "          " + priority + "\n" +
+                            "      )" + "\n" +
+                            ");" + "\n",
+                    value,
+                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_INTERCEPTOR_META),
                     element
             );
         } else {
             throw new IllegalArgumentException("Please ensure @RouteInterceptor marked class is sub class for "
                     + Constants.CLASS_NAME_IINTERCEPTOR);
         }
-    }
-
-    /**
-     * Build loadInto method code.
-     */
-    private String getLoadIntoMethodCode(int priority) {
-        return Constants.METHOD_LOAD_INTO_PARAMETER_NAME_INTERCEPTION_CACHES + ".put(" + "\n" +
-                "      $S, " + "\n" +
-                "      $T.create(" + "\n" +
-                "          $T.class," + "\n" +
-                "          " + priority + "\n" +
-                "      )" + "\n" +
-                ")";
     }
 
 }

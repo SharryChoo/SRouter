@@ -1,8 +1,8 @@
 package com.sharry.srouter.app
 
 import android.app.Activity.RESULT_OK
-import com.sharry.libbase.AppConstants
 import com.sharry.srouter.annotation.RouteInterceptor
+import com.sharry.srouter.module.base.ModuleConstants
 import com.sharry.srouter.support.data.ActivityConfigs
 import com.sharry.srouter.support.data.Response
 import com.sharry.srouter.support.facade.SRouter
@@ -13,12 +13,15 @@ import com.sharry.srouter.support.interceptors.IInterceptor
  * @version 1.0
  * @since 2019/2/19 20:15
  */
-@RouteInterceptor(path = "app/LoginInterceptor", priority = 10)
+@RouteInterceptor(
+        value = "app/LoginInterceptor",
+        priority = 10
+)
 class LoginInterceptor : IInterceptor {
 
     override fun process(chain: IInterceptor.Chain): Response? {
         // 若没有登录, 则先跳转到登录页面
-        if (!AppConstants.isLogin) {
+        if (!ModuleConstants.isLogin) {
             // 构建 Activity 的配置
             val configs = ActivityConfigs.Builder()
                     .setRequestCode(100)
@@ -31,7 +34,7 @@ class LoginInterceptor : IInterceptor {
                     .build()
             // 跳转到登录页面
             SRouter.getInstance()
-                    .build("app/LoginActivity")
+                    .build("app", "LoginActivity")
                     .setActivityConfigs(configs)
                     .navigation(chain.context())
             return null

@@ -13,6 +13,7 @@ import com.squareup.javapoet.TypeSpec;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -95,10 +96,18 @@ public class RouteCompiler extends AbstractProcessor {
         /*
           ```Map<String, RouteMeta>```
          */
-        ParameterizedTypeName inputMapTypeName = ParameterizedTypeName.get(
+        ParameterizedTypeName inputInnerMapTypeName = ParameterizedTypeName.get(
                 ClassName.get(Map.class),
                 ClassName.get(String.class),
                 ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META)
+        );
+        /*
+          ```Map<String, Map<String, RouteMeta>>```
+         */
+        ParameterizedTypeName inputMapTypeName = ParameterizedTypeName.get(
+                ClassName.get(Map.class),
+                ClassName.get(String.class),
+                inputInnerMapTypeName
         );
         /*
            Build input param name.
@@ -116,7 +125,7 @@ public class RouteCompiler extends AbstractProcessor {
                 .addParameter(rootParamSpec);
 
         // parse elements to loadInto method.
-        parseElements(elements, moduleName, loadIntoMethodSpec);
+        completionLoadIntoMethod(elements, loadIntoMethodSpec);
         /*
           Build class : SRouter$$Route$$xxx
           public class SRouter$$Route$$module_name implements IRouter
@@ -130,6 +139,7 @@ public class RouteCompiler extends AbstractProcessor {
         try {
             JavaFile.builder(Constants.PACKAGE_NAME_OF_GENERATE_FILE, classBuilder.build())
                     .addFileComment("SRouter-Compiler auto generate.")
+                    .indent("    ")
                     .build()
                     .writeTo(mFiler);
             mLogger.i("Generated root, name is " + Constants.SIMPLE_NAME_PREFIX_OF_ROUTERS + moduleName);
@@ -175,41 +185,18 @@ public class RouteCompiler extends AbstractProcessor {
     }
 
     /**
-     * Parse element info then inject to method.
-     *
-     * @param elements   Elements is mark at @Route class.
-     * @param moduleName Component module name.
-     * @param loadInto   Need generate method.
-     */
-    private void parseElements(Set<? extends Element> elements, String moduleName, MethodSpec.Builder loadInto) {
-        List<String> paths = new ArrayList<>();
-        for (Element element : elements) {
-            Route routeAnnotation = element.getAnnotation(Route.class);
-            // Setup routeAuthority.
-            String routePath = routeAnnotation.path();
-            if (!routePath.startsWith(moduleName)) {
-                throw new IllegalArgumentException("Found error @Route(route path = \"" + routePath + "\" ) at "
-                        + element + ".class, @Route route path must start with : " + moduleName);
-            }
-            if (paths.contains(routePath)) {
-                throw new IllegalArgumentException("Found duplicate route path \"" + routePath +
-                        "\", Unsupported define duplicate routeAuthority.");
-            }
-            paths.add(routePath);
-            // Setup ThreadMode.
-            ThreadMode threadMode = routeAnnotation.mode();
-            // Write code into method loadInto.
-            writeToMethodLoadInto(loadInto, routePath, threadMode, Arrays.asList(
-                    routeAnnotation.interceptorPaths()), element);
-        }
-    }
-
-    /**
      * Write code to method loadInto.
      *
      * <pre>
-     *         routeCaches.put(
-     *                 "component1/Component1Activity",
+     *         Map<String, RouteMeta> metas = null;
+     *         ......
+     *         metas = caches.get("moduleName");
+     *         if (metas == null) {
+     *             metas = new HashMap<>();
+     *             cache.put("moduleName", metas);
+     *         }
+     *         metas.put(
+     *                 "SampleActivity",
      *                 RouteMeta.create(
      *                         RouteMeta.Type.CLASS_NAME_ACTIVITY,
      *                         ThreadMode.MAIN,
@@ -219,85 +206,191 @@ public class RouteCompiler extends AbstractProcessor {
      *         );
      *         ......
      * </pre>
+     *
+     * @param elements Elements is mark at @Route class.
+     * @param loadInto Need generate method.
      */
-    private void writeToMethodLoadInto(MethodSpec.Builder loadInto, String routeAuthority,
-                                       ThreadMode threadMode, List<String> interceptorPaths, Element element) {
-        TypeMirror tm = element.asType();
-        // @Route bind class is child for Activity.
-        if (mTypeUtils.isSubtype(tm, mTypeActivity)) {
-            mLogger.i("Found activity route: " + tm.toString() + " <<<");
-            loadInto.addStatement(
-                    getLoadIntoMethodCode("ACTIVITY", threadMode, interceptorPaths),
-                    routeAuthority,
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(ThreadMode.class),
-                    element
-            );
-        } else if (mTypeUtils.isSubtype(tm, mTypeService)) {
-            // @Route bind class is child for Service.
-            mLogger.i("Found service route: " + tm.toString() + " <<<");
-            loadInto.addStatement(
-                    getLoadIntoMethodCode("CLASS_NAME_SERVICE", threadMode, interceptorPaths),
-                    routeAuthority,
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(ThreadMode.class),
-                    element
-            );
-        } else if (mTypeUtils.isSubtype(tm, mTypeFragment)) {
-            // @Route bind class is child for Fragment.
-            mLogger.i("Found fragment route: " + tm.toString() + " <<<");
-            loadInto.addStatement(
-                    getLoadIntoMethodCode("FRAGMENT", threadMode, interceptorPaths),
-                    routeAuthority,
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(ThreadMode.class),
-                    element
-            );
-        } else if (mTypeUtils.isSubtype(tm, mTypeFragmentV4)) {
-            // @Route bind class is child for Fragment.
-            mLogger.i("Found fragment v4 route: " + tm.toString() + " <<<");
-            loadInto.addStatement(
-                    getLoadIntoMethodCode("FRAGMENT_V4", threadMode, interceptorPaths),
-                    routeAuthority,
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(ThreadMode.class),
-                    element
-            );
-        } else if (mTypeUtils.isSubtype(tm, mTypeProvider)) {
-            // @Route bind class is child for IProvider.
-            mLogger.i("Found provider route: " + tm.toString() + " <<<");
-            loadInto.addStatement(
-                    getLoadIntoMethodCode("IPROVIDER", threadMode, interceptorPaths),
-                    routeAuthority,
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(ThreadMode.class),
-                    element
-            );
-        } else {
-            mLogger.i("Found other route: " + tm.toString() + " <<<");
-            // @Route bind class is child for others.
-            loadInto.addStatement(
-                    getLoadIntoMethodCode("UNKNOWN", threadMode, interceptorPaths),
-                    routeAuthority,
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                    ClassName.get(ThreadMode.class),
+    private void completionLoadIntoMethod(Set<? extends Element> elements, MethodSpec.Builder loadInto) {
+        /*
+          Map<String, RouteMeta> metas = null;
+         */
+        loadInto.addStatement(
+                "$T<$T, $T> metas = null",
+                ClassName.get(Map.class),
+                ClassName.get(String.class),
+                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META)
+        );
+        /*
+          Write for each.
+         */
+        List<String> paths = new ArrayList<>();
+        for (Element element : elements) {
+            Route routeAnnotation = element.getAnnotation(Route.class);
+            // Verify path
+            String routePath = routeAnnotation.path();
+            if (paths.contains(routePath)) {
+                throw new IllegalArgumentException("Found duplicate route path \"" + routePath +
+                        "\", Unsupported define duplicate routeAuthority.");
+            }
+            paths.add(routePath);
+            // Setup ThreadMode.
+            ThreadMode threadMode = routeAnnotation.mode();
+            // Write code into method loadInto.
+            writeToMethodLoadInto(
+                    loadInto,
+                    routeAnnotation.authority(),
+                    routePath,
+                    threadMode,
+                    Arrays.asList(
+                            routeAnnotation.interceptorURIs()
+                    ),
                     element
             );
         }
     }
 
-    /**
-     * Build loadInto method code.
-     */
-    private String getLoadIntoMethodCode(String routeType, ThreadMode threadMode, List<String> interceptorClassNames) {
-        // append prefix
+    private void writeToMethodLoadInto(MethodSpec.Builder loadInto, String authority, String path,
+                                       ThreadMode threadMode, List<String> interceptorURIs, Element element) {
+        TypeMirror tm = element.asType();
+        if (mTypeUtils.isSubtype(tm, mTypeActivity)) {
+            // @Route bind class is child for Activity.
+            mLogger.i("Found activity route: " + tm.toString() + " <<<");
+            writeLoadInto(loadInto, "ACTIVITY", authority, path, threadMode, interceptorURIs, element);
+        } else if (mTypeUtils.isSubtype(tm, mTypeService)) {
+            // @Route bind class is child for Service.
+            mLogger.i("Found service route: " + tm.toString() + " <<<");
+            writeLoadInto(loadInto, "SERVICE", authority, path, threadMode, interceptorURIs, element);
+        } else if (mTypeUtils.isSubtype(tm, mTypeFragment)) {
+            // @Route bind class is child for Fragment.
+            mLogger.i("Found fragment route: " + tm.toString() + " <<<");
+            writeLoadInto(loadInto, "FRAGMENT", authority, path, threadMode, interceptorURIs, element);
+        } else if (mTypeUtils.isSubtype(tm, mTypeFragmentV4)) {
+            // @Route bind class is child for Fragment.
+            mLogger.i("Found fragment v4 route: " + tm.toString() + " <<<");
+            writeLoadInto(loadInto, "FRAGMENT_V4", authority, path, threadMode, interceptorURIs, element);
+
+        } else if (mTypeUtils.isSubtype(tm, mTypeProvider)) {
+            // @Route bind class is child for IProvider.
+            mLogger.i("Found provider route: " + tm.toString() + " <<<");
+            writeLoadInto(loadInto, "IPROVIDER", authority, path, threadMode, interceptorURIs, element);
+        } else {
+            // @Route bind class is child for others.
+            mLogger.i("Found other route: " + tm.toString() + " <<<");
+            writeLoadInto(loadInto, "UNKNOWN", authority, path, threadMode, interceptorURIs, element);
+        }
+    }
+
+    private void writeLoadInto(MethodSpec.Builder loadInto,
+                               String routeType,
+                               String authority,
+                               String path,
+                               ThreadMode threadMode,
+                               List<String> interceptorURIs,
+                               Element element) {
+        loadInto.addComment("------------------ @Route(authority = \"" + authority + "\", " +
+                "path = \"" + path + "\") ------------------");
+        /*
+          metas = caches.get("moduleName");
+         */
+        loadInto.addStatement(
+                "metas = " + Constants.METHOD_LOAD_INTO_PARAMETER_NAME_ROUTE_CACHES + ".get($S)",
+                authority
+        );
+        /*
+          if (metas == null) {
+             metas = new HashMap<>();
+             cache.put("moduleName", metas);
+          }
+         */
+        loadInto.addCode(
+                "if (metas == null) {" + "\n"
+                        + "    metas = new $T<>();" + "\n"
+                        + "    " + Constants.METHOD_LOAD_INTO_PARAMETER_NAME_ROUTE_CACHES + ".put($S, metas);" + "\n"
+                        + "}" + "\n",
+                ClassName.get(HashMap.class),
+                authority
+        );
+        /*
+          metas.put(
+                    "SampleActivity",
+                    RouteMeta.create(
+                            RouteMeta.Type.CLASS_NAME_ACTIVITY,
+                            ThreadMode.MAIN,
+                            Component1Activity.class,
+                            new String[]{..., ...}
+                    )
+           );
+         */
         StringBuilder builder = new StringBuilder(
+                "metas.put(" + "\n" +
+                        "   $S, " + "\n" +
+                        "    $T.create(" + "\n" +
+                        "        $T.Type." + routeType + "," + "\n" +
+                        "        $T." + threadMode + ", " + "\n" +
+                        "        $T.class," + "\n" +
+                        "        new String[]{" + "\n"
+        );
+        // Add interceptorURIs
+        int size = interceptorURIs.size();
+        for (int i = 0; i < size; i++) {
+            builder.append(
+                    "              \"" + interceptorURIs.get(i) + "\""
+            );
+            if (i != size - 1) {
+                builder.append(", ");
+            }
+            builder.append("\n");
+        }
+        // append suffix
+        builder.append(
+                "        }" + "\n" +
+                        "    )" + "\n" +
+                        ");" + "\n"
+        );
+        loadInto.addCode(
+                builder.toString(),
+                path,
+                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
+                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
+                ClassName.get(ThreadMode.class),
+                element
+        );
+    }
+
+    /**
+     * <pre>
+     *         metas = caches.get("component1");
+     *         if (metas == null) {
+     *             metas = new HashMap<>();
+     *         }
+     *         metas.put(
+     *                 "component1",
+     *                 "Component1Activity",
+     *                 RouteMeta.create(
+     *                         RouteMeta.Type.CLASS_NAME_ACTIVITY,
+     *                         ThreadMode.MAIN,
+     *                         Component1Activity.class,
+     *                         new String[]{..., ...}
+     *                 )
+     *         );
+     * </pre>
+     */
+    private String methodCode(String routeType, ThreadMode threadMode, List<String> interceptorClassNames) {
+        // append prefix
+        StringBuilder builder = new StringBuilder();
+        /*
+          metas.put(
+                    "component1",
+                    "Component1Activity",
+                    RouteMeta.create(
+                            RouteMeta.Type.CLASS_NAME_ACTIVITY,
+                            ThreadMode.MAIN,
+                            Component1Activity.class,
+                            new String[]{..., ...}
+                    )
+           );
+         */
+        builder.append(
                 Constants.METHOD_LOAD_INTO_PARAMETER_NAME_ROUTE_CACHES + ".put(" + "\n" +
                         "      $S, " + "\n" +
                         "      $T.create(" + "\n" +
@@ -306,7 +399,7 @@ public class RouteCompiler extends AbstractProcessor {
                         "          $T.class," + "\n" +
                         "          new String[]{" + "\n"
         );
-        // Add interceptorPaths
+        // Add interceptorURIs
         int size = interceptorClassNames.size();
         for (int i = 0; i < size; i++) {
             builder.append(

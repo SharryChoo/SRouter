@@ -2,12 +2,11 @@ package com.sharry.srouter.support.facade;
 
 import android.app.Application;
 import android.content.Context;
-import androidx.annotation.NonNull;
 
+import com.sharry.srouter.support.data.InterceptorMeta;
 import com.sharry.srouter.support.data.LogisticsCenter;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
-import com.sharry.srouter.support.data.RouteInterceptorMeta;
 import com.sharry.srouter.support.data.Warehouse;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.interceptors.IInterceptor;
@@ -54,8 +53,8 @@ class SRouterImpl {
     /**
      * Build navigation postcard by path.
      */
-    Request build(@NonNull String path) {
-        return Request.create(path);
+    Request build(String authority, String path) {
+        return Request.create(authority, path);
     }
 
     /**
@@ -69,22 +68,20 @@ class SRouterImpl {
             Logger.e(e.getMessage(), e);
             return null;
         }
-        final List<IInterceptor> interceptors = new ArrayList<>();
         // 2. Add user added interceptors before route interceptor.
-        interceptors.addAll(request.getInterceptors());
-        // 3. Add route INTERCEPTORS.
+        final List<IInterceptor> interceptors = new ArrayList<>(request.getInterceptors());
+        // 3. Add route interceptors.
         if (!request.isGreenChannel()) {
             // 3.1 Sort route INTERCEPTORS by priority.
-            final List<RouteInterceptorMeta> orderedMetas = new LinkedList<>();
-            for (String interceptorPath : request.getRouteInterceptors()) {
-                // Get meta data associated with the path.
-                RouteInterceptorMeta meta = Warehouse.TABLE_ROUTES_INTERCEPTORS.get(interceptorPath);
+            final List<InterceptorMeta> orderedMetas = new LinkedList<>();
+            for (String value : request.getRouteInterceptors()) {
+                InterceptorMeta meta = Warehouse.TABLE_ROUTES_INTERCEPTORS.get(value);
                 if (null == meta) {
                     continue;
                 }
                 // Add meta data to comfortable position.
                 int insertIndex = 0;
-                for (RouteInterceptorMeta orderedMeta : orderedMetas) {
+                for (InterceptorMeta orderedMeta : orderedMetas) {
                     if (orderedMeta.getPriority() < meta.getPriority()) {
                         break;
                     } else {
@@ -93,8 +90,8 @@ class SRouterImpl {
                 }
                 orderedMetas.add(insertIndex, meta);
             }
-            // Put Instantiation interceptor to INTERCEPTORS.
-            for (RouteInterceptorMeta meta : orderedMetas) {
+            // 3.2 Put sorted metas to interceptors.
+            for (InterceptorMeta meta : orderedMetas) {
                 try {
                     IInterceptor interceptor = (IInterceptor) meta.getInterceptorClass().newInstance();
                     interceptors.add(interceptor);
@@ -106,7 +103,7 @@ class SRouterImpl {
                 }
             }
         }
-        // 4. Add user added interceptors before route interceptor.
+        // 4. Add user added interceptorURIs before route interceptor.
         interceptors.addAll(request.getNavigationInterceptors());
         // 5. Add finalize navigation Interceptor.
         interceptors.add(new NavigationInterceptor());

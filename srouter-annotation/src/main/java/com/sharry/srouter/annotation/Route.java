@@ -17,7 +17,12 @@ import java.lang.annotation.Target;
 public @interface Route {
 
     /**
-     * Route path in module.
+     * The authority associated with Route URI.
+     */
+    String authority();
+
+    /**
+     * Route path associated with Route URI.
      */
     String path();
 
@@ -27,9 +32,9 @@ public @interface Route {
     ThreadMode mode() default ThreadMode.MAIN;
 
     /**
-     * The interceptor Paths for this Route.
+     * The interceptor URIs for this Route.
      */
-    String[] interceptorPaths() default {};
+    String[] interceptorURIs() default {};
 
     /**
      * Description for this Route.

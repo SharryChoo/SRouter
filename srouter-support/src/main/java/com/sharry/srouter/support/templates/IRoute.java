@@ -13,6 +13,6 @@ import java.util.Map;
  */
 public interface IRoute {
 
-    void loadInto(Map<String, RouteMeta> routes);
+    void loadInto(Map<String, Map<String, RouteMeta>> routes);
 
 }

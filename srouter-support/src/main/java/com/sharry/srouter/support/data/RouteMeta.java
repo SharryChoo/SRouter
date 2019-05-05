@@ -63,12 +63,12 @@ public class RouteMeta {
     /**
      * Get an instance of RouteMeta
      */
-    public static RouteMeta create(Type type, ThreadMode mode, Class<?> routeCls, String[] interceptors) {
+    public static RouteMeta create(Type type, ThreadMode mode, Class<?> routeCls, String[] interceptorURIs) {
         RouteMeta result = new RouteMeta();
         result.type = type;
         result.threadMode = mode;
         result.routeClass = routeCls;
-        result.routeInterceptors = interceptors;
+        result.routeInterceptors = interceptorURIs;
         return result;
     }
 
@@ -87,7 +87,7 @@ public class RouteMeta {
      */
     private ThreadMode threadMode;
     /**
-     * Navigation interceptorPaths.
+     * Navigation interceptorURIs.
      */
     private String[] routeInterceptors;
 

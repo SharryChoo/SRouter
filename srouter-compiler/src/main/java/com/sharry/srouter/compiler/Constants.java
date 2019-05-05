@@ -27,7 +27,7 @@ class Constants {
     /**
      * Sub element for simple class name.
      */
-    static final String PACKAGE_NAME_OF_GENERATE_FILE = "com.sharry.android.srouter";
+    static final String PACKAGE_NAME_OF_GENERATE_FILE = "com.sharry.srouter.generate";
     private static final String SIMPLE_NAME_SUB_PROJECT = "SRouter";
     private static final String SIMPLE_NAME_SUB_SEPARATOR = "$$";
 
@@ -62,6 +62,6 @@ class Constants {
      */
     static final String PACKAGE_NAME_DATA = "com.sharry.srouter.support.data";
     static final String SIMPLE_NAME_ROUTE_META = "RouteMeta";
-    static final String SIMPLE_NAME_ROUTE_INTERCEPTOR_META = "RouteInterceptorMeta";
+    static final String SIMPLE_NAME_INTERCEPTOR_META = "InterceptorMeta";
 
 }

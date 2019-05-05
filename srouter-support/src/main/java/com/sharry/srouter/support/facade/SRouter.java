@@ -64,14 +64,17 @@ public class SRouter {
     /**
      * Build router navigation path.
      */
-    public Request build(@NonNull String path) {
+    public Request build(@NonNull String authority, @NonNull String path) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
+        }
+        if (TextUtils.isEmpty(authority)) {
+            throw new IllegalArgumentException("Navigation authority must be nonnull!");
         }
         if (TextUtils.isEmpty(path)) {
             throw new IllegalArgumentException("Navigation path must be nonnull!");
         }
-        return SRouterImpl.getInstance().build(path);
+        return SRouterImpl.getInstance().build(authority, path);
     }
 
     /**

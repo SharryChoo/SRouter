@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.SparseArray;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.SparseArray;
 
 import com.sharry.srouter.support.facade.SRouter;
 import com.sharry.srouter.support.interceptors.IInterceptor;
@@ -30,9 +31,14 @@ public class Request extends RouteMeta {
     /**
      * U can get an instance of Request from this method.
      */
-    public static Request create(@NonNull String path) {
-        return new Request(path);
+    public static Request create(@NonNull String authority, @NonNull String path) {
+        return new Request(authority, path);
     }
+
+    /**
+     * Navigation authority
+     */
+    private final String authority;
 
     /**
      * Navigation path.
@@ -60,17 +66,18 @@ public class Request extends RouteMeta {
     private boolean isGreenChannel;
 
     /**
-     * The interceptors will be process before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
+     * The interceptorURIs will be process before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
      */
     private final List<IInterceptor> interceptors = new ArrayList<>();
 
     /**
-     * The interceptors will be process after {@link Warehouse#TABLE_ROUTES_INTERCEPTORS} and
+     * The interceptorURIs will be process after {@link Warehouse#TABLE_ROUTES_INTERCEPTORS} and
      * before {@link com.sharry.srouter.support.interceptors.NavigationInterceptor}
      */
     private final List<IInterceptor> navigationInterceptors = new ArrayList<>();
 
-    private Request(String path) {
+    private Request(String authority, String path) {
+        this.authority = authority;
         this.path = path;
         datum = new Bundle();
     }
@@ -127,7 +134,14 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Get Request data.
+     * Get request authority.
+     */
+    public String getAuthority() {
+        return authority;
+    }
+
+    /**
+     * Get Request path.
      */
     public String getPath() {
         return path;

@@ -5,6 +5,8 @@ import com.sharry.srouter.support.templates.IRoute;
 import com.sharry.srouter.support.templates.IRouteInterceptor;
 import com.sharry.srouter.support.utils.Logger;
 
+import java.util.Map;
+
 import static com.sharry.srouter.support.utils.Constants.DOT;
 import static com.sharry.srouter.support.utils.Constants.NAME_OF_INTERCEPTOR;
 import static com.sharry.srouter.support.utils.Constants.NAME_OF_ROUTERS;
@@ -49,8 +51,15 @@ public class LogisticsCenter {
      * Fetch data from warehouse and then inject to request.
      */
     public static void completion(Request request) throws NoRouteFoundException {
+        // Fetch authority.
+        String authority = request.getAuthority();
+        Map<String, RouteMeta> routeMetas = Warehouse.TABLE_ROUTES.get(authority);
+        if (null == routeMetas) {
+            throw new NoRouteFoundException("SRouter cannot found authority: " + authority);
+        }
+        // Fetch path.
         String path = request.getPath();
-        RouteMeta routeMeta = Warehouse.TABLE_ROUTES.get(path);
+        RouteMeta routeMeta = routeMetas.get(path);
         if (null == routeMeta) {
             throw new NoRouteFoundException("SRouter cannot found path: " + path);
         }

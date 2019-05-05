@@ -15,16 +15,16 @@ import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import com.sharry.srouter.R
-import com.sharry.libbase.AppConstants
 import com.sharry.srouter.annotation.Route
+import com.sharry.srouter.module.base.ModuleConstants
 import kotlinx.android.synthetic.main.app_activity_login.*
 import java.util.*
 
@@ -32,7 +32,8 @@ import java.util.*
  * A login screen that offers login via email/password.
  */
 @Route(
-        path = "app/LoginActivity"
+        authority = "app",
+        path = "LoginActivity"
 )
 class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
@@ -271,7 +272,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             showProgress(false)
 
             if (success!!) {
-                AppConstants.isLogin = true
+                ModuleConstants.isLogin = true
                 setResult(Activity.RESULT_OK)
                 finish()
             } else {

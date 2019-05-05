@@ -1,6 +1,6 @@
 package com.sharry.srouter.support.templates;
 
-import com.sharry.srouter.support.data.RouteInterceptorMeta;
+import com.sharry.srouter.support.data.InterceptorMeta;
 
 import java.util.Map;
 
@@ -13,6 +13,6 @@ import java.util.Map;
  */
 public interface IRouteInterceptor {
 
-    void loadInto(Map<String, RouteInterceptorMeta> interceptors);
+    void loadInto(Map<String, InterceptorMeta> interceptors);
 
 }

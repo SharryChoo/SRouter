@@ -17,9 +17,9 @@ import java.lang.annotation.Target;
 public @interface RouteInterceptor {
 
     /**
-     * Interceptor path in module.
+     * Route value associated with RouteInterceptor URI.
      */
-    String path();
+    String value();
 
     /**
      * Priority for the interceptor.
@@ -31,7 +31,7 @@ public @interface RouteInterceptor {
      *      ]
      * </pre>
      * If two priority value is equivalent, the path mapper special IInterceptor
-     * will be performed in {@link Route#interceptorPaths()} add order.
+     * will be performed in {@link Route#interceptorURIs()} add order.
      */
     int priority() default 1;
 
