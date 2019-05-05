@@ -2,7 +2,6 @@ package com.sharry.srouter.support.facade;
 
 import android.app.Application;
 import android.content.Context;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,6 +10,7 @@ import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.exceptions.RouteUninitializedException;
 import com.sharry.srouter.support.utils.Logger;
+import com.sharry.srouter.support.utils.Preconditions;
 
 /**
  * Route facade.
@@ -58,6 +58,7 @@ public class SRouter {
      * @param names the module name must be consistent of U setup module name.
      */
     public static void registerComponents(@NonNull String... names) {
+        Preconditions.checkNotNull(names);
         SRouterImpl.registerComponents(names);
     }
 
@@ -67,6 +68,7 @@ public class SRouter {
      * @param names the module name must be consistent of U setup module name.
      */
     public static void unregisterComponents(@NonNull String... names) {
+        Preconditions.checkNotNull(names);
         SRouterImpl.unregisterComponents(names);
     }
 
@@ -77,12 +79,8 @@ public class SRouter {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
-        if (TextUtils.isEmpty(authority)) {
-            throw new IllegalArgumentException("Navigation authority must be nonnull!");
-        }
-        if (TextUtils.isEmpty(path)) {
-            throw new IllegalArgumentException("Navigation path must be nonnull!");
-        }
+        Preconditions.checkNotEmpty(authority);
+        Preconditions.checkNotEmpty(path);
         return SRouterImpl.getInstance().build(authority, path);
     }
 
@@ -93,9 +91,7 @@ public class SRouter {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
-        if (null == request) {
-            throw new NullPointerException();
-        }
+        Preconditions.checkNotNull(request);
         return SRouterImpl.getInstance().navigation(context, request);
     }
 }

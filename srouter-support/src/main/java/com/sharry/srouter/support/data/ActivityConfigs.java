@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 
+import com.sharry.srouter.support.utils.Preconditions;
+
 /**
  * The config for navigation request.
  *
@@ -74,6 +76,7 @@ public class ActivityConfigs {
          * Set activity configs when jump to other page.
          */
         public Builder setActivityOptions(@NonNull ActivityOptionsCompat options) {
+            Preconditions.checkNotNull(options);
             configs.activityOptions = options;
             return this;
         }
@@ -81,7 +84,8 @@ public class ActivityConfigs {
         /**
          * Set callback for a navigation request, it will called when routed activity finished.
          */
-        public Builder setActivityCallback(Callback callback) {
+        public Builder setActivityCallback(@NonNull Callback callback) {
+            Preconditions.checkNotNull(callback);
             this.configs.callback = callback;
             return this;
         }
