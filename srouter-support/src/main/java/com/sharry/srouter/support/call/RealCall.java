@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.data.Warehouse;
+import com.sharry.srouter.support.exceptions.NoAdapterFoundException;
 import com.sharry.srouter.support.facade.Callback;
 import com.sharry.srouter.support.interceptors.ChainContext;
 import com.sharry.srouter.support.interceptors.IInterceptor;
@@ -81,13 +82,14 @@ public class RealCall implements ICall {
     }
 
     @Override
-    public <T> T adaptTo(Class<T> returnClass) {
+    public <T> T adaptTo(@NonNull Class<T> returnClass) {
         for (ICallAdapter callAdapter : Warehouse.CALL_ADAPTERS) {
             if (returnClass.getName().equals(callAdapter.adaptType().getName())) {
                 return (T) callAdapter.adapt(this);
             }
         }
-        return null;
+        throw new NoAdapterFoundException("Cannot find CallAdapter return type as: "
+                + returnClass.getSimpleName());
     }
 
 }

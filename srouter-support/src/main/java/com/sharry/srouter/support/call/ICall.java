@@ -1,5 +1,6 @@
 package com.sharry.srouter.support.call;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.sharry.srouter.support.facade.Callback;
@@ -24,8 +25,9 @@ public interface ICall {
         }
 
         @Override
-        public <T> T adaptTo(Class<T> adaptType) {
-            return null;
+        @NonNull
+        public <T> T adaptTo(@NonNull Class<T> adaptType) {
+            throw new UnsupportedOperationException("This ICall cannot support adapt operation.");
         }
 
     };
@@ -34,6 +36,7 @@ public interface ICall {
 
     void call(@Nullable Callback callback);
 
-    <T> T adaptTo(Class<T> adaptType);
+    @NonNull
+    <T> T adaptTo(@NonNull Class<T> adaptType);
 
 }
