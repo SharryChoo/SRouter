@@ -33,7 +33,6 @@ final class CallObservable extends Observable<Response> {
         call.call(new Callback() {
             @Override
             public void onSuccess(@NonNull Response response) {
-                Log.e("TAG", response.toString());
                 observer.onNext(response);
             }
         });
