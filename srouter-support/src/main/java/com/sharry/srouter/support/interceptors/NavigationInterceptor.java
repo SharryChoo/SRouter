@@ -18,6 +18,8 @@ import com.sharry.srouter.support.utils.Logger;
 import com.sharry.srouter.support.utils.RouterCallbackFragment;
 
 /**
+ * 最终用于导航的拦截器
+ *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2/20/2019 9:29 AM
@@ -102,9 +104,7 @@ public class NavigationInterceptor implements IInterceptor {
     /**
      * Perform launch target activity.
      */
-    private void performLaunchActivity(@NonNull Context context,
-                                       @NonNull Intent intent,
-                                       @Nullable ActivityConfigs configs) {
+    private void performLaunchActivity(Context context, Intent intent, ActivityConfigs configs) {
         // Inject user config flags to intent.
         if (configs == null) {
             configs = new ActivityConfigs.Builder().build();
@@ -131,11 +131,11 @@ public class NavigationInterceptor implements IInterceptor {
     /**
      * Perform launch activity for result actual.
      */
-    private void launchActivityForResultActual(@NonNull Activity activity,
-                                               @NonNull Intent intent,
+    private void launchActivityForResultActual(Activity activity,
+                                               Intent intent,
                                                int requestCode,
-                                               @Nullable ActivityOptionsCompat activityOptions,
-                                               @Nullable ActivityConfigs.Callback callback) {
+                                               ActivityOptionsCompat activityOptions,
+                                               ActivityConfigs.Callback callback) {
         // Launch activity with Activity options.
         if (activityOptions != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             // Observer activity onActivityResult Callback.

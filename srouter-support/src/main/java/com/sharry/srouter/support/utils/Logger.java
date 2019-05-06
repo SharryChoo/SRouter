@@ -1,7 +1,6 @@
 package com.sharry.srouter.support.utils;
 
 import androidx.annotation.NonNull;
-import android.util.Log;
 
 /**
  * @author think <a href="SharryChooCHN@Gmail.com">Contact me.</a>
@@ -11,15 +10,10 @@ import android.util.Log;
 public class Logger {
 
     private static final String TAG_DEFAULT = Logger.class.getSimpleName();
-    private static String TAG = Logger.class.getSimpleName();
-    private static ILoggerEngine sLoggerEngine;
+    private static final ILoggerEngine sLoggerEngine = new ILoggerEngine.DefaultEngine();
 
     private Logger() {
         throw new UnsupportedOperationException("cannot be instantiated");
-    }
-
-    public static void init(ILoggerEngine loggerEngine) {
-        sLoggerEngine = loggerEngine;
     }
 
     /**
@@ -30,7 +24,6 @@ public class Logger {
     }
 
     public static void v(@NonNull String tag, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.v(tag, content.toString());
     }
 
@@ -39,7 +32,6 @@ public class Logger {
     }
 
     public static void v(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.v(tag, e, content.toString());
     }
 
@@ -51,7 +43,6 @@ public class Logger {
     }
 
     public static void d(@NonNull String tag, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.d(tag, content.toString());
     }
 
@@ -60,7 +51,6 @@ public class Logger {
     }
 
     public static void d(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.d(tag, e, content.toString());
     }
 
@@ -72,7 +62,6 @@ public class Logger {
     }
 
     public static void i(@NonNull String tag, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.i(tag, content.toString());
     }
 
@@ -81,7 +70,6 @@ public class Logger {
     }
 
     public static void i(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.i(tag, e, content.toString());
     }
 
@@ -93,7 +81,6 @@ public class Logger {
     }
 
     public static void w(@NonNull String tag, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.w(tag, content.toString());
     }
 
@@ -102,7 +89,6 @@ public class Logger {
     }
 
     public static void w(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.w(tag, e, content.toString());
     }
 
@@ -114,7 +100,6 @@ public class Logger {
     }
 
     public static void e(@NonNull String tag, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.e(tag, content.toString());
     }
 
@@ -123,18 +108,7 @@ public class Logger {
     }
 
     public static void e(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        ensure();
         sLoggerEngine.e(tag, e, content.toString());
-    }
-
-    /**
-     * 确认 LoggerEngine 引擎是否初始化
-     */
-    private static void ensure() {
-        if (sLoggerEngine == null) {
-            sLoggerEngine = new ILoggerEngine.DefaultEngine();
-            Log.e(TAG, "Recommend init your custom LoggerEngine.");
-        }
     }
 
     /**

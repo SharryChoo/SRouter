@@ -28,13 +28,12 @@ class LoginInterceptor : IInterceptor {
                     .setActivityCallback { _, resultCode, _ ->
                         // 登录成功之后, 重新导航到目标页面
                         if (resultCode == RESULT_OK) {
-                            SRouter.getInstance().navigation(chain.context(), chain.request())
+                            SRouter.navigation(chain.context(), chain.request())
                         }
                     }
                     .build()
             // 跳转到登录页面
-            SRouter.getInstance()
-                    .build(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
+            SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
                     .setActivityConfigs(configs)
                     .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
                     .navigation(chain.context())

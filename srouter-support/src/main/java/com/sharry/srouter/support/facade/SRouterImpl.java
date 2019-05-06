@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.sharry.srouter.support.data.InterceptorMeta;
 import com.sharry.srouter.support.data.LogisticsCenter;
-import com.sharry.srouter.support.data.RealChain;
+import com.sharry.srouter.support.interceptors.RealChain;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.data.Warehouse;
@@ -32,15 +32,6 @@ class SRouterImpl {
 
     private static Context sContext;
 
-    /**
-     * Get instance of router implementation. S
-     *
-     * @return SRouterImpl singleton
-     */
-    static SRouterImpl getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
-
     static synchronized boolean init(Application application) {
         sContext = application;
         Logger.i("Route initialize success.");
@@ -51,21 +42,21 @@ class SRouterImpl {
         LogisticsCenter.registerComponents(names);
     }
 
-    public static void unregisterComponents(String[] names) {
+    static void unregisterComponents(String[] names) {
         LogisticsCenter.unregisterComponents(names);
     }
 
     /**
      * Build navigation postcard by path.
      */
-    Request build(String authority, String path) {
+    static Request build(String authority, String path) {
         return Request.create(authority, path);
     }
 
     /**
      * Initiatory perform navigation.
      */
-    void navigation(final Context context, final Request request) {
+    static void navigation(final Context context, final Request request) {
         // 1. load data to request.
         try {
             LogisticsCenter.completion(request);
@@ -125,12 +116,6 @@ class SRouterImpl {
                 // TODO handler response.
             }
         }, request.getDelay());
-    }
-
-    private static class InstanceHolder {
-
-        private static final SRouterImpl INSTANCE = new SRouterImpl();
-
     }
 
 }

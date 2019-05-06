@@ -222,7 +222,7 @@ public class Request extends RouteMeta {
     }
 
     public void navigation(Context context) {
-        SRouter.getInstance().navigation(context, this);
+        SRouter.navigation(context, this);
     }
 
     // ######################### annotation @FlagInt copy from #{Intent}  ##########################

@@ -20,15 +20,13 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         // 尝试跳转到发现页面
         btnFound.setOnClickListener {
-            SRouter.getInstance()
-                    .build(ModuleConstants.Found.NAME, ModuleConstants.Found.FOUND_ACTIVITY)
+            SRouter.request(ModuleConstants.Found.NAME, ModuleConstants.Found.FOUND_ACTIVITY)
                     .setDelay(1000)
                     .navigation(this)
         }
         // 尝试跳转到个人中心
         btnPersonal.setOnClickListener {
-            SRouter.getInstance()
-                    .build(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
+            SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
                     .setActivityConfigs(
                             ActivityConfigs.Builder()
                                     .setActivityOptions(ActivityOptionsCompat.makeClipRevealAnimation(

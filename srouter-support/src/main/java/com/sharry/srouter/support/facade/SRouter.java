@@ -23,6 +23,9 @@ public class SRouter {
 
     private static boolean sHasInit = false;
 
+    private SRouter() {
+    }
+
     /**
      * Initialize, it must be invoke before used router.
      */
@@ -41,6 +44,9 @@ public class SRouter {
      * @param names the module name must be consistent of U setup module name.
      */
     public static void registerComponents(@NonNull String... names) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
         Preconditions.checkNotNull(names);
         SRouterImpl.registerComponents(names);
     }
@@ -51,45 +57,34 @@ public class SRouter {
      * @param names the module name must be consistent of U setup module name.
      */
     public static void unregisterComponents(@NonNull String... names) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
         Preconditions.checkNotNull(names);
         SRouterImpl.unregisterComponents(names);
     }
 
     /**
-     * Get instance of router. S
-     * All function U use, will be start here.
-     *
-     * @return Route singleton
-     */
-    public static SRouter getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
-
-    /**
      * Build router navigation path.
      */
-    public Request build(@NonNull String authority, @NonNull String path) {
+    public static Request request(@NonNull String authority, @NonNull String path) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
         Preconditions.checkNotEmpty(authority);
         Preconditions.checkNotEmpty(path);
-        return SRouterImpl.getInstance().build(authority, path);
+        return SRouterImpl.build(authority, path);
     }
 
     /**
      * perform navigation.
      */
-    public void navigation(@Nullable Context context, @NonNull Request request) {
+    public static void navigation(@Nullable Context context, @NonNull Request request) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
         Preconditions.checkNotNull(request);
-        SRouterImpl.getInstance().navigation(context, request);
-    }
-
-    private static final class InstanceHolder {
-        private static final SRouter INSTANCE = new SRouter();
+        SRouterImpl.navigation(context, request);
     }
 
 }

@@ -1,12 +1,15 @@
-package com.sharry.srouter.support.data;
+package com.sharry.srouter.support.interceptors;
 
 import android.content.Context;
 
-import com.sharry.srouter.support.interceptors.IInterceptor;
+import com.sharry.srouter.support.data.Request;
+import com.sharry.srouter.support.data.Response;
 
 import java.util.List;
 
 /**
+ * 拦截器的责任链实现
+ *
  * @author Sharry <a href="sharrychoochn@gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2019-05-05
