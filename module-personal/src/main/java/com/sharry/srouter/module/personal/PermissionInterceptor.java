@@ -2,6 +2,8 @@ package com.sharry.srouter.module.personal;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.sharry.srouter.annotation.RouteInterceptor;
 import com.sharry.srouter.module.base.ModuleConstants;
 import com.sharry.srouter.support.data.Response;
@@ -19,9 +21,9 @@ import com.sharry.srouter.support.interceptors.IInterceptor;
 public class PermissionInterceptor implements IInterceptor {
 
     @Override
-    public Response process(Chain chain) {
+    public void process(@NonNull Chain chain) {
         Log.e("TAG", "权限获取成功");
-        return chain.dispatch();
+        chain.dispatch();
     }
 
 }

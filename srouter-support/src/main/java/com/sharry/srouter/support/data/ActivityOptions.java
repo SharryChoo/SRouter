@@ -3,7 +3,6 @@ package com.sharry.srouter.support.data;
 import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 
 import com.sharry.srouter.support.utils.Preconditions;
@@ -15,7 +14,7 @@ import com.sharry.srouter.support.utils.Preconditions;
  * @version 1.0
  * @since 2/22/2019 3:28 PM
  */
-public class ActivityConfigs {
+public class ActivityOptions {
 
     public static final int NON_REQUEST_CODE = -1;
     public static final int NON_FLAGS = -1;
@@ -35,13 +34,7 @@ public class ActivityConfigs {
      */
     private ActivityOptionsCompat activityOptions;
 
-    /**
-     * The call back for activity result.
-     */
-    private Callback callback;
-
-    private ActivityConfigs() {
-
+    private ActivityOptions() {
     }
 
     public int getRequestCode() {
@@ -56,20 +49,12 @@ public class ActivityConfigs {
         return activityOptions;
     }
 
-    public void setCallback(Callback callback) {
-        this.callback = callback;
-    }
-
-    public Callback getCallback() {
-        return callback;
-    }
-
     public static class Builder {
 
-        ActivityConfigs configs;
+        ActivityOptions configs;
 
         public Builder() {
-            this.configs = new ActivityConfigs();
+            this.configs = new ActivityOptions();
         }
 
         /**
@@ -78,15 +63,6 @@ public class ActivityConfigs {
         public Builder setActivityOptions(@NonNull ActivityOptionsCompat options) {
             Preconditions.checkNotNull(options);
             configs.activityOptions = options;
-            return this;
-        }
-
-        /**
-         * Set callback for a navigation request, it will called when routed activity finished.
-         */
-        public Builder setActivityCallback(@NonNull Callback callback) {
-            Preconditions.checkNotNull(callback);
-            this.configs.callback = callback;
             return this;
         }
 
@@ -111,13 +87,10 @@ public class ActivityConfigs {
             return this;
         }
 
-        public ActivityConfigs build() {
+        public ActivityOptions build() {
             return configs;
         }
 
     }
 
-    public interface Callback {
-        void onActivityResult(int requestCode, int resultCode, @Nullable Intent data);
-    }
 }

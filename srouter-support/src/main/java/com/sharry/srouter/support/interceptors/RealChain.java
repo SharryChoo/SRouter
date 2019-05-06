@@ -1,14 +1,13 @@
 package com.sharry.srouter.support.interceptors;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
 
-import com.sharry.srouter.support.data.Request;
-import com.sharry.srouter.support.data.Response;
+import com.sharry.srouter.support.utils.Preconditions;
 
 import java.util.List;
 
 /**
- * 拦截器的责任链实现
+ * The Chain implementor.
  *
  * @author Sharry <a href="sharrychoochn@gmail.com">Contact me.</a>
  * @version 1.0
@@ -16,43 +15,40 @@ import java.util.List;
  */
 public class RealChain implements IInterceptor.Chain {
 
-    public static RealChain create(List<IInterceptor> handles, Context context, Request request) {
-        return new RealChain(handles, context, request, 0);
+    /**
+     * Gat an instance of RealChain.
+     */
+    public static RealChain create(@NonNull List<IInterceptor> handles, @NonNull ChainContext chainContext) {
+        Preconditions.checkNotEmpty(handles);
+        Preconditions.checkNotNull(chainContext);
+        return new RealChain(handles, chainContext, 0);
     }
 
-    private static RealChain create(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
-        return new RealChain(handles, context, request, handleIndex);
+    private static RealChain create(List<IInterceptor> handles, ChainContext chainContext, int handleIndex) {
+        return new RealChain(handles, chainContext, handleIndex);
     }
 
     private final List<IInterceptor> handles;
-    private final Context context;
-    private final Request request;
+    private final ChainContext chainContext;
     private final int index;
 
-    private RealChain(List<IInterceptor> handles, Context context, Request request, int handleIndex) {
+    private RealChain(List<IInterceptor> handles, ChainContext context, int handleIndex) {
         this.handles = handles;
-        this.context = context;
-        this.request = request;
+        this.chainContext = context;
         this.index = handleIndex;
     }
 
     @Override
-    public Request request() {
-        return request;
+    public ChainContext chainContext() {
+        return chainContext;
     }
 
     @Override
-    public Context context() {
-        return context;
-    }
-
-    @Override
-    public Response dispatch() {
-        return handles.get(index).process(
+    public void dispatch() {
+        handles.get(index).process(
                 RealChain.create(
                         handles,
-                        context,
-                        request,
+                        chainContext,
                         index + 1
                 )
         );

@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 
-import com.sharry.srouter.support.data.ActivityConfigs;
+import com.sharry.srouter.support.data.ActivityOptions;
 
 /**
- * The Fragment use to receive Target activity result data and callback by {@link ActivityConfigs.Callback}.
+ * The Fragment use to receive Target activity result data and callback by {@link ActivityOptions.Callback}.
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
@@ -47,7 +47,7 @@ public class RouterCallbackFragment extends Fragment {
         return new RouterCallbackFragment();
     }
 
-    private ActivityConfigs.Callback mCallback;
+    private Callback mCallback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class RouterCallbackFragment extends Fragment {
     /**
      * Set callback for the fragment.
      */
-    public void setCallback(ActivityConfigs.Callback callback) {
+    public void setCallback(Callback callback) {
         this.mCallback = callback;
     }
 
@@ -68,6 +68,10 @@ public class RouterCallbackFragment extends Fragment {
         if (null != mCallback) {
             mCallback.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    public interface Callback {
+        void onActivityResult(int requestCode, int resultCode, Intent data);
     }
 
 }

@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 
-import com.sharry.srouter.support.data.ActivityConfigs;
+import com.sharry.srouter.support.data.ActivityOptions;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.providers.IProvider;
@@ -27,14 +27,19 @@ import com.sharry.srouter.support.utils.RouterCallbackFragment;
 public class NavigationInterceptor implements IInterceptor {
 
     @Override
-    public Response process(final Chain chain) {
-        return navigationActual(chain.context(), chain.request());
+    public void process(@NonNull final Chain chain) {
+        ChainContext chainContext = chain.chainContext();
+        navigationActual(
+                chainContext.getBaseContext(),
+                chainContext.getRequest(),
+                chainContext.getCallback()
+        );
     }
 
     /**
      * Actual perform navigation.
      */
-    private Response navigationActual(Context context, Request request) {
+    private void navigationActual(Context context, Request request, IInterceptor.Chain.Callback callback) {
         Response response = new Response();
         switch (request.getType()) {
             case ACTIVITY:
@@ -42,11 +47,7 @@ public class NavigationInterceptor implements IInterceptor {
                 // Inject user extra info to intent.
                 intent.putExtras(request.getDatum());
                 // Real perform activity launch.
-                performLaunchActivity(
-                        context,
-                        intent,
-                        request.getActivityConfigs()
-                );
+                performLaunchActivity(context, intent, request.getActivityOptions(), response, callback);
                 break;
             case SERVICE:
                 intent = new Intent(context, request.getRouteClass());
@@ -59,6 +60,8 @@ public class NavigationInterceptor implements IInterceptor {
                     fragment.setArguments(request.getDatum());
                     // Inject fragment to request provider.
                     response.setFragment(fragment);
+                    // process success.
+                    callback.onDispatched(response);
                 } catch (InstantiationException e) {
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
                             + " failed.", e);
@@ -74,6 +77,8 @@ public class NavigationInterceptor implements IInterceptor {
                     fragmentV4.setArguments(request.getDatum());
                     // Inject fragment to request provider.
                     response.setFragmentV4(fragmentV4);
+                    // process success.
+                    callback.onDispatched(response);
                 } catch (InstantiationException e) {
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
                             + " failed.", e);
@@ -86,6 +91,8 @@ public class NavigationInterceptor implements IInterceptor {
                 try {
                     IProvider provider = (IProvider) request.getRouteClass().newInstance();
                     response.setProvider(provider);
+                    // process success.
+                    callback.onDispatched(response);
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
@@ -98,33 +105,36 @@ public class NavigationInterceptor implements IInterceptor {
             default:
                 break;
         }
-        return response;
     }
 
     /**
      * Perform launch target activity.
      */
-    private void performLaunchActivity(Context context, Intent intent, ActivityConfigs configs) {
+    private void performLaunchActivity(Context context,
+                                       Intent intent,
+                                       ActivityOptions options,
+                                       Response response,
+                                       IInterceptor.Chain.Callback callback) {
         // Inject user config flags to intent.
-        if (configs == null) {
-            configs = new ActivityConfigs.Builder().build();
+        if (options == null) {
+            options = new ActivityOptions.Builder().build();
         }
         // Verify flags.
-        if (ActivityConfigs.NON_FLAGS != configs.getFlags()) {
-            intent.setFlags(configs.getFlags());
+        if (ActivityOptions.NON_FLAGS != options.getFlags()) {
+            intent.setFlags(options.getFlags());
         } else if (!(context instanceof Activity)) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
         // perform launch activity.
-        if (ActivityConfigs.NON_REQUEST_CODE != configs.getRequestCode()) {
+        if (ActivityOptions.NON_REQUEST_CODE != options.getRequestCode()) {
             if (context instanceof Activity) {
-                launchActivityForResultActual((Activity) context, intent, configs.getRequestCode(),
-                        configs.getActivityOptions(), configs.getCallback());
+                launchActivityForResultActual((Activity) context, intent, options.getRequestCode(),
+                        options.getActivityOptions(), response, callback);
             } else {
-                launchActivityActual(context, intent, configs.getActivityOptions());
+                launchActivityActual(context, intent, options.getActivityOptions());
             }
         } else {
-            launchActivityActual(context, intent, configs.getActivityOptions());
+            launchActivityActual(context, intent, options.getActivityOptions());
         }
     }
 
@@ -135,26 +145,22 @@ public class NavigationInterceptor implements IInterceptor {
                                                Intent intent,
                                                int requestCode,
                                                ActivityOptionsCompat activityOptions,
-                                               ActivityConfigs.Callback callback) {
+                                               final Response response,
+                                               final IInterceptor.Chain.Callback callback) {
+        // Observer activity onActivityResult Callback.
+        RouterCallbackFragment callbackFragment = RouterCallbackFragment.getInstance(activity);
+        callbackFragment.setCallback(new RouterCallbackFragment.Callback() {
+            @Override
+            public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                response.setActivityResult(requestCode, resultCode, data);
+                callback.onDispatched(response);
+            }
+        });
         // Launch activity with Activity options.
         if (activityOptions != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            // Observer activity onActivityResult Callback.
-            if (callback != null) {
-                RouterCallbackFragment callbackFragment = RouterCallbackFragment.getInstance(activity);
-                callbackFragment.setCallback(callback);
-                callbackFragment.startActivityForResult(intent, requestCode, activityOptions.toBundle());
-            } else {
-                activity.startActivityForResult(intent, requestCode, activityOptions.toBundle());
-            }
+            callbackFragment.startActivityForResult(intent, requestCode, activityOptions.toBundle());
         } else { // Launch activity without Activity options.
-            // Observer activity onActivityResult Callback.
-            if (callback != null) {
-                RouterCallbackFragment callbackFragment = RouterCallbackFragment.getInstance(activity);
-                callbackFragment.setCallback(callback);
-                callbackFragment.startActivityForResult(intent, requestCode);
-            } else {
-                activity.startActivityForResult(intent, requestCode);
-            }
+            callbackFragment.startActivityForResult(intent, requestCode);
         }
     }
 

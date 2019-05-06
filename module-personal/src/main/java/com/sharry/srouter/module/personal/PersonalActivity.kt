@@ -24,7 +24,7 @@ class PersonalActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.component2_activity_personal)
+        setContentView(R.layout.personal_activity_personal)
     }
 
 }

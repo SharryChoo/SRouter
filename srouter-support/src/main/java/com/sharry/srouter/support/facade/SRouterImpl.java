@@ -3,17 +3,15 @@ package com.sharry.srouter.support.facade;
 import android.app.Application;
 import android.content.Context;
 
+import com.sharry.srouter.support.call.ICall;
+import com.sharry.srouter.support.call.RealCall;
 import com.sharry.srouter.support.data.InterceptorMeta;
 import com.sharry.srouter.support.data.LogisticsCenter;
-import com.sharry.srouter.support.interceptors.RealChain;
 import com.sharry.srouter.support.data.Request;
-import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.data.Warehouse;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.interceptors.IInterceptor;
 import com.sharry.srouter.support.interceptors.NavigationInterceptor;
-import com.sharry.srouter.support.scheduler.IScheduler;
-import com.sharry.srouter.support.scheduler.SchedulerFactory;
 import com.sharry.srouter.support.utils.Logger;
 
 import java.util.ArrayList;
@@ -56,13 +54,20 @@ class SRouterImpl {
     /**
      * Initiatory perform navigation.
      */
-    static void navigation(final Context context, final Request request) {
+    static void navigation(final Context context, final Request request, Callback callback) {
+        newCall(context, request).call(callback);
+    }
+
+    /**
+     * Build an instance of navigation call.
+     */
+    static ICall newCall(final Context context, final Request request) {
         // 1. load data to request.
         try {
             LogisticsCenter.completion(request);
         } catch (NoRouteFoundException e) {
             Logger.e(e.getMessage(), e);
-            return;
+            return ICall.DEFAULT;
         }
         // 2. Add user added interceptors before route interceptor.
         final List<IInterceptor> interceptors = new ArrayList<>(request.getInterceptors());
@@ -103,19 +108,7 @@ class SRouterImpl {
         }
         // 4. Add finalize navigation Interceptor.
         interceptors.add(new NavigationInterceptor());
-        // 5. dispatch request.
-        IScheduler scheduler = SchedulerFactory.create(request.getThreadMode());
-        scheduler.schedule(new Runnable() {
-            @Override
-            public void run() {
-                Response response = RealChain.create(
-                        interceptors,
-                        null == context ? sContext : context,
-                        request
-                ).dispatch();
-                // TODO handler response.
-            }
-        }, request.getDelay());
+        return RealCall.create(null == context ? sContext : context, request, interceptors);
     }
 
 }

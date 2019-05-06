@@ -10,6 +10,8 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.sharry.srouter.support.call.ICall;
+import com.sharry.srouter.support.facade.Callback;
 import com.sharry.srouter.support.facade.SRouter;
 import com.sharry.srouter.support.interceptors.IInterceptor;
 import com.sharry.srouter.support.utils.Logger;
@@ -63,7 +65,7 @@ public class Request extends RouteMeta {
     /**
      * The Activity request params for the request.
      */
-    private ActivityConfigs activityConfigs;
+    private ActivityOptions activityOptions;
 
     /**
      * if true, it will ignore interceptor.
@@ -106,9 +108,9 @@ public class Request extends RouteMeta {
         return this;
     }
 
-    public Request setActivityConfigs(@NonNull ActivityConfigs activityConfigs) {
-        Preconditions.checkNotNull(activityConfigs);
-        this.activityConfigs = activityConfigs;
+    public Request setActivityOptions(@NonNull ActivityOptions activityOptions) {
+        Preconditions.checkNotNull(activityOptions);
+        this.activityOptions = activityOptions;
         return this;
     }
 
@@ -176,16 +178,10 @@ public class Request extends RouteMeta {
         return this;
     }
 
-    /**
-     * Get request authority.
-     */
     public String getAuthority() {
         return authority;
     }
 
-    /**
-     * Get Request path.
-     */
     public String getPath() {
         return path;
     }
@@ -202,8 +198,8 @@ public class Request extends RouteMeta {
         return isGreenChannel;
     }
 
-    public ActivityConfigs getActivityConfigs() {
-        return activityConfigs;
+    public ActivityOptions getActivityOptions() {
+        return activityOptions;
     }
 
     public List<IInterceptor> getInterceptors() {
@@ -218,11 +214,30 @@ public class Request extends RouteMeta {
      * Start navigation.
      */
     public void navigation() {
-        this.navigation(null);
+        navigation(null, null);
     }
 
-    public void navigation(Context context) {
-        SRouter.navigation(context, this);
+    public void navigation(@Nullable Context context) {
+        navigation(context, null);
+    }
+
+    public void navigation(@Nullable Callback callback) {
+        navigation(null, callback);
+    }
+
+    public void navigation(@Nullable Context context, @Nullable Callback callback) {
+        SRouter.navigation(context, this, callback);
+    }
+
+    /**
+     * Get an instance of navigation call
+     */
+    public ICall newCall() {
+        return newCall(null);
+    }
+
+    public ICall newCall(@Nullable Context context) {
+        return SRouter.newCall(context, this);
     }
 
     // ######################### annotation @FlagInt copy from #{Intent}  ##########################

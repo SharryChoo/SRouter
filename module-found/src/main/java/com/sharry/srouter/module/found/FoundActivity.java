@@ -28,7 +28,7 @@ public class FoundActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.component1_activity_found);
+        setContentView(R.layout.found_activity_found);
     }
 
     @Override

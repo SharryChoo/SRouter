@@ -1,8 +1,7 @@
 package com.sharry.srouter.support.interceptors;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
 
-import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
 
 /**
@@ -12,18 +11,23 @@ import com.sharry.srouter.support.data.Response;
  */
 public interface IInterceptor {
 
-    Response process(Chain chain);
+    void process(@NonNull Chain chain);
 
     /**
      * The chain for once navigation.
      */
     interface Chain {
 
-        Request request();
+        ChainContext chainContext();
 
-        Context context();
+        void dispatch();
 
-        Response dispatch();
+        interface Callback {
+
+            void onDispatched(@NonNull Response response);
+
+        }
     }
+
 
 }
