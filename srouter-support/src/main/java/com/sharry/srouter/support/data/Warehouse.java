@@ -2,8 +2,11 @@ package com.sharry.srouter.support.data;
 
 import com.sharry.srouter.annotation.Route;
 import com.sharry.srouter.annotation.RouteInterceptor;
+import com.sharry.srouter.support.call.ICallAdapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,5 +31,11 @@ public class Warehouse {
      * The key mapper special value is data associated with @RouteInterceptor marked class.
      */
     public static final Map<String, InterceptorMeta> TABLE_ROUTES_INTERCEPTORS = new HashMap<>();
+
+    public static final List<ICallAdapter> CALL_ADAPTERS = new ArrayList<>();
+
+    static {
+        CALL_ADAPTERS.add(ICallAdapter.DEFAULT);
+    }
 
 }

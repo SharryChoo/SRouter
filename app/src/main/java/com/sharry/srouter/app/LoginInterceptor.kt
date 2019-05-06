@@ -4,8 +4,10 @@ import android.app.Activity.RESULT_OK
 import com.sharry.srouter.annotation.RouteInterceptor
 import com.sharry.srouter.module.base.ModuleConstants
 import com.sharry.srouter.support.data.ActivityOptions
+import com.sharry.srouter.support.data.Response
 import com.sharry.srouter.support.facade.SRouter
 import com.sharry.srouter.support.interceptors.IInterceptor
+import io.reactivex.Observable
 
 /**
  * @author Sharry [Contact me.](SharryChooCHN@Gmail.com)
@@ -22,17 +24,21 @@ class LoginInterceptor : IInterceptor {
         // 若没有登录, 则先跳转到登录页面
         if (!ModuleConstants.App.isLogin) {
             // 跳转到登录页面
-            SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
+            val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
                     // 构建 Activity 相关配置
                     .setActivityOptions(
                             ActivityOptions.Builder().setRequestCode(100).build()
                     )
                     .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
-                    .navigation(chain.chainContext()) {
-                        if (it.activityResult.requestCode == RESULT_OK) {
-                            SRouter.navigation(chain.chainContext(), chain.chainContext().request)
+                    .newCall(chain.chainContext().baseContext)
+                    .adaptTo(Observable::class.java)
+                    .map { it as Response }
+                    .subscribe {
+                        if (it.activityResult.resultCode == RESULT_OK) {
+                            SRouter.navigation(chain.chainContext().baseContext, chain.chainContext().request)
                         }
                     }
+            disposable.dispose()
             return
         }
         // 若已经登录, 则正常分发

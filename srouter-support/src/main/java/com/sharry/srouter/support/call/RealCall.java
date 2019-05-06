@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
+import com.sharry.srouter.support.data.Warehouse;
 import com.sharry.srouter.support.facade.Callback;
 import com.sharry.srouter.support.interceptors.ChainContext;
 import com.sharry.srouter.support.interceptors.IInterceptor;
@@ -77,6 +78,16 @@ public class RealCall implements ICall {
                 RealChain.create(interceptors, chainContext).dispatch();
             }
         }, request.getDelay());
+    }
+
+    @Override
+    public <T> T adaptTo(Class<T> returnClass) {
+        for (ICallAdapter callAdapter : Warehouse.CALL_ADAPTERS) {
+            if (returnClass.getName().equals(callAdapter.adaptType().getName())) {
+                return (T) callAdapter.adapt(this);
+            }
+        }
+        return null;
     }
 
 }

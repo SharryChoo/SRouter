@@ -287,6 +287,11 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         }
     }
 
+    override fun finish() {
+        setResult(Activity.RESULT_OK)
+        super.finish()
+    }
+
     companion object {
 
         /**

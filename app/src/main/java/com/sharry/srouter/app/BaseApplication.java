@@ -3,6 +3,7 @@ package com.sharry.srouter.app;
 import android.app.Application;
 
 import com.sharry.srouter.module.base.ModuleConstants;
+import com.sharry.srouter.module.base.RxJavaAdapter;
 import com.sharry.srouter.support.facade.SRouter;
 
 /**
@@ -21,6 +22,7 @@ public class BaseApplication extends Application {
                 ModuleConstants.Found.NAME,
                 ModuleConstants.Personal.NAME
         );
+        SRouter.addCallAdapter(new RxJavaAdapter());
     }
 
 }

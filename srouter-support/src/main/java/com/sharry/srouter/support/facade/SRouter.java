@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.sharry.srouter.support.call.ICall;
+import com.sharry.srouter.support.call.ICallAdapter;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.exceptions.RouteUninitializedException;
 import com.sharry.srouter.support.utils.Logger;
@@ -94,9 +95,19 @@ public class SRouter {
     /**
      * Build an instance of navigation call.
      */
-    public static ICall newCall(@Nullable Context context, @NonNull  Request request) {
+    public static ICall newCall(@Nullable Context context, @NonNull Request request) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
         Preconditions.checkNotNull(request);
         return SRouterImpl.newCall(context, request);
     }
 
+    public static void addCallAdapter(@NonNull ICallAdapter adapter) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        Preconditions.checkNotNull(adapter);
+        SRouterImpl.addCallAdapter(adapter);
+    }
 }

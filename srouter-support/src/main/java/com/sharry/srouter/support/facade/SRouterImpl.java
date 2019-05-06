@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.sharry.srouter.support.call.ICall;
+import com.sharry.srouter.support.call.ICallAdapter;
 import com.sharry.srouter.support.call.RealCall;
 import com.sharry.srouter.support.data.InterceptorMeta;
 import com.sharry.srouter.support.data.LogisticsCenter;
@@ -44,6 +45,10 @@ class SRouterImpl {
         LogisticsCenter.unregisterComponents(names);
     }
 
+    static void addCallAdapter(ICallAdapter adapter) {
+        LogisticsCenter.addCallAdapter(adapter);
+    }
+
     /**
      * Build navigation postcard by path.
      */
@@ -55,7 +60,8 @@ class SRouterImpl {
      * Initiatory perform navigation.
      */
     static void navigation(final Context context, final Request request, Callback callback) {
-        newCall(context, request).call(callback);
+        ICall newCall = newCall(context, request);
+        newCall.call(callback);
     }
 
     /**
@@ -110,5 +116,4 @@ class SRouterImpl {
         interceptors.add(new NavigationInterceptor());
         return RealCall.create(null == context ? sContext : context, request, interceptors);
     }
-
 }

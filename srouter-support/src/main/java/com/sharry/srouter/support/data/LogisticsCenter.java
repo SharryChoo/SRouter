@@ -1,5 +1,6 @@
 package com.sharry.srouter.support.data;
 
+import com.sharry.srouter.support.call.ICallAdapter;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.templates.IRoute;
 import com.sharry.srouter.support.templates.IRouteInterceptor;
@@ -82,5 +83,9 @@ public class LogisticsCenter {
         request.setRouteInterceptorURIs(routeMeta.getRouteInterceptorURIs());
         // If Type is PROVIDER, the request cannot be intercepted.
         request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.PROVIDER);
+    }
+
+    public static void addCallAdapter(ICallAdapter adapter) {
+        Warehouse.CALL_ADAPTERS.add(adapter);
     }
 }

@@ -22,10 +22,18 @@ public interface ICall {
         @Override
         public void call(@Nullable Callback callback) {
         }
+
+        @Override
+        public <T> T adaptTo(Class<T> adaptType) {
+            return null;
+        }
+
     };
 
     void call();
 
     void call(@Nullable Callback callback);
+
+    <T> T adaptTo(Class<T> adaptType);
 
 }
