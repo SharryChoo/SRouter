@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 
-import com.sharry.srouter.support.data.ActivityOptions;
+import com.sharry.srouter.support.data.ActivityConfig;
 
 /**
- * The Fragment use to receive Target activity result data and callback by {@link ActivityOptions.Callback}.
+ * The Fragment use to receive Target activity result data and callback by {@link ActivityConfig.Callback}.
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0

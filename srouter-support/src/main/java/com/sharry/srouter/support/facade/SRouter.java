@@ -74,7 +74,7 @@ public class SRouter {
         }
         Preconditions.checkNotEmpty(authority);
         Preconditions.checkNotEmpty(path);
-        return SRouterImpl.build(authority, path);
+        return SRouterImpl.request(authority, path);
     }
 
     /**

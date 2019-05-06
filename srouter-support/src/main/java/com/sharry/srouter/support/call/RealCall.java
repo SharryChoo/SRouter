@@ -67,7 +67,7 @@ public class RealCall implements ICall {
                         request,
                         new IInterceptor.Chain.Callback() {
                             @Override
-                            public void onDispatched(@NonNull Response response) {
+                            public void onCompleted(@NonNull Response response) {
                                 if (callback == null) {
                                     Logger.i("Callback is null, callback canceled.");
                                     return;

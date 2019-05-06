@@ -9,7 +9,7 @@ import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.utils.Preconditions;
 
 /**
- * The data parcel used to chain dispatching.
+ * The context associated with dispatching.
  *
  * @author Sharry <a href="xiaoyu.zhu@1hai.cn">Contact me.</a>
  * @version 1.0
@@ -29,8 +29,8 @@ public class ChainContext extends ContextWrapper {
         return new ChainContext(context, request, callback);
     }
 
-    public final Request request;
     public final IInterceptor.Chain.Callback callback;
+    public Request request;
 
     private ChainContext(Context base, Request request, IInterceptor.Chain.Callback callback) {
         super(base);

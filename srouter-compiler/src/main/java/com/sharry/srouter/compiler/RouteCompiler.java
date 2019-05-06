@@ -34,7 +34,6 @@ import javax.lang.model.util.Types;
 
 import static com.sharry.srouter.compiler.Constants.CLASS_NAME_ACTIVITY;
 import static com.sharry.srouter.compiler.Constants.CLASS_NAME_FRAGMENT;
-import static com.sharry.srouter.compiler.Constants.CLASS_NAME_SERVICE;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 /**
@@ -53,10 +52,9 @@ public class RouteCompiler extends AbstractProcessor {
     private Elements mElementUtils;
     // Special super class type.
     private TypeMirror mTypeActivity;
-    private TypeMirror mTypeService;
     private TypeMirror mTypeFragment;
     private TypeMirror mTypeFragmentV4;
-    private TypeMirror mTypeProvider;
+    private TypeMirror mTypeService;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
@@ -178,10 +176,9 @@ public class RouteCompiler extends AbstractProcessor {
      */
     private void findDeclaredSpecialType() {
         mTypeActivity = mElementUtils.getTypeElement(CLASS_NAME_ACTIVITY).asType();
-        mTypeService = mElementUtils.getTypeElement(CLASS_NAME_SERVICE).asType();
         mTypeFragment = mElementUtils.getTypeElement(CLASS_NAME_FRAGMENT).asType();
         mTypeFragmentV4 = mElementUtils.getTypeElement(Constants.CLASS_NAME_FRAGMENT_V4).asType();
-        mTypeProvider = mElementUtils.getTypeElement(Constants.CLASS_NAME_IPROVIDER).asType();
+        mTypeService = mElementUtils.getTypeElement(Constants.CLASS_NAME_ISERVICE).asType();
     }
 
     /**
@@ -256,10 +253,6 @@ public class RouteCompiler extends AbstractProcessor {
             // @Route bind class is child for Activity.
             mLogger.i("Found activity route: " + tm.toString() + " <<<");
             writeLoadInto(loadInto, "ACTIVITY", authority, path, threadMode, interceptorURIs, element);
-        } else if (mTypeUtils.isSubtype(tm, mTypeService)) {
-            // @Route bind class is child for Service.
-            mLogger.i("Found service route: " + tm.toString() + " <<<");
-            writeLoadInto(loadInto, "SERVICE", authority, path, threadMode, interceptorURIs, element);
         } else if (mTypeUtils.isSubtype(tm, mTypeFragment)) {
             // @Route bind class is child for Fragment.
             mLogger.i("Found fragment route: " + tm.toString() + " <<<");
@@ -268,11 +261,10 @@ public class RouteCompiler extends AbstractProcessor {
             // @Route bind class is child for Fragment.
             mLogger.i("Found fragment v4 route: " + tm.toString() + " <<<");
             writeLoadInto(loadInto, "FRAGMENT_V4", authority, path, threadMode, interceptorURIs, element);
-
-        } else if (mTypeUtils.isSubtype(tm, mTypeProvider)) {
-            // @Route bind class is child for IProvider.
-            mLogger.i("Found provider route: " + tm.toString() + " <<<");
-            writeLoadInto(loadInto, "IPROVIDER", authority, path, threadMode, interceptorURIs, element);
+        } else if (mTypeUtils.isSubtype(tm, mTypeService)) {
+            // @Route bind class is child for IService.
+            mLogger.i("Found service route: " + tm.toString() + " <<<");
+            writeLoadInto(loadInto, "SERVICE", authority, path, threadMode, interceptorURIs, element);
         } else {
             // @Route bind class is child for others.
             mLogger.i("Found other route: " + tm.toString() + " <<<");

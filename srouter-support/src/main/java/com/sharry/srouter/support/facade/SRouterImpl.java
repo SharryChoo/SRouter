@@ -12,7 +12,7 @@ import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Warehouse;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.interceptors.IInterceptor;
-import com.sharry.srouter.support.interceptors.NavigationInterceptor;
+import com.sharry.srouter.support.interceptors.FinalInterceptor;
 import com.sharry.srouter.support.utils.Logger;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ class SRouterImpl {
     /**
      * Build navigation postcard by path.
      */
-    static Request build(String authority, String path) {
+    static Request request(String authority, String path) {
         return Request.create(authority, path);
     }
 
@@ -60,8 +60,7 @@ class SRouterImpl {
      * Initiatory perform navigation.
      */
     static void navigation(final Context context, final Request request, Callback callback) {
-        ICall newCall = newCall(context, request);
-        newCall.call(callback);
+        newCall(context, request).call(callback);
     }
 
     /**
@@ -113,7 +112,7 @@ class SRouterImpl {
             }
         }
         // 4. Add finalize navigation Interceptor.
-        interceptors.add(new NavigationInterceptor());
+        interceptors.add(new FinalInterceptor());
         return RealCall.create(null == context ? sContext : context, request, interceptors);
     }
 }

@@ -57,6 +57,13 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         email_sign_in_button.setOnClickListener { attemptLogin() }
     }
 
+    override fun finish() {
+        if (ModuleConstants.App.isLogin) {
+            setResult(Activity.RESULT_OK)
+        }
+        super.finish()
+    }
+
     private fun populateAutoComplete() {
         if (!mayRequestContacts()) {
             return
@@ -93,7 +100,6 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             }
         }
     }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -285,11 +291,6 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             mAuthTask = null
             showProgress(false)
         }
-    }
-
-    override fun finish() {
-        setResult(Activity.RESULT_OK)
-        super.finish()
     }
 
     companion object {

@@ -32,6 +32,9 @@ public class Warehouse {
      */
     public static final Map<String, InterceptorMeta> TABLE_ROUTES_INTERCEPTORS = new HashMap<>();
 
+    /**
+     * Cache call adapters associated with SRouter.
+     */
     public static final List<ICallAdapter> CALL_ADAPTERS = new ArrayList<>();
 
     static {

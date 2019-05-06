@@ -2,9 +2,10 @@ package com.sharry.srouter.support.data;
 
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.sharry.srouter.support.providers.IProvider;
+import com.sharry.srouter.support.service.IService;
 
 /**
  * The result associated with a navigation.
@@ -15,10 +16,19 @@ import com.sharry.srouter.support.providers.IProvider;
  */
 public class Response {
 
-    private IProvider provider;
+    private final Request request;
+    private IService provider;
     private Fragment fragmentV4;
     private android.app.Fragment fragment;
     private ActivityResult activityResult;
+
+    public Response(@NonNull Request request) {
+        this.request = request;
+    }
+
+    public Request getRequest() {
+        return request;
+    }
 
     public Fragment getFragmentV4() {
         return fragmentV4;
@@ -36,12 +46,12 @@ public class Response {
         this.fragment = fragment;
     }
 
-    public IProvider getProvider() {
+    public IService getProvider() {
         return provider;
     }
 
-    public void setProvider(IProvider provider) {
-        this.provider = provider;
+    public void setService(IService service) {
+        this.provider = service;
     }
 
     public void setActivityResult(int requestCode, int resultCode, Intent data) {

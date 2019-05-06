@@ -14,7 +14,7 @@ import com.sharry.srouter.support.utils.Preconditions;
  * @version 1.0
  * @since 2/22/2019 3:28 PM
  */
-public class ActivityOptions {
+public class ActivityConfig {
 
     public static final int NON_REQUEST_CODE = -1;
     public static final int NON_FLAGS = -1;
@@ -34,7 +34,7 @@ public class ActivityOptions {
      */
     private ActivityOptionsCompat activityOptions;
 
-    private ActivityOptions() {
+    private ActivityConfig() {
     }
 
     public int getRequestCode() {
@@ -51,10 +51,10 @@ public class ActivityOptions {
 
     public static class Builder {
 
-        ActivityOptions configs;
+        ActivityConfig configs;
 
         public Builder() {
-            this.configs = new ActivityOptions();
+            this.configs = new ActivityConfig();
         }
 
         /**
@@ -87,7 +87,7 @@ public class ActivityOptions {
             return this;
         }
 
-        public ActivityOptions build() {
+        public ActivityConfig build() {
             return configs;
         }
 

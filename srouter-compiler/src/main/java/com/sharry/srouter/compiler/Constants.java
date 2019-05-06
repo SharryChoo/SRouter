@@ -20,8 +20,7 @@ class Constants {
     static final String CLASS_NAME_ACTIVITY = "android.app.Activity";
     static final String CLASS_NAME_FRAGMENT = "android.app.Fragment";
     static final String CLASS_NAME_FRAGMENT_V4 = "android.support.v4.app.Fragment";
-    static final String CLASS_NAME_SERVICE = "android.app.Service";
-    static final String CLASS_NAME_IPROVIDER = "com.sharry.srouter.support.providers.IProvider";
+    static final String CLASS_NAME_ISERVICE = "com.sharry.srouter.support.service.IService";
     static final String CLASS_NAME_IINTERCEPTOR = "com.sharry.srouter.support.interceptors.IInterceptor";
 
     /**

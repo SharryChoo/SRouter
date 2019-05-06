@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment;
 
 import com.sharry.srouter.annotation.Route;
 import com.sharry.srouter.annotation.ThreadMode;
-import com.sharry.srouter.support.providers.IProvider;
+import com.sharry.srouter.support.service.IService;
 
 /**
  * Save data associated with {@link Route} marked class.
@@ -35,24 +35,9 @@ public class RouteMeta {
         FRAGMENT_V4,
 
         /**
-         * Type of {@link android.app.Service}.
+         * Type of {@link IService}.
          */
         SERVICE,
-
-        /**
-         * Type of {@link android.content.ContentProvider}.
-         */
-        CONTENT_PROVIDER,
-
-        /**
-         * Type of {@link android.content.BroadcastReceiver}.
-         */
-        BROADCAST,
-
-        /**
-         * Type of {@link IProvider}.
-         */
-        PROVIDER,
 
         /**
          * Type unsupported.

@@ -18,24 +18,23 @@ public class RealChain implements IInterceptor.Chain {
     /**
      * Gat an instance of RealChain.
      */
-    public static RealChain create(@NonNull List<IInterceptor> handles, @NonNull ChainContext chainContext) {
+    public static RealChain create(@NonNull List<IInterceptor> handles, ChainContext chainContext) {
         Preconditions.checkNotEmpty(handles);
-        Preconditions.checkNotNull(chainContext);
-        return new RealChain(handles, chainContext, 0);
+        return new RealChain(handles, 0, chainContext);
     }
 
-    private static RealChain create(List<IInterceptor> handles, ChainContext chainContext, int handleIndex) {
-        return new RealChain(handles, chainContext, handleIndex);
+    private static RealChain create(List<IInterceptor> handles, int handleIndex, ChainContext chainContext) {
+        return new RealChain(handles, handleIndex, chainContext);
     }
 
     private final List<IInterceptor> handles;
-    private final ChainContext chainContext;
     private final int index;
+    private final ChainContext chainContext;
 
-    private RealChain(List<IInterceptor> handles, ChainContext context, int handleIndex) {
+    private RealChain(List<IInterceptor> handles, int handleIndex, ChainContext context) {
         this.handles = handles;
-        this.chainContext = context;
         this.index = handleIndex;
+        this.chainContext = context;
     }
 
     @Override
@@ -45,11 +44,11 @@ public class RealChain implements IInterceptor.Chain {
 
     @Override
     public void dispatch() {
-        handles.get(index).process(
+        handles.get(index).intercept(
                 RealChain.create(
                         handles,
-                        chainContext,
-                        index + 1
+                        index + 1,
+                        chainContext
                 )
         );
     }

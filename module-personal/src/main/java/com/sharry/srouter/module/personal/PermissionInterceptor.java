@@ -21,7 +21,7 @@ import com.sharry.srouter.support.interceptors.IInterceptor;
 public class PermissionInterceptor implements IInterceptor {
 
     @Override
-    public void process(@NonNull Chain chain) {
+    public void intercept(@NonNull Chain chain) {
         Log.e("TAG", "权限获取成功");
         chain.dispatch();
     }

@@ -65,7 +65,7 @@ public class Request extends RouteMeta {
     /**
      * The Activity request params for the request.
      */
-    private ActivityOptions activityOptions;
+    private ActivityConfig activityConfig;
 
     /**
      * if true, it will ignore interceptor.
@@ -73,12 +73,12 @@ public class Request extends RouteMeta {
     private boolean isGreenChannel;
 
     /**
-     * The interceptorURIs will be process before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
+     * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
      */
     private final List<IInterceptor> interceptors = new ArrayList<>();
 
     /**
-     * The interceptorURIs will be process before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
+     * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
      */
     private final List<String> interceptorURIs = new ArrayList<>();
 
@@ -99,7 +99,7 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Set delay time when navigation process.
+     * Set delay time when navigation intercept.
      * <p>
      * Unit is {{@link TimeUnit#MILLISECONDS}}
      */
@@ -108,9 +108,9 @@ public class Request extends RouteMeta {
         return this;
     }
 
-    public Request setActivityOptions(@NonNull ActivityOptions activityOptions) {
-        Preconditions.checkNotNull(activityOptions);
-        this.activityOptions = activityOptions;
+    public Request setActivityConfig(@NonNull ActivityConfig activityConfig) {
+        Preconditions.checkNotNull(activityConfig);
+        this.activityConfig = activityConfig;
         return this;
     }
 
@@ -198,8 +198,8 @@ public class Request extends RouteMeta {
         return isGreenChannel;
     }
 
-    public ActivityOptions getActivityOptions() {
-        return activityOptions;
+    public ActivityConfig getActivityConfig() {
+        return activityConfig;
     }
 
     public List<IInterceptor> getInterceptors() {

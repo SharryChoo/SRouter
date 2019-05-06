@@ -81,8 +81,8 @@ public class LogisticsCenter {
         request.setRouteClass(routeMeta.getRouteClass());
         request.setThreadMode(routeMeta.getThreadMode());
         request.setRouteInterceptorURIs(routeMeta.getRouteInterceptorURIs());
-        // If Type is PROVIDER, the request cannot be intercepted.
-        request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.PROVIDER);
+        // If Type is SERVICE, the request cannot be intercepted.
+        request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.SERVICE);
     }
 
     public static void addCallAdapter(ICallAdapter adapter) {
