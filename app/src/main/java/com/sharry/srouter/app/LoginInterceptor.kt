@@ -21,21 +21,24 @@ import io.reactivex.Observable
 class LoginInterceptor : IInterceptor {
 
     override fun process(chain: IInterceptor.Chain) {
+        val chainContext = chain.chainContext()
         // 若没有登录, 则先跳转到登录页面
         if (!ModuleConstants.App.isLogin) {
             // 跳转到登录页面
             val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
                     // 构建 Activity 相关配置
                     .setActivityOptions(
-                            ActivityOptions.Builder().setRequestCode(100).build()
+                            ActivityOptions.Builder()
+                                    .setRequestCode(100)
+                                    .build()
                     )
                     .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
-                    .newCall(chain.chainContext().baseContext)
+                    .newCall(chainContext.baseContext)
                     .adaptTo(Observable::class.java)
                     .map { it as Response }
                     .subscribe {
                         if (it.activityResult.resultCode == RESULT_OK) {
-                            SRouter.navigation(chain.chainContext().baseContext, chain.chainContext().request)
+                            SRouter.navigation(chainContext.baseContext, chainContext.request)
                         }
                     }
             disposable.dispose()
