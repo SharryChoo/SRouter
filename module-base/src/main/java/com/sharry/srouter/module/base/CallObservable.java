@@ -1,7 +1,5 @@
 package com.sharry.srouter.module.base;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.sharry.srouter.support.call.ICall;
@@ -13,6 +11,8 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 /**
+ * Thanks for RxJava.
+ *
  * @author Sharry <a href="xiaoyu.zhu@1hai.cn">Contact me.</a>
  * @version 1.0
  * @since 5/6/2019 6:16 PM

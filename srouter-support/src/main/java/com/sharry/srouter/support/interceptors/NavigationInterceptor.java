@@ -30,7 +30,7 @@ public class NavigationInterceptor implements IInterceptor {
     public void process(@NonNull final Chain chain) {
         ChainContext chainContext = chain.chainContext();
         navigationActual(
-                chainContext.context,
+                chainContext.getBaseContext(),
                 chainContext.request,
                 chainContext.callback
         );

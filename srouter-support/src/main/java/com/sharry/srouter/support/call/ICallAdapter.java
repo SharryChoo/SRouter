@@ -3,6 +3,8 @@ package com.sharry.srouter.support.call;
 import androidx.annotation.NonNull;
 
 /**
+ * The define of ICall adapter.
+ *
  * @author Sharry <a href="xiaoyu.zhu@1hai.cn">Contact me.</a>
  * @version 1.0
  * @since 5/6/2019 4:48 PM

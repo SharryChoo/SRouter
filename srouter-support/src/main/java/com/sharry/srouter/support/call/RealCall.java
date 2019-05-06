@@ -82,7 +82,9 @@ public class RealCall implements ICall {
     }
 
     @Override
+    @NonNull
     public <T> T adaptTo(@NonNull Class<T> returnClass) {
+        // Find adapter.
         for (ICallAdapter callAdapter : Warehouse.CALL_ADAPTERS) {
             if (returnClass.getName().equals(callAdapter.adaptType().getName())) {
                 return (T) callAdapter.adapt(this);

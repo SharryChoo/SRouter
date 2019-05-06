@@ -29,13 +29,11 @@ public class ChainContext extends ContextWrapper {
         return new ChainContext(context, request, callback);
     }
 
-    public final Context context;
     public final Request request;
     public final IInterceptor.Chain.Callback callback;
 
     private ChainContext(Context base, Request request, IInterceptor.Chain.Callback callback) {
         super(base);
-        this.context = base;
         this.request = request;
         this.callback = callback;
     }
