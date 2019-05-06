@@ -66,6 +66,17 @@ public class SRouter {
     }
 
     /**
+     * Add ICall adapter.
+     */
+    public static void addCallAdapter(@NonNull ICallAdapter adapter) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        Preconditions.checkNotNull(adapter);
+        SRouterImpl.addCallAdapter(adapter);
+    }
+
+    /**
      * Build router navigation path.
      */
     public static Request request(@NonNull String authority, @NonNull String path) {
@@ -101,13 +112,5 @@ public class SRouter {
         }
         Preconditions.checkNotNull(request);
         return SRouterImpl.newCall(context, request);
-    }
-
-    public static void addCallAdapter(@NonNull ICallAdapter adapter) {
-        if (!sHasInit) {
-            throw new RouteUninitializedException();
-        }
-        Preconditions.checkNotNull(adapter);
-        SRouterImpl.addCallAdapter(adapter);
     }
 }

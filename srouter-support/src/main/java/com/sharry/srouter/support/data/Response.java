@@ -17,7 +17,7 @@ import com.sharry.srouter.support.service.IService;
 public class Response {
 
     private final Request request;
-    private IService provider;
+    private IService service;
     private Fragment fragmentV4;
     private android.app.Fragment fragment;
     private ActivityResult activityResult;
@@ -46,12 +46,12 @@ public class Response {
         this.fragment = fragment;
     }
 
-    public IService getProvider() {
-        return provider;
+    public IService getService() {
+        return service;
     }
 
     public void setService(IService service) {
-        this.provider = service;
+        this.service = service;
     }
 
     public void setActivityResult(int requestCode, int resultCode, Intent data) {
