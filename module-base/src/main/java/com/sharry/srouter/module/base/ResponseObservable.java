@@ -14,11 +14,11 @@ import io.reactivex.disposables.Disposable;
  * @version 1.0
  * @since 5/6/2019 6:16 PM
  */
-final class CallObservable extends Observable<Response> {
+public final class ResponseObservable extends Observable<Response> {
 
     private final ICall originalCall;
 
-    CallObservable(ICall originalCall) {
+    ResponseObservable(ICall originalCall) {
         this.originalCall = originalCall;
     }
 

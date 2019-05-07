@@ -2,11 +2,11 @@ package com.sharry.srouter.app
 
 import android.app.Activity.RESULT_OK
 import com.sharry.srouter.annotation.RouteInterceptor
+import com.sharry.srouter.module.base.ResponseObservable
 import com.sharry.srouter.module.base.ModuleConstants
 import com.sharry.srouter.support.data.Response
 import com.sharry.srouter.support.facade.SRouter
 import com.sharry.srouter.support.interceptors.IInterceptor
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -31,8 +31,7 @@ class LoginInterceptor : IInterceptor {
                     .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
                     .newCall(chainContext.baseContext)
                     // 将 ICall 转为 Observable<Response> 泛型失效, 需要手动转数据
-                    .adaptTo(Observable::class.java)
-                    .map { it as Response }
+                    .adaptTo(ResponseObservable::class.java)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
