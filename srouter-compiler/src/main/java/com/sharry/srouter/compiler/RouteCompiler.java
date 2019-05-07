@@ -195,8 +195,7 @@ public class RouteCompiler extends AbstractProcessor {
      *                 "SampleActivity",
      *                 RouteMeta.create(
      *                         RouteMeta.Type.CLASS_NAME_ACTIVITY,
-     *                         ThreadMode.MAIN_THREAD,
-     *                         Component1Activity.class,
+     *                         SampleActivity.class,
      *                         new String[]{..., ...}
      *                 )
      *         );

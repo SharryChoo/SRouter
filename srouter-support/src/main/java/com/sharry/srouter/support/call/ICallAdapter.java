@@ -26,6 +26,6 @@ public interface ICallAdapter<T> {
 
     T adapt(@NonNull ICall call);
 
-    Class<?> adaptType();
+    Class<T> adaptType();
 
 }

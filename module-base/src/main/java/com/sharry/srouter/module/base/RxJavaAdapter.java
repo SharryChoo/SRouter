@@ -18,7 +18,7 @@ public class RxJavaAdapter implements ICallAdapter<ResponseObservable> {
     }
 
     @Override
-    public Class<?> adaptType() {
+    public Class<ResponseObservable> adaptType() {
         return ResponseObservable.class;
     }
 

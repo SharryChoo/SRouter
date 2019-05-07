@@ -30,7 +30,7 @@ import javax.lang.model.util.Types;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 /**
- * Generate SRouter$$Routes$$xxx.java file.
+ * Generate SRouter$$Interfaces$$xxx.java file.
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
