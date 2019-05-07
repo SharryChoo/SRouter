@@ -230,7 +230,7 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Get an instance of navigation call
+     * Get an instance of navigation enqueue
      */
     public ICall newCall() {
         return newCall(null);

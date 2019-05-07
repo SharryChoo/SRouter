@@ -3,7 +3,7 @@ package com.sharry.srouter.module.personal
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.sharry.srouter.annotation.Route
-import com.sharry.srouter.annotation.ThreadMode
+import com.sharry.srouter.support.scheduler.ThreadMode
 import com.sharry.srouter.module.base.ModuleConstants
 
 /**
@@ -16,7 +16,6 @@ import com.sharry.srouter.module.base.ModuleConstants
 @Route(
         authority = ModuleConstants.Personal.NAME,
         path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
-        mode = ThreadMode.MAIN,
         interceptorURIs = [ModuleConstants.App.LOGIN_INTERCEPTOR],
         desc = "个人中心页面"
 )

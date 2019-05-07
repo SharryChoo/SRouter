@@ -20,22 +20,17 @@ public class ChainContext extends ContextWrapper {
     /**
      * Get an instance of ChainContext.
      */
-    public static ChainContext obtain(@NonNull Context context,
-                                      @NonNull Request request,
-                                      @NonNull IInterceptor.Chain.Callback callback) {
+    public static ChainContext obtain(@NonNull Context context, @NonNull Request request) {
         Preconditions.checkNotNull(context);
         Preconditions.checkNotNull(request);
-        Preconditions.checkNotNull(callback);
-        return new ChainContext(context, request, callback);
+        return new ChainContext(context, request);
     }
 
-    public final IInterceptor.Chain.Callback callback;
     public Request request;
 
-    private ChainContext(Context base, Request request, IInterceptor.Chain.Callback callback) {
+    private ChainContext(Context base, Request request) {
         super(base);
         this.request = request;
-        this.callback = callback;
     }
 
 }

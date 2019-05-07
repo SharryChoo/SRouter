@@ -55,19 +55,19 @@ public class RouterCallbackFragment extends Fragment {
         setRetainInstance(true);
     }
 
-    /**
-     * Set callback for the fragment.
-     */
-    public void setCallback(Callback callback) {
-        this.mCallback = callback;
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (null != mCallback) {
             mCallback.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    /**
+     * Set callback for the fragment.
+     */
+    public void setCallback(Callback callback) {
+        this.mCallback = callback;
     }
 
     public interface Callback {

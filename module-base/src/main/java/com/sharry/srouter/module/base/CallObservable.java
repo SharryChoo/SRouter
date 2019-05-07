@@ -30,12 +30,8 @@ final class CallObservable extends Observable<Response> {
         // Since Call is a one-shot type, clone it for each new observer.
         ICall call = originalCall;
         observer.onSubscribe(new CallDisposable(call));
-        call.call(new Callback() {
-            @Override
-            public void onSuccess(@NonNull Response response) {
-                observer.onNext(response);
-            }
-        });
+        Response response = call.call();
+        observer.onNext(response);
     }
 
     private static final class CallDisposable implements Disposable {

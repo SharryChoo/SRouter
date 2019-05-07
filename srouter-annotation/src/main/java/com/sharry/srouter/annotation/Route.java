@@ -27,11 +27,6 @@ public @interface Route {
     String path();
 
     /**
-     * Thread mode for this Route.
-     */
-    ThreadMode mode() default ThreadMode.MAIN;
-
-    /**
      * The interceptor URIs for this Route.
      */
     String[] interceptorURIs() default {};

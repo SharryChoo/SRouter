@@ -7,6 +7,8 @@ package com.sharry.srouter.support.scheduler;
  */
 public interface IScheduler {
 
+    void schedule(Runnable runnable);
+
     void schedule(Runnable runnable, long delay);
 
 }

@@ -27,11 +27,7 @@ class MainActivity : AppCompatActivity() {
         // 尝试跳转到个人中心
         btnPersonal.setOnClickListener {
             SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
-                    .setActivityConfig(
-                            ActivityConfig.Builder()
-                                    .setActivityOptions(ActivityOptionsCompat.makeBasic())
-                                    .build()
-                    )
+                    .setActivityOptions(ActivityOptionsCompat.makeBasic())
                     .navigation(this)
         }
     }

@@ -11,25 +11,32 @@ import androidx.fragment.app.Fragment;
 import com.sharry.srouter.support.data.ActivityConfig;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
+import com.sharry.srouter.support.scheduler.IScheduler;
+import com.sharry.srouter.support.scheduler.SchedulerFactory;
+import com.sharry.srouter.support.scheduler.ThreadMode;
 import com.sharry.srouter.support.service.IService;
 import com.sharry.srouter.support.utils.Logger;
 import com.sharry.srouter.support.utils.RouterCallbackFragment;
 import com.sharry.srouter.support.utils.Utils;
 
 /**
- * The final interceptor.
+ * The final navigation interceptor.
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2/20/2019 9:29 AM
  */
-public class FinalInterceptor implements IInterceptor {
+public class NavigationInterceptor implements IInterceptor {
+
+    /**
+     * The lock use to wait activity result.
+     */
+    private final Object mLock = new Object();
 
     @Override
-    public void intercept(@NonNull final Chain chain) {
+    public Response intercept(@NonNull final Chain chain) {
         ChainContext context = chain.chainContext();
         Request request = context.request;
-        Chain.Callback callback = context.callback;
         Response response = new Response(request);
         switch (request.getType()) {
             case ACTIVITY:
@@ -46,8 +53,6 @@ public class FinalInterceptor implements IInterceptor {
                     fragment.setArguments(request.getDatum());
                     // Inject fragment to request provider.
                     response.setFragment(fragment);
-                    // intercept success.
-                    callback.onCompleted(response);
                 } catch (InstantiationException e) {
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
                             + " failed.", e);
@@ -63,8 +68,6 @@ public class FinalInterceptor implements IInterceptor {
                     fragmentV4.setArguments(request.getDatum());
                     // Inject fragment to request provider.
                     response.setFragmentV4(fragmentV4);
-                    // intercept success.
-                    callback.onCompleted(response);
                 } catch (InstantiationException e) {
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
                             + " failed.", e);
@@ -78,8 +81,6 @@ public class FinalInterceptor implements IInterceptor {
                     IService service = (IService) request.getRouteClass().newInstance();
                     service.init(context);
                     response.setService(service);
-                    // intercept success.
-                    callback.onCompleted(response);
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
@@ -92,36 +93,29 @@ public class FinalInterceptor implements IInterceptor {
             default:
                 break;
         }
+        return response;
     }
 
     /**
      * Perform launch target activity.
      */
-    private void performLaunchActivity(Context context,
-                                       Intent intent,
-                                       ActivityConfig config,
-                                       Response response,
-                                       Chain.Callback callback) {
-        // Inject user config flags to intent.
-        if (config == null) {
-            config = new ActivityConfig.Builder().build();
-        }
+    private void performLaunchActivity(Context context, Intent intent, Request request, Response response) {
         // Inject flags.
-        if (ActivityConfig.NON_FLAGS != config.getFlags()) {
-            intent.setFlags(config.getFlags());
+        if (Request.NON_FLAGS != request.getFlags()) {
+            intent.setFlags(request.getFlags());
         }
         // perform launch activity.
         Activity activity = Utils.findActivity(context);
         if (Utils.isIllegalState(activity)) {
-            // Activity is illegal, use application context jump.
+            // Activity at illegal state, use application context do jump.
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            launchActivityActual(context, intent, config.getActivityOptions());
+            launchActivityActual(context, intent, request.getActivityOptions());
         } else {
-            if (ActivityConfig.NON_REQUEST_CODE != config.getRequestCode()) {
-                launchActivityForResultActual(activity, intent, config.getRequestCode(),
-                        config.getActivityOptions(), response, callback);
+            if (Request.NON_REQUEST_CODE != request.getRequestCode()) {
+                launchActivityForResultActual(activity, intent, request.getRequestCode(),
+                        request.getActivityOptions(), response);
             } else {
-                launchActivityActual(activity, intent, config.getActivityOptions());
+                launchActivityActual(activity, intent, request.getActivityOptions());
             }
         }
     }
@@ -129,35 +123,54 @@ public class FinalInterceptor implements IInterceptor {
     /**
      * Perform launch activity for result actual.
      */
-    private void launchActivityForResultActual(Activity activity,
-                                               Intent intent,
-                                               int requestCode,
-                                               ActivityOptionsCompat activityOptions,
-                                               final Response response,
-                                               final IInterceptor.Chain.Callback callback) {
-        // Observer activity onActivityResult Callback.
-        RouterCallbackFragment callbackFragment = RouterCallbackFragment.getInstance(activity);
-        callbackFragment.setCallback(new RouterCallbackFragment.Callback() {
+    private void launchActivityForResultActual(final Activity activity,
+                                               final Intent intent,
+                                               final int requestCode,
+                                               final ActivityOptionsCompat activityOptions,
+                                               final Response response) {
+        IScheduler scheduler = SchedulerFactory.create(ThreadMode.MAIN_THREAD);
+        // Launch activity with Activity options.
+        scheduler.schedule(new Runnable() {
             @Override
-            public void onActivityResult(int requestCode, int resultCode, Intent data) {
-                response.setActivityResult(requestCode, resultCode, data);
-                callback.onCompleted(response);
+            public void run() {
+                // Observer activity onActivityResult Callback.
+                final RouterCallbackFragment callbackFragment = RouterCallbackFragment.getInstance(activity);
+                callbackFragment.setCallback(new RouterCallbackFragment.Callback() {
+                    @Override
+                    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+                        // Activity data is injected.
+                        response.setActivityResult(requestCode, resultCode, data);
+                        // Release lock.
+                        synchronized (mLock) {
+                            mLock.notifyAll();
+                        }
+                    }
+                });
+                // Launch activity with Activity options.
+                if (activityOptions != null && Utils.isJellyBean()) {
+                    callbackFragment.startActivityForResult(intent, requestCode, activityOptions.toBundle());
+                } else {
+                    // Launch activity without Activity options.
+                    callbackFragment.startActivityForResult(intent, requestCode);
+                }
             }
         });
-        // Launch activity with Activity options.
-        if (activityOptions != null && Utils.isJellyBean()) {
-            callbackFragment.startActivityForResult(intent, requestCode, activityOptions.toBundle());
-        } else {
-            // Launch activity without Activity options.
-            callbackFragment.startActivityForResult(intent, requestCode);
+        // Waiting for activity data result.
+        try {
+            synchronized (mLock) {
+                Logger.i(Thread.currentThread().getName() + " is blocking for activity result.");
+                mLock.wait();
+                Logger.i(Thread.currentThread().getName() + " blocking is released.");
+            }
+        } catch (InterruptedException e) {
+            Logger.e(e.getMessage(), e);
         }
     }
 
     /**
      * Perform launch activity actual.
      */
-    private void launchActivityActual(Context context, Intent intent,
-                                      ActivityOptionsCompat activityOptions) {
+    private void launchActivityActual(Context context, Intent intent, ActivityOptionsCompat activityOptions) {
         if (activityOptions != null && Utils.isJellyBean()) {
             context.startActivity(intent, activityOptions.toBundle());
         } else {

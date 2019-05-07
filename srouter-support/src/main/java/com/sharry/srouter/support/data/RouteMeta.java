@@ -3,7 +3,6 @@ package com.sharry.srouter.support.data;
 import androidx.fragment.app.Fragment;
 
 import com.sharry.srouter.annotation.Route;
-import com.sharry.srouter.annotation.ThreadMode;
 import com.sharry.srouter.support.service.IService;
 
 /**
@@ -48,10 +47,9 @@ public class RouteMeta {
     /**
      * Get an instance of RouteMeta
      */
-    public static RouteMeta create(Type type, ThreadMode mode, Class<?> routeCls, String[] interceptorURIs) {
+    public static RouteMeta create(Type type, Class<?> routeCls, String[] interceptorURIs) {
         RouteMeta result = new RouteMeta();
         result.type = type;
-        result.threadMode = mode;
         result.routeClass = routeCls;
         result.routeInterceptorURIs = interceptorURIs;
         return result;
@@ -68,10 +66,6 @@ public class RouteMeta {
     private Class<?> routeClass;
 
     /**
-     * Navigation route thread mode.
-     */
-    private ThreadMode threadMode;
-    /**
      * Navigation interceptorURIs.
      */
     private String[] routeInterceptorURIs;
@@ -87,10 +81,6 @@ public class RouteMeta {
         return routeClass;
     }
 
-    public ThreadMode getThreadMode() {
-        return threadMode;
-    }
-
     public String[] getRouteInterceptorURIs() {
         return routeInterceptorURIs;
     }
@@ -103,11 +93,8 @@ public class RouteMeta {
         this.routeClass = routeClass;
     }
 
-    public void setThreadMode(ThreadMode threadMode) {
-        this.threadMode = threadMode;
-    }
-
     public void setRouteInterceptorURIs(String[] routeInterceptorURIs) {
         this.routeInterceptorURIs = routeInterceptorURIs;
     }
+
 }

@@ -61,6 +61,11 @@ public class AsyncScheduler extends ScheduledThreadPoolExecutor implements ISche
     }
 
     @Override
+    public void schedule(Runnable runnable) {
+        schedule(runnable, 0);
+    }
+
+    @Override
     public void schedule(Runnable runnable, long delay) {
         schedule(runnable, delay, TimeUnit.MILLISECONDS);
     }

@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sharry.srouter.annotation.Route;
-import com.sharry.srouter.annotation.ThreadMode;
+import com.sharry.srouter.support.scheduler.ThreadMode;
 import com.sharry.srouter.module.base.ModuleConstants;
 
 /**
@@ -20,7 +20,6 @@ import com.sharry.srouter.module.base.ModuleConstants;
 @Route(
         authority = ModuleConstants.Found.NAME,
         path = ModuleConstants.Found.FOUND_ACTIVITY,
-        mode = ThreadMode.ASYNC,
         desc = "组件1的入口页面"
 )
 public class FoundActivity extends AppCompatActivity {

@@ -17,6 +17,11 @@ public class MainScheduler implements IScheduler {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
+    public void schedule(Runnable runnable) {
+        schedule(runnable, 0);
+    }
+
+    @Override
     public void schedule(Runnable runnable, long delay) {
         mHandler.postDelayed(runnable, delay);
     }

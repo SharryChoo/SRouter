@@ -1,4 +1,4 @@
-package com.sharry.srouter.annotation;
+package com.sharry.srouter.support.scheduler;
 
 /**
  * Thanks EventBus
@@ -14,7 +14,7 @@ public enum ThreadMode {
      * the main thread, action methods will be called directly, blocking the posting thread. Otherwise the event
      * is queued for delivery (non-blocking). Action using this mode must return quickly to avoid blocking the main thread.
      */
-    MAIN,
+    MAIN_THREAD,
 
     /**
      * Action will be called in a separate thread. This is always independent from the posting thread and the

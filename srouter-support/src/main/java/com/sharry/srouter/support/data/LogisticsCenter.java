@@ -79,7 +79,6 @@ public class LogisticsCenter {
         // Load data to request before navigation
         request.setType(routeMeta.getType());
         request.setRouteClass(routeMeta.getRouteClass());
-        request.setThreadMode(routeMeta.getThreadMode());
         request.setRouteInterceptorURIs(routeMeta.getRouteInterceptorURIs());
         // If Type is SERVICE, the request cannot be intercepted.
         request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.SERVICE);

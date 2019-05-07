@@ -8,6 +8,8 @@ import com.sharry.srouter.support.data.Response
 import com.sharry.srouter.support.facade.SRouter
 import com.sharry.srouter.support.interceptors.IInterceptor
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 /**
  * @author Sharry [Contact me.](SharryChooCHN@Gmail.com)
@@ -20,32 +22,30 @@ import io.reactivex.Observable
 )
 class LoginInterceptor : IInterceptor {
 
-    override fun intercept(chain: IInterceptor.Chain) {
+    override fun intercept(chain: IInterceptor.Chain): Response? {
         val chainContext = chain.chainContext()
         // 若没有登录, 则先跳转到登录页面
         if (!ModuleConstants.App.isLogin) {
-            // 跳转到登录页面
             val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
                     // 构建 Activity 相关配置
-                    .setActivityConfig(
-                            ActivityConfig.Builder()
-                                    .setRequestCode(100)
-                                    .build()
-                    )
+                    .setRequestCode(100)
                     .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
                     .newCall(chainContext.baseContext)
                     // 将 ICall 转为 Observable<Response> 泛型失效, 需要手动转数据
                     .adaptTo(Observable::class.java)
                     .map { it as Response }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         if (it.activityResult.resultCode == RESULT_OK) {
                             SRouter.navigation(chainContext.baseContext, chainContext.request)
                         }
                     }
-            return
+            // 跳转到登录页面
+            return null
         }
         // 若已经登录, 则正常分发
-        chain.dispatch()
+        return chain.dispatch()
     }
 
 }

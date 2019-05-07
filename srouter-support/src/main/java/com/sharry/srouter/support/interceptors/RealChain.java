@@ -2,6 +2,7 @@ package com.sharry.srouter.support.interceptors;
 
 import androidx.annotation.NonNull;
 
+import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.utils.Preconditions;
 
 import java.util.List;
@@ -43,8 +44,8 @@ public class RealChain implements IInterceptor.Chain {
     }
 
     @Override
-    public void dispatch() {
-        handles.get(index).intercept(
+    public Response dispatch() {
+       return handles.get(index).intercept(
                 RealChain.create(
                         handles,
                         index + 1,

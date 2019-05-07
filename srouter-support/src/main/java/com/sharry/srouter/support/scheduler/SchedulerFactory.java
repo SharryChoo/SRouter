@@ -1,7 +1,5 @@
 package com.sharry.srouter.support.scheduler;
 
-import com.sharry.srouter.annotation.ThreadMode;
-
 /**
  * @author Sharry <a href="sharrychoochn@gmail.com">Contact me.</a>
  * @version 1.0
@@ -15,7 +13,7 @@ public class SchedulerFactory {
             case ASYNC:
                 result = AsyncScheduler.getInstance();
                 break;
-            case MAIN:
+            case MAIN_THREAD:
             default:
                 result = MainScheduler.getInstance();
                 break;

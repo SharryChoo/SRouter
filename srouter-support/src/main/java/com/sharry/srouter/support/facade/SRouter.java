@@ -104,7 +104,7 @@ public class SRouter {
     }
 
     /**
-     * Build an instance of navigation call.
+     * Build an instance of navigation enqueue.
      */
     public static ICall newCall(@Nullable Context context, @NonNull Request request) {
         if (!sHasInit) {

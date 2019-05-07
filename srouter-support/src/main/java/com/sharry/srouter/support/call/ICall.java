@@ -3,10 +3,11 @@ package com.sharry.srouter.support.call;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.facade.Callback;
 
 /**
- * The call associated with once navigation.
+ * The enqueue associated with once navigation.
  *
  * @author Sharry <a href="xiaoyu.zhu@1hai.cn">Contact me.</a>
  * @version 1.0
@@ -16,12 +17,12 @@ public interface ICall {
 
     ICall DEFAULT = new ICall() {
         @Override
-        public void call() {
-
+        public Response call() {
+            return null;
         }
 
         @Override
-        public void call(@Nullable Callback callback) {
+        public void enqueue(@Nullable Callback callback) {
         }
 
         @Override
@@ -32,10 +33,24 @@ public interface ICall {
 
     };
 
-    void call();
+    /**
+     * Get response directly.(Dangerous.)
+     * <p>
+     * If call activity for result. do not use sync call. It will blocking current thread.
+     */
+    @Nullable
+    Response call();
 
-    void call(@Nullable Callback callback);
+    /**
+     * Get response on Callback.(Recommend.)
+     */
+    void enqueue(@Nullable Callback callback);
 
+    /**
+     * Adapter ICall to target.
+     *
+     * @return The target<T> instance.
+     */
     @NonNull
     <T> T adaptTo(@NonNull Class<T> adaptType);
 
