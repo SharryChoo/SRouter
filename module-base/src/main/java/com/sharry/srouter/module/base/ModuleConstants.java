@@ -9,14 +9,11 @@ public final class ModuleConstants {
 
     public static final class App {
 
-        public static boolean isLogin = false;
-
         public static final String NAME = "app";
-
         public static final String LOGIN_ACTIVITY = "login_activity";
-
         // interceptors
         public static final String LOGIN_INTERCEPTOR = NAME + "/login_interceptor";
+        public static boolean isLogin = false;
     }
 
     public static final class Found {

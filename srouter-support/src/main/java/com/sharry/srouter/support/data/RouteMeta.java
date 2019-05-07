@@ -15,6 +15,57 @@ import com.sharry.srouter.support.service.IService;
 public class RouteMeta {
 
     /**
+     * Navigation route type.
+     */
+    private Type type;
+    /**
+     * Navigation route target class.
+     */
+    private Class<?> routeClass;
+    /**
+     * Navigation interceptorURIs.
+     */
+    private String[] routeInterceptorURIs;
+
+    RouteMeta() {
+    }
+
+    /**
+     * Get an instance of RouteMeta
+     */
+    public static RouteMeta create(Type type, Class<?> routeCls, String[] interceptorURIs) {
+        RouteMeta result = new RouteMeta();
+        result.type = type;
+        result.routeClass = routeCls;
+        result.routeInterceptorURIs = interceptorURIs;
+        return result;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Class<?> getRouteClass() {
+        return routeClass;
+    }
+
+    public void setRouteClass(Class<?> routeClass) {
+        this.routeClass = routeClass;
+    }
+
+    public String[] getRouteInterceptorURIs() {
+        return routeInterceptorURIs;
+    }
+
+    public void setRouteInterceptorURIs(String[] routeInterceptorURIs) {
+        this.routeInterceptorURIs = routeInterceptorURIs;
+    }
+
+    /**
      * The types for Route target.
      */
     public enum Type {
@@ -42,59 +93,6 @@ public class RouteMeta {
          * Type unsupported.
          */
         UNKNOWN
-    }
-
-    /**
-     * Get an instance of RouteMeta
-     */
-    public static RouteMeta create(Type type, Class<?> routeCls, String[] interceptorURIs) {
-        RouteMeta result = new RouteMeta();
-        result.type = type;
-        result.routeClass = routeCls;
-        result.routeInterceptorURIs = interceptorURIs;
-        return result;
-    }
-
-    /**
-     * Navigation route type.
-     */
-    private Type type;
-
-    /**
-     * Navigation route target class.
-     */
-    private Class<?> routeClass;
-
-    /**
-     * Navigation interceptorURIs.
-     */
-    private String[] routeInterceptorURIs;
-
-    RouteMeta() {
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public Class<?> getRouteClass() {
-        return routeClass;
-    }
-
-    public String[] getRouteInterceptorURIs() {
-        return routeInterceptorURIs;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public void setRouteClass(Class<?> routeClass) {
-        this.routeClass = routeClass;
-    }
-
-    public void setRouteInterceptorURIs(String[] routeInterceptorURIs) {
-        this.routeInterceptorURIs = routeInterceptorURIs;
     }
 
 }

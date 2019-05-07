@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sharry.srouter.annotation.Route;
-import com.sharry.srouter.support.scheduler.ThreadMode;
 import com.sharry.srouter.module.base.ModuleConstants;
 
 /**

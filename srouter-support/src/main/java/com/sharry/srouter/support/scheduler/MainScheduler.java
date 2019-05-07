@@ -10,11 +10,11 @@ import android.os.Looper;
  */
 public class MainScheduler implements IScheduler {
 
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+
     public static MainScheduler getInstance() {
         return InstanceHolder.INSTANCE;
     }
-
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void schedule(Runnable runnable) {

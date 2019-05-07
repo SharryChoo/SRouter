@@ -12,6 +12,18 @@ import com.sharry.srouter.annotation.RouteInterceptor;
 public class InterceptorMeta {
 
     /**
+     * navigation route target class.
+     */
+    private Class<?> interceptorClass;
+    /**
+     * navigation route thread mode.
+     */
+    private int priority;
+
+    private InterceptorMeta() {
+    }
+
+    /**
      * Get an instance of InterceptorMeta
      */
     public static InterceptorMeta create(Class<?> interceptorClass, int priority) {
@@ -19,19 +31,6 @@ public class InterceptorMeta {
         result.interceptorClass = interceptorClass;
         result.priority = priority;
         return result;
-    }
-
-    /**
-     * navigation route target class.
-     */
-    private Class<?> interceptorClass;
-
-    /**
-     * navigation route thread mode.
-     */
-    private int priority;
-
-    private InterceptorMeta() {
     }
 
     public Class<?> getInterceptorClass() {

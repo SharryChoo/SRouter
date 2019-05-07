@@ -27,20 +27,6 @@ class Constants {
      * Sub element for simple class name.
      */
     static final String PACKAGE_NAME_OF_GENERATE_FILE = "com.sharry.srouter.generate";
-    private static final String SIMPLE_NAME_SUB_PROJECT = "SRouter";
-    private static final String SIMPLE_NAME_SUB_SEPARATOR = "$$";
-
-    /**
-     * Simple class name prefix: SRouter$$Routes$$
-     */
-    static final String SIMPLE_NAME_PREFIX_OF_ROUTERS = SIMPLE_NAME_SUB_PROJECT +
-            SIMPLE_NAME_SUB_SEPARATOR + "Routes" + SIMPLE_NAME_SUB_SEPARATOR;
-
-    /**
-     * Simple class name prefix: SRouter$$Interceptors$$
-     */
-    static final String SIMPLE_NAME_PREFIX_OF_INTERCEPTOR = SIMPLE_NAME_SUB_PROJECT +
-            SIMPLE_NAME_SUB_SEPARATOR + "Interceptors" + SIMPLE_NAME_SUB_SEPARATOR;
 
     /**
      * Description parents for generation classes.
@@ -62,5 +48,19 @@ class Constants {
     static final String PACKAGE_NAME_DATA = "com.sharry.srouter.support.data";
     static final String SIMPLE_NAME_ROUTE_META = "RouteMeta";
     static final String SIMPLE_NAME_INTERCEPTOR_META = "InterceptorMeta";
+    private static final String SIMPLE_NAME_SUB_PROJECT = "SRouter";
+    private static final String SIMPLE_NAME_SUB_SEPARATOR = "$$";
+
+    /**
+     * Simple class name prefix: SRouter$$Routes$$
+     */
+    static final String SIMPLE_NAME_PREFIX_OF_ROUTERS = SIMPLE_NAME_SUB_PROJECT +
+            SIMPLE_NAME_SUB_SEPARATOR + "Routes" + SIMPLE_NAME_SUB_SEPARATOR;
+
+    /**
+     * Simple class name prefix: SRouter$$Interceptors$$
+     */
+    static final String SIMPLE_NAME_PREFIX_OF_INTERCEPTOR = SIMPLE_NAME_SUB_PROJECT +
+            SIMPLE_NAME_SUB_SEPARATOR + "Interceptors" + SIMPLE_NAME_SUB_SEPARATOR;
 
 }

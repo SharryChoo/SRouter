@@ -16,6 +16,15 @@ import java.util.List;
  */
 public class RealChain implements IInterceptor.Chain {
 
+    private final List<IInterceptor> handles;
+    private final int index;
+    private final ChainContext chainContext;
+    private RealChain(List<IInterceptor> handles, int handleIndex, ChainContext context) {
+        this.handles = handles;
+        this.index = handleIndex;
+        this.chainContext = context;
+    }
+
     /**
      * Gat an instance of RealChain.
      */
@@ -28,16 +37,6 @@ public class RealChain implements IInterceptor.Chain {
         return new RealChain(handles, handleIndex, chainContext);
     }
 
-    private final List<IInterceptor> handles;
-    private final int index;
-    private final ChainContext chainContext;
-
-    private RealChain(List<IInterceptor> handles, int handleIndex, ChainContext context) {
-        this.handles = handles;
-        this.index = handleIndex;
-        this.chainContext = context;
-    }
-
     @Override
     public ChainContext chainContext() {
         return chainContext;
@@ -45,7 +44,7 @@ public class RealChain implements IInterceptor.Chain {
 
     @Override
     public Response dispatch() {
-       return handles.get(index).intercept(
+        return handles.get(index).intercept(
                 RealChain.create(
                         handles,
                         index + 1,

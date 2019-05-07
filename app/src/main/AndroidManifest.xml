@@ -19,7 +19,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name="com.sharry.srouter.app.LoginActivity"
-            android:label="@string/title_activity_login"/>
+            android:label="@string/title_activity_login" />
         <activity android:name="com.sharry.srouter.app.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

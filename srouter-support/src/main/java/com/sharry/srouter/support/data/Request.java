@@ -9,6 +9,7 @@ import android.util.SparseArray;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 
 import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.facade.Callback;
@@ -33,54 +34,50 @@ import java.util.concurrent.TimeUnit;
  */
 public class Request extends RouteMeta {
 
-    /**
-     * U can get an instance of Request from this method.
-     */
-    public static Request create(@NonNull String authority, @NonNull String path) {
-        return new Request(authority, path);
-    }
-
+    public static final int NON_REQUEST_CODE = -1;
+    public static final int NON_FLAGS = -1;
     /**
      * Navigation authority
      */
     private final String authority;
-
     /**
      * Navigation path.
      */
     private final String path;
-
+    /**
+     * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
+     */
+    private final List<IInterceptor> interceptors = new ArrayList<>();
+    /**
+     * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
+     */
+    private final List<String> interceptorURIs = new ArrayList<>();
     /**
      * The datum for the route navigation.
      */
     private Bundle datum;
-
     /**
      * Navigation delay
      * <p>
      * Unit is {@link TimeUnit#MILLISECONDS}
      */
     private long delay = 0;
-
     /**
-     * The Activity request params for the request.
+     * The Flag for the route navigation.
      */
-    private ActivityConfig activityConfig;
-
+    private int flags = NON_FLAGS;
+    /**
+     * The requestCode for the requestCode.
+     */
+    private int requestCode = NON_REQUEST_CODE;
+    /**
+     * The jump activity configs for the request.
+     */
+    private ActivityOptionsCompat activityOptions;
     /**
      * if true, it will ignore interceptor.
      */
     private boolean isGreenChannel;
-
-    /**
-     * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
-     */
-    private final List<IInterceptor> interceptors = new ArrayList<>();
-
-    /**
-     * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
-     */
-    private final List<String> interceptorURIs = new ArrayList<>();
 
     private Request(String authority, String path) {
         this.authority = authority;
@@ -89,39 +86,10 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * BE ATTENTION TO THIS METHOD WAS <P>SET, NOT ADD!</P>
+     * U can get an instance of Request from this method.
      */
-    public Request setDatum(@Nullable Bundle datum) {
-        if (datum != null) {
-            this.datum = datum;
-        }
-        return this;
-    }
-
-    /**
-     * Set delay time when navigation intercept.
-     * <p>
-     * Unit is {{@link TimeUnit#MILLISECONDS}}
-     */
-    public Request setDelay(long delay) {
-        this.delay = delay;
-        return this;
-    }
-
-    public Request setActivityConfig(@NonNull ActivityConfig activityConfig) {
-        Preconditions.checkNotNull(activityConfig);
-        this.activityConfig = activityConfig;
-        return this;
-    }
-
-    /**
-     * Set green channel associated with this Request.
-     *
-     * @param isGreenChannel if true will ignore Route INTERCEPTORS.
-     */
-    public Request setGreenChannel(boolean isGreenChannel) {
-        this.isGreenChannel = isGreenChannel;
-        return this;
+    public static Request create(@NonNull String authority, @NonNull String path) {
+        return new Request(authority, path);
     }
 
     /**
@@ -190,16 +158,79 @@ public class Request extends RouteMeta {
         return datum;
     }
 
+    /**
+     * BE ATTENTION TO THIS METHOD WAS <P>SET, NOT ADD!</P>
+     */
+    public Request setDatum(@Nullable Bundle datum) {
+        if (datum != null) {
+            this.datum = datum;
+        }
+        return this;
+    }
+
     public long getDelay() {
         return delay;
+    }
+
+    /**
+     * Set delay time when navigation intercept.
+     * <p>
+     * Unit is {{@link TimeUnit#MILLISECONDS}}
+     */
+    public Request setDelay(long delay) {
+        this.delay = delay;
+        return this;
     }
 
     public boolean isGreenChannel() {
         return isGreenChannel;
     }
 
-    public ActivityConfig getActivityConfig() {
-        return activityConfig;
+    /**
+     * Set green channel associated with this Request.
+     *
+     * @param isGreenChannel if true will ignore Route INTERCEPTORS.
+     */
+    public Request setGreenChannel(boolean isGreenChannel) {
+        this.isGreenChannel = isGreenChannel;
+        return this;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    /**
+     * Set Activity jump flags
+     */
+    public Request setFlags(int flags) {
+        this.flags = flags;
+        return this;
+    }
+
+    public int getRequestCode() {
+        return requestCode;
+    }
+
+    /**
+     * Set Activity jump request code.
+     */
+    public Request setRequestCode(int requestCode) {
+        this.requestCode = requestCode;
+        return this;
+    }
+
+    public ActivityOptionsCompat getActivityOptions() {
+        return activityOptions;
+    }
+
+    /**
+     * Set Activity jump options.
+     */
+    public Request setActivityOptions(@NonNull ActivityOptionsCompat activityOptions) {
+        Preconditions.checkNotNull(activityOptions);
+        this.activityOptions = activityOptions;
+        return this;
     }
 
     public List<IInterceptor> getInterceptors() {
@@ -240,34 +271,6 @@ public class Request extends RouteMeta {
         return SRouter.newCall(context, this);
     }
 
-    // ######################### annotation @FlagInt copy from #{Intent}  ##########################
-    @IntDef({
-            Intent.FLAG_ACTIVITY_SINGLE_TOP,
-            Intent.FLAG_ACTIVITY_NEW_TASK,
-            Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
-            Intent.FLAG_DEBUG_LOG_RESOLUTION,
-            Intent.FLAG_FROM_BACKGROUND,
-            Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT,
-            Intent.FLAG_ACTIVITY_CLEAR_TASK,
-            Intent.FLAG_ACTIVITY_CLEAR_TOP,
-            Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS,
-            Intent.FLAG_ACTIVITY_FORWARD_RESULT,
-            Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY,
-            Intent.FLAG_ACTIVITY_MULTIPLE_TASK,
-            Intent.FLAG_ACTIVITY_NO_ANIMATION,
-            Intent.FLAG_ACTIVITY_NO_USER_ACTION,
-            Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP,
-            Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED,
-            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT,
-            Intent.FLAG_ACTIVITY_TASK_ON_HOME,
-            Intent.FLAG_RECEIVER_REGISTERED_ONLY
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface FlagInt {
-    }
-
-    // #############################  Follow api copy from #{Bundle}  ##############################
-
     /**
      * Inserts a String value into the mapping of this Bundle, replacing
      * any existing value for the given key.  Either key or value may be null.
@@ -280,6 +283,8 @@ public class Request extends RouteMeta {
         datum.putString(key, value);
         return this;
     }
+
+    // #############################  Follow api copy from #{Bundle}  ##############################
 
     /**
      * Inserts a Boolean value into the mapping of this Bundle, replacing
@@ -581,6 +586,32 @@ public class Request extends RouteMeta {
     public Request withBundle(@Nullable String key, @Nullable Bundle value) {
         datum.putBundle(key, value);
         return this;
+    }
+
+    // ######################### annotation @FlagInt copy from #{Intent}  ##########################
+    @IntDef({
+            Intent.FLAG_ACTIVITY_SINGLE_TOP,
+            Intent.FLAG_ACTIVITY_NEW_TASK,
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+            Intent.FLAG_DEBUG_LOG_RESOLUTION,
+            Intent.FLAG_FROM_BACKGROUND,
+            Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT,
+            Intent.FLAG_ACTIVITY_CLEAR_TASK,
+            Intent.FLAG_ACTIVITY_CLEAR_TOP,
+            Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS,
+            Intent.FLAG_ACTIVITY_FORWARD_RESULT,
+            Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY,
+            Intent.FLAG_ACTIVITY_MULTIPLE_TASK,
+            Intent.FLAG_ACTIVITY_NO_ANIMATION,
+            Intent.FLAG_ACTIVITY_NO_USER_ACTION,
+            Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP,
+            Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED,
+            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT,
+            Intent.FLAG_ACTIVITY_TASK_ON_HOME,
+            Intent.FLAG_RECEIVER_REGISTERED_ONLY
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface FlagInt {
     }
 
 }

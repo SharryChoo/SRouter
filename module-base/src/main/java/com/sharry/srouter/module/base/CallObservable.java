@@ -1,10 +1,7 @@
 package com.sharry.srouter.module.base;
 
-import androidx.annotation.NonNull;
-
 import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.data.Response;
-import com.sharry.srouter.support.facade.Callback;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;

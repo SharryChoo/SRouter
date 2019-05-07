@@ -5,12 +5,11 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
-import com.sharry.srouter.support.data.ActivityConfig;
-
 /**
- * The Fragment use to receive Target activity result data and callback by {@link ActivityConfig.Callback}.
+ * The Fragment use to receive Target activity result data with callback.
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
@@ -19,6 +18,7 @@ import com.sharry.srouter.support.data.ActivityConfig;
 public class RouterCallbackFragment extends Fragment {
 
     public static final String TAG = RouterCallbackFragment.class.getSimpleName();
+    private Callback mCallback;
 
     /**
      * 获取一个添加到 Activity 中的 Fragment 的实例
@@ -46,8 +46,6 @@ public class RouterCallbackFragment extends Fragment {
     private static RouterCallbackFragment newInstance() {
         return new RouterCallbackFragment();
     }
-
-    private Callback mCallback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

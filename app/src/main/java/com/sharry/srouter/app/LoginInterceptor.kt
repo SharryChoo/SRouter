@@ -3,7 +3,6 @@ package com.sharry.srouter.app
 import android.app.Activity.RESULT_OK
 import com.sharry.srouter.annotation.RouteInterceptor
 import com.sharry.srouter.module.base.ModuleConstants
-import com.sharry.srouter.support.data.ActivityConfig
 import com.sharry.srouter.support.data.Response
 import com.sharry.srouter.support.facade.SRouter
 import com.sharry.srouter.support.interceptors.IInterceptor

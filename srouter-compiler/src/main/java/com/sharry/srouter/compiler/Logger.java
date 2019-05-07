@@ -62,7 +62,7 @@ class Logger {
 
     private String formatStackTrace(StackTraceElement[] stackTrace) {
         StringBuilder sb = new StringBuilder();
-        for (StackTraceElement element: stackTrace) {
+        for (StackTraceElement element : stackTrace) {
             sb.append("    at ").append(element.toString());
             sb.append("\n");
         }

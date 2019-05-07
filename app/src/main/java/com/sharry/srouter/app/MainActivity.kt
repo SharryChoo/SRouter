@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import com.sharry.srouter.R
 import com.sharry.srouter.module.base.ModuleConstants
-import com.sharry.srouter.support.data.ActivityConfig
 import com.sharry.srouter.support.facade.SRouter
 import kotlinx.android.synthetic.main.app_activity_main.*
 

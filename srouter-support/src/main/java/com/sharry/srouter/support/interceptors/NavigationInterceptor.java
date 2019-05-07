@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 
-import com.sharry.srouter.support.data.ActivityConfig;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.scheduler.IScheduler;
@@ -44,7 +43,7 @@ public class NavigationInterceptor implements IInterceptor {
                 // Inject user extra info to intent.
                 intent.putExtras(request.getDatum());
                 // Real perform activity launch.
-                performLaunchActivity(context, intent, request.getActivityConfig(), response, callback);
+                performLaunchActivity(context, intent, request, response);
                 break;
             case FRAGMENT:
                 try {

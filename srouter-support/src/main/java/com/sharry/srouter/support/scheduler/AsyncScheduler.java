@@ -20,10 +20,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class AsyncScheduler extends ScheduledThreadPoolExecutor implements IScheduler {
 
-    public static AsyncScheduler getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
-
     private AsyncScheduler(int corePoolSize, ThreadFactory threadFactory) {
         super(corePoolSize, threadFactory, new RejectedExecutionHandler() {
             @Override
@@ -31,6 +27,10 @@ public class AsyncScheduler extends ScheduledThreadPoolExecutor implements ISche
                 Logger.e("Task rejected, too many task!");
             }
         });
+    }
+
+    public static AsyncScheduler getInstance() {
+        return InstanceHolder.INSTANCE;
     }
 
     /**

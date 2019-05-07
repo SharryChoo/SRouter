@@ -31,6 +31,15 @@ import static com.sharry.srouter.support.scheduler.ThreadMode.MAIN_THREAD;
  */
 public class RealCall implements ICall {
 
+    private final Context context;
+    private final Request request;
+    private final List<IInterceptor> interceptors;
+    private RealCall(Context context, Request request, List<IInterceptor> interceptors) {
+        this.context = context;
+        this.request = request;
+        this.interceptors = interceptors;
+    }
+
     /**
      * The factory method help U create instance.
      */
@@ -41,16 +50,6 @@ public class RealCall implements ICall {
         Preconditions.checkNotNull(request);
         Preconditions.checkNotNull(interceptors);
         return new RealCall(context, request, interceptors);
-    }
-
-    private final Context context;
-    private final Request request;
-    private final List<IInterceptor> interceptors;
-
-    private RealCall(Context context, Request request, List<IInterceptor> interceptors) {
-        this.context = context;
-        this.request = request;
-        this.interceptors = interceptors;
     }
 
     @Override

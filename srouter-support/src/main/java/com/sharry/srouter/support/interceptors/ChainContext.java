@@ -17,6 +17,13 @@ import com.sharry.srouter.support.utils.Preconditions;
  */
 public class ChainContext extends ContextWrapper {
 
+    public Request request;
+
+    private ChainContext(Context base, Request request) {
+        super(base);
+        this.request = request;
+    }
+
     /**
      * Get an instance of ChainContext.
      */
@@ -24,13 +31,6 @@ public class ChainContext extends ContextWrapper {
         Preconditions.checkNotNull(context);
         Preconditions.checkNotNull(request);
         return new ChainContext(context, request);
-    }
-
-    public Request request;
-
-    private ChainContext(Context base, Request request) {
-        super(base);
-        this.request = request;
     }
 
 }
