@@ -30,7 +30,7 @@ class LoginInterceptor : IInterceptor {
                     .setRequestCode(100)
                     .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
                     .newCall(chainContext.baseContext)
-                    // 将 ICall 转为 Observable<Response> 泛型失效, 需要手动转数据
+                    // 将 ICall 转为 ResponseObservable
                     .adaptTo(ResponseObservable::class.java)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
