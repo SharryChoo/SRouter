@@ -261,7 +261,7 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Get an instance of navigation enqueue
+     * Get an instance of navigation post
      */
     public ICall newCall() {
         return newCall(null);

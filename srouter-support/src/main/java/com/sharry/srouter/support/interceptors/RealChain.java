@@ -2,7 +2,6 @@ package com.sharry.srouter.support.interceptors;
 
 import androidx.annotation.NonNull;
 
-import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.utils.Preconditions;
 
 import java.util.List;
@@ -16,25 +15,31 @@ import java.util.List;
  */
 public class RealChain implements IInterceptor.Chain {
 
-    private final List<IInterceptor> handles;
-    private final int index;
-    private final ChainContext chainContext;
-    private RealChain(List<IInterceptor> handles, int handleIndex, ChainContext context) {
-        this.handles = handles;
-        this.index = handleIndex;
-        this.chainContext = context;
-    }
-
     /**
      * Gat an instance of RealChain.
      */
-    public static RealChain create(@NonNull List<IInterceptor> handles, ChainContext chainContext) {
+    public static RealChain create(@NonNull List<IInterceptor> handles, ChainContext chainContext,
+                                   IInterceptor.ChainCallback chainCallback) {
         Preconditions.checkNotEmpty(handles);
-        return new RealChain(handles, 0, chainContext);
+        return new RealChain(handles, 0, chainContext, chainCallback);
     }
 
-    private static RealChain create(List<IInterceptor> handles, int handleIndex, ChainContext chainContext) {
-        return new RealChain(handles, handleIndex, chainContext);
+    private static RealChain create(List<IInterceptor> handles, int handleIndex,
+                                    ChainContext chainContext, IInterceptor.ChainCallback chainCallback) {
+        return new RealChain(handles, handleIndex, chainContext, chainCallback);
+    }
+
+    private final List<IInterceptor> handles;
+    private final int index;
+    private final ChainContext chainContext;
+    private final IInterceptor.ChainCallback chainCallback;
+
+    private RealChain(List<IInterceptor> handles, int handleIndex, ChainContext context,
+                      IInterceptor.ChainCallback chainCallback) {
+        this.handles = handles;
+        this.index = handleIndex;
+        this.chainContext = context;
+        this.chainCallback = chainCallback;
     }
 
     @Override
@@ -43,12 +48,18 @@ public class RealChain implements IInterceptor.Chain {
     }
 
     @Override
-    public Response dispatch() {
-        return handles.get(index).intercept(
+    public IInterceptor.ChainCallback callback() {
+        return chainCallback;
+    }
+
+    @Override
+    public void dispatch() {
+        handles.get(index).intercept(
                 RealChain.create(
                         handles,
                         index + 1,
-                        chainContext
+                        chainContext,
+                        chainCallback
                 )
         );
     }

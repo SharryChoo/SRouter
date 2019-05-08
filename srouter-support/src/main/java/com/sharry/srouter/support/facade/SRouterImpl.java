@@ -3,12 +3,15 @@ package com.sharry.srouter.support.facade;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.call.ICallAdapter;
 import com.sharry.srouter.support.call.RealCall;
 import com.sharry.srouter.support.data.InterceptorMeta;
 import com.sharry.srouter.support.data.LogisticsCenter;
 import com.sharry.srouter.support.data.Request;
+import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.data.Warehouse;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.interceptors.IInterceptor;
@@ -59,12 +62,24 @@ class SRouterImpl {
     /**
      * Initiatory perform navigation.
      */
-    static void navigation(final Context context, final Request request, Callback callback) {
-        newCall(context, request).enqueue(callback);
+    static void navigation(final Context context, final Request request, final Callback callback) {
+        newCall(context, request).post(new IInterceptor.ChainCallback() {
+            @Override
+            public void onSuccess(@NonNull Response response) {
+                if (callback != null) {
+                    callback.onSuccess(response);
+                }
+            }
+
+            @Override
+            public void onFailed(Throwable throwable) {
+                Logger.e(throwable.getMessage(), throwable);
+            }
+        });
     }
 
     /**
-     * Build an instance of navigation enqueue.
+     * Build an instance of navigation post.
      */
     static ICall newCall(final Context context, final Request request) {
         // 1. load data to request.

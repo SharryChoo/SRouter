@@ -5,9 +5,10 @@ import androidx.annotation.Nullable;
 
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.facade.Callback;
+import com.sharry.srouter.support.interceptors.IInterceptor;
 
 /**
- * The enqueue associated with once navigation.
+ * The post associated with once navigation.
  *
  * @author Sharry <a href="xiaoyu.zhu@1hai.cn">Contact me.</a>
  * @version 1.0
@@ -16,13 +17,10 @@ import com.sharry.srouter.support.facade.Callback;
 public interface ICall {
 
     ICall DEFAULT = new ICall() {
-        @Override
-        public Response call() {
-            return null;
-        }
 
         @Override
-        public void enqueue(@Nullable Callback callback) {
+        public void post(@NonNull IInterceptor.ChainCallback callback) {
+
         }
 
         @Override
@@ -34,17 +32,9 @@ public interface ICall {
     };
 
     /**
-     * Get response directly.(Dangerous.)
-     * <p>
-     * If call activity for result. do not use sync call. It will blocking current thread.
-     */
-    @Nullable
-    Response call();
-
-    /**
      * Get response on Callback.(Recommend.)
      */
-    void enqueue(@Nullable Callback callback);
+    void post(@NonNull IInterceptor.ChainCallback callback);
 
     /**
      * Adapter ICall to target.

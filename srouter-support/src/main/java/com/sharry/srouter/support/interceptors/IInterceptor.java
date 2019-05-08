@@ -11,7 +11,7 @@ import com.sharry.srouter.support.data.Response;
  */
 public interface IInterceptor {
 
-    Response intercept(@NonNull Chain chain);
+    void intercept(@NonNull Chain chain);
 
     /**
      * The chain for once navigation.
@@ -20,8 +20,16 @@ public interface IInterceptor {
 
         ChainContext chainContext();
 
-        Response dispatch();
+        ChainCallback callback();
 
+        void dispatch();
+
+    }
+
+    interface ChainCallback {
+        void onSuccess(@NonNull Response response);
+
+        void onFailed(Throwable throwable);
     }
 
 }

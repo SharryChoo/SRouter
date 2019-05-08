@@ -1,7 +1,10 @@
 package com.sharry.srouter.module.base;
 
+import androidx.annotation.NonNull;
+
 import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.data.Response;
+import com.sharry.srouter.support.interceptors.IInterceptor;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -27,8 +30,17 @@ public final class ResponseObservable extends Observable<Response> {
         // Since Call is a one-shot type, clone it for each new observer.
         ICall call = originalCall;
         observer.onSubscribe(new CallDisposable(call));
-        Response response = call.call();
-        observer.onNext(response);
+        call.post(new IInterceptor.ChainCallback() {
+            @Override
+            public void onSuccess(@NonNull Response response) {
+                observer.onNext(response);
+            }
+
+            @Override
+            public void onFailed(Throwable throwable) {
+                observer.onError(throwable);
+            }
+        });
     }
 
     private static final class CallDisposable implements Disposable {

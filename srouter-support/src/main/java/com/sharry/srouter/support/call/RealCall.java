@@ -3,13 +3,10 @@ package com.sharry.srouter.support.call;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.sharry.srouter.support.data.Request;
-import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.data.Warehouse;
 import com.sharry.srouter.support.exceptions.NoAdapterFoundException;
-import com.sharry.srouter.support.facade.Callback;
 import com.sharry.srouter.support.interceptors.ChainContext;
 import com.sharry.srouter.support.interceptors.IInterceptor;
 import com.sharry.srouter.support.interceptors.RealChain;
@@ -19,7 +16,6 @@ import com.sharry.srouter.support.utils.Preconditions;
 
 import java.util.List;
 
-import static com.sharry.srouter.support.scheduler.ThreadMode.ASYNC;
 import static com.sharry.srouter.support.scheduler.ThreadMode.MAIN_THREAD;
 
 /**
@@ -34,6 +30,7 @@ public class RealCall implements ICall {
     private final Context context;
     private final Request request;
     private final List<IInterceptor> interceptors;
+
     private RealCall(Context context, Request request, List<IInterceptor> interceptors) {
         this.context = context;
         this.request = request;
@@ -53,28 +50,15 @@ public class RealCall implements ICall {
     }
 
     @Override
-    public Response call() {
-        ChainContext chainContext = ChainContext.obtain(context, request);
-        return RealChain.create(interceptors, chainContext).dispatch();
-    }
-
-    @Override
-    public void enqueue(@Nullable final Callback callback) {
-        IScheduler scheduler = SchedulerFactory.create(ASYNC);
+    public void post(@NonNull final IInterceptor.ChainCallback callback) {
+        Preconditions.checkNotNull(callback);
+        IScheduler scheduler = SchedulerFactory.create(MAIN_THREAD);
         scheduler.schedule(new Runnable() {
             @Override
             public void run() {
-                final Response response = call();
-                if (callback != null && response != null) {
-                    // Post to main thread callback.
-                    IScheduler scheduler = SchedulerFactory.create(MAIN_THREAD);
-                    scheduler.schedule(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onSuccess(response);
-                        }
-                    }, 0);
-                }
+                ChainContext chainContext = ChainContext.obtain(context, request);
+                IInterceptor.Chain chain = RealChain.create(interceptors, chainContext, callback);
+                chain.dispatch();
             }
         }, request.getDelay());
     }

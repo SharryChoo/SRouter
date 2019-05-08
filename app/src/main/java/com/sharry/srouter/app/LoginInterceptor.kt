@@ -21,7 +21,7 @@ import io.reactivex.schedulers.Schedulers
 )
 class LoginInterceptor : IInterceptor {
 
-    override fun intercept(chain: IInterceptor.Chain): Response? {
+    override fun intercept(chain: IInterceptor.Chain) {
         val chainContext = chain.chainContext()
         // 若没有登录, 则先跳转到登录页面
         if (!ModuleConstants.App.isLogin) {
@@ -40,10 +40,10 @@ class LoginInterceptor : IInterceptor {
                         }
                     }
             // 跳转到登录页面
-            return null
+            return
         }
         // 若已经登录, 则正常分发
-        return chain.dispatch()
+        chain.dispatch()
     }
 
 }
