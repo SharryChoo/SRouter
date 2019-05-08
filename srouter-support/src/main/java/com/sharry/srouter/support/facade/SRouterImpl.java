@@ -75,6 +75,11 @@ class SRouterImpl {
             public void onFailed(Throwable throwable) {
                 Logger.e(throwable.getMessage(), throwable);
             }
+
+            @Override
+            public void onCanceled() {
+                Logger.e("Dispatch canceled.");
+            }
         });
     }
 

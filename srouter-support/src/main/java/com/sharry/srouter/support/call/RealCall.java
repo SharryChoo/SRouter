@@ -27,15 +27,6 @@ import static com.sharry.srouter.support.scheduler.ThreadMode.MAIN_THREAD;
  */
 public class RealCall implements ICall {
 
-    private final Context context;
-    private final Request request;
-    private final List<IInterceptor> interceptors;
-
-    private RealCall(Context context, Request request, List<IInterceptor> interceptors) {
-        this.context = context;
-        this.request = request;
-        this.interceptors = interceptors;
-    }
 
     /**
      * The factory method help U create instance.
@@ -49,18 +40,30 @@ public class RealCall implements ICall {
         return new RealCall(context, request, interceptors);
     }
 
+    private final Context context;
+    private final Request request;
+    private final List<IInterceptor> interceptors;
+
+    private RealCall(Context context, Request request, List<IInterceptor> interceptors) {
+        this.context = context;
+        this.request = request;
+        this.interceptors = interceptors;
+    }
+
     @Override
-    public void post(@NonNull final IInterceptor.ChainCallback callback) {
+    public Cancelable post(@NonNull final IInterceptor.ChainCallback callback) {
         Preconditions.checkNotNull(callback);
         IScheduler scheduler = SchedulerFactory.create(MAIN_THREAD);
+        final Cancelable cancelable = new Cancelable();
         scheduler.schedule(new Runnable() {
             @Override
             public void run() {
-                ChainContext chainContext = ChainContext.obtain(context, request);
+                ChainContext chainContext = ChainContext.obtain(context, request, cancelable);
                 IInterceptor.Chain chain = RealChain.create(interceptors, chainContext, callback);
                 chain.dispatch();
             }
         }, request.getDelay());
+        return cancelable;
     }
 
     @Override

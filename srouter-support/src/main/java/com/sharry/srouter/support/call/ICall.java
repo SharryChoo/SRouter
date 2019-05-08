@@ -19,8 +19,8 @@ public interface ICall {
     ICall DEFAULT = new ICall() {
 
         @Override
-        public void post(@NonNull IInterceptor.ChainCallback callback) {
-
+        public Cancelable post(@NonNull IInterceptor.ChainCallback callback) {
+            return null;
         }
 
         @Override
@@ -34,7 +34,7 @@ public interface ICall {
     /**
      * Get response on Callback.(Recommend.)
      */
-    void post(@NonNull IInterceptor.ChainCallback callback);
+    Cancelable post(@NonNull IInterceptor.ChainCallback callback);
 
     /**
      * Adapter ICall to target.

@@ -2,6 +2,7 @@ package com.sharry.srouter.module.base;
 
 import androidx.annotation.NonNull;
 
+import com.sharry.srouter.support.call.Cancelable;
 import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.interceptors.IInterceptor;
@@ -19,18 +20,16 @@ import io.reactivex.disposables.Disposable;
  */
 public final class ResponseObservable extends Observable<Response> {
 
-    private final ICall originalCall;
+    private final ICall call;
 
-    ResponseObservable(ICall originalCall) {
-        this.originalCall = originalCall;
+    ResponseObservable(ICall call) {
+        this.call = call;
     }
 
     @Override
     protected void subscribeActual(final Observer<? super Response> observer) {
         // Since Call is a one-shot type, clone it for each new observer.
-        ICall call = originalCall;
-        observer.onSubscribe(new CallDisposable(call));
-        call.post(new IInterceptor.ChainCallback() {
+        Cancelable cancelable = call.post(new IInterceptor.ChainCallback() {
             @Override
             public void onSuccess(@NonNull Response response) {
                 observer.onNext(response);
@@ -40,25 +39,31 @@ public final class ResponseObservable extends Observable<Response> {
             public void onFailed(Throwable throwable) {
                 observer.onError(throwable);
             }
+
+            @Override
+            public void onCanceled() {
+                // do nothing.
+            }
         });
+        observer.onSubscribe(new CallDisposable(cancelable));
     }
 
     private static final class CallDisposable implements Disposable {
 
-        private final ICall call;
+        private final Cancelable cancelable;
 
-        CallDisposable(ICall call) {
-            this.call = call;
+        CallDisposable(Cancelable cancelable) {
+            this.cancelable = cancelable;
         }
 
         @Override
         public void dispose() {
-
+            cancelable.cancel();
         }
 
         @Override
         public boolean isDisposed() {
-            return false;
+            return cancelable.isCanceled();
         }
     }
 }

@@ -23,13 +23,14 @@ public interface IInterceptor {
         ChainCallback callback();
 
         void dispatch();
-
     }
 
     interface ChainCallback {
         void onSuccess(@NonNull Response response);
 
         void onFailed(Throwable throwable);
+
+        void onCanceled();
     }
 
 }
