@@ -2,7 +2,7 @@ package com.sharry.srouter.module.base;
 
 import androidx.annotation.NonNull;
 
-import com.sharry.srouter.support.call.Cancelable;
+import com.sharry.srouter.support.call.ICancelable;
 import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.data.Response;
 import com.sharry.srouter.support.interceptors.IInterceptor;
@@ -29,7 +29,7 @@ public final class ResponseObservable extends Observable<Response> {
     @Override
     protected void subscribeActual(final Observer<? super Response> observer) {
         // Since Call is a one-shot type, clone it for each new observer.
-        Cancelable cancelable = call.post(new IInterceptor.ChainCallback() {
+        ICancelable cancelable = call.post(new IInterceptor.ChainCallback() {
             @Override
             public void onSuccess(@NonNull Response response) {
                 observer.onNext(response);
@@ -50,9 +50,9 @@ public final class ResponseObservable extends Observable<Response> {
 
     private static final class CallDisposable implements Disposable {
 
-        private final Cancelable cancelable;
+        private final ICancelable cancelable;
 
-        CallDisposable(Cancelable cancelable) {
+        CallDisposable(ICancelable cancelable) {
             this.cancelable = cancelable;
         }
 

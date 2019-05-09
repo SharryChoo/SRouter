@@ -5,7 +5,7 @@ import android.content.ContextWrapper;
 
 import androidx.annotation.NonNull;
 
-import com.sharry.srouter.support.call.Cancelable;
+import com.sharry.srouter.support.call.ICancelable;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.utils.Preconditions;
 
@@ -23,16 +23,16 @@ public class ChainContext extends ContextWrapper {
      */
     public static ChainContext obtain(@NonNull Context context,
                                       @NonNull Request request,
-                                      @NonNull Cancelable cancelable) {
+                                      @NonNull ICancelable cancelable) {
         Preconditions.checkNotNull(context);
         Preconditions.checkNotNull(request);
         return new ChainContext(context, request, cancelable);
     }
 
-    public Cancelable cancelable;
+    public ICancelable cancelable;
     public Request request;
 
-    private ChainContext(Context base, Request request, Cancelable cancelable) {
+    private ChainContext(Context base, Request request, ICancelable cancelable) {
         super(base);
         this.request = request;
         this.cancelable = cancelable;

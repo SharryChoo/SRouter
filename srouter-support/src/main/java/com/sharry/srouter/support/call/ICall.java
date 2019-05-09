@@ -1,10 +1,7 @@
 package com.sharry.srouter.support.call;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import com.sharry.srouter.support.data.Response;
-import com.sharry.srouter.support.facade.Callback;
 import com.sharry.srouter.support.interceptors.IInterceptor;
 
 /**
@@ -19,7 +16,7 @@ public interface ICall {
     ICall DEFAULT = new ICall() {
 
         @Override
-        public Cancelable post(@NonNull IInterceptor.ChainCallback callback) {
+        public ICancelable post(@NonNull IInterceptor.ChainCallback callback) {
             return null;
         }
 
@@ -34,7 +31,7 @@ public interface ICall {
     /**
      * Get response on Callback.(Recommend.)
      */
-    Cancelable post(@NonNull IInterceptor.ChainCallback callback);
+    ICancelable post(@NonNull IInterceptor.ChainCallback callback);
 
     /**
      * Adapter ICall to target.
