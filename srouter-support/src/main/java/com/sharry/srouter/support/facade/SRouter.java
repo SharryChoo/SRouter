@@ -89,6 +89,17 @@ public class SRouter {
     }
 
     /**
+     * Build router navigation path.
+     */
+    public static Request request(@NonNull String url) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        Preconditions.checkNotEmpty(url);
+        return SRouterImpl.request(url);
+    }
+
+    /**
      * perform navigation.
      */
     public static void navigation(@Nullable Context context, @NonNull Request request) {

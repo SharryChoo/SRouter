@@ -2,6 +2,7 @@ package com.sharry.srouter.module.found;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,10 +28,18 @@ public class FoundActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.found_activity_found);
+        parseIntent();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void parseIntent() {
+        String oprNo = getIntent().getStringExtra("opr");
+        String password = getIntent().getStringExtra("password");
+        TextView textView = findViewById(R.id.tv_desc);
+        textView.setText("oprNo = " + oprNo + ", password = " + password);
     }
 }

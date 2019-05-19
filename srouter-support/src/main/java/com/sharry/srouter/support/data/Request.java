@@ -2,6 +2,7 @@ package com.sharry.srouter.support.data;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -89,7 +90,26 @@ public class Request extends RouteMeta {
      * U can get an instance of Request from this method.
      */
     public static Request create(@NonNull String authority, @NonNull String path) {
-        return new Request(authority, path);
+        return new Request(Preconditions.checkNotEmpty(authority), Preconditions.checkNotEmpty(path));
+    }
+
+    /**
+     * U can instant Request by parse URL
+     */
+    public static Request parseFrom(@NonNull String url) {
+        Uri uri = Uri.parse(Preconditions.checkNotEmpty(url));
+        // Fetch authority.
+        String authority = Preconditions.checkNotEmpty(uri.getAuthority());
+        // Fetch path and remove '/' at start.
+        String path = Preconditions.checkNotEmpty(uri.getPath()).substring(1);
+        // Fetch query items.
+        Bundle datum = new Bundle();
+        for (String queryParameterName : uri.getQueryParameterNames()) {
+            datum.putString(queryParameterName, uri.getQueryParameter(queryParameterName));
+        }
+        Request request = create(authority, path);
+        request.setDatum(datum);
+        return request;
     }
 
     /**

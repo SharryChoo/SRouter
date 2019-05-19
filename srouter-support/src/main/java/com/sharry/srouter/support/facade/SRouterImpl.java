@@ -59,6 +59,10 @@ class SRouterImpl {
         return Request.create(authority, path);
     }
 
+    static Request request(String url) {
+        return Request.parseFrom(url);
+    }
+
     /**
      * Initiatory perform navigation.
      */

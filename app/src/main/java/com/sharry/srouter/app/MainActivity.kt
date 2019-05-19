@@ -19,7 +19,8 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         // 尝试跳转到发现页面
         btnFound.setOnClickListener {
-            SRouter.request(ModuleConstants.Found.NAME, ModuleConstants.Found.FOUND_ACTIVITY)
+            val url = "router://found/found_activity?opr=15533&password=1234456"
+            SRouter.request(url)
                     .setDelay(1000)
                     .navigation(this)
         }
