@@ -6,6 +6,7 @@ import com.sharry.srouter.support.templates.IRoute;
 import com.sharry.srouter.support.templates.IRouteInterceptor;
 import com.sharry.srouter.support.utils.Logger;
 
+import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import static com.sharry.srouter.support.utils.Constants.DOT;
@@ -13,6 +14,7 @@ import static com.sharry.srouter.support.utils.Constants.NAME_OF_INTERCEPTOR;
 import static com.sharry.srouter.support.utils.Constants.NAME_OF_ROUTERS;
 import static com.sharry.srouter.support.utils.Constants.PACKAGE_OF_GENERATE_FILE;
 import static com.sharry.srouter.support.utils.Constants.SEPARATOR;
+import static com.sharry.srouter.support.utils.Constants.SUFFIX_OF_QUERY_BINDING;
 
 /**
  * Perform Route logistics, it contains all of the map.
@@ -57,6 +59,26 @@ public class LogisticsCenter {
             if (metas == null) {
                 Logger.i("Cannot find this module: " + moduleName);
             }
+        }
+    }
+
+    /**
+     * Parse intent and inject to fields that @Query marked.
+     */
+    public static <T> void bindQuery(T binder) {
+        Class binderClass = binder.getClass();
+        String queryBindingClassName = binderClass.getName() + SEPARATOR + SUFFIX_OF_QUERY_BINDING;
+        try {
+            Constructor constructor = Warehouse.QUERY_BINDING_CONSTRUCTORS.get(queryBindingClassName);
+            if (constructor == null) {
+                Class queryBindingClass = Class.forName(queryBindingClassName);
+                constructor = queryBindingClass.getConstructor(binderClass);
+                constructor.setAccessible(true);
+                Warehouse.QUERY_BINDING_CONSTRUCTORS.put(queryBindingClassName, constructor);
+            }
+            constructor.newInstance(binder);
+        } catch (Throwable e) {
+            Logger.e(e.getMessage(), e);
         }
     }
 

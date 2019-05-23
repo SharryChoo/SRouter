@@ -33,6 +33,7 @@ public abstract class BaseCompiler extends AbstractProcessor {
     protected TypeMirror typeActivity;
     protected TypeMirror typeFragment;
     protected TypeMirror typeFragmentV4;
+    protected TypeMirror typeFragmentX;
     protected TypeMirror typeService;
     protected TypeMirror typeInterceptor;
 
@@ -71,6 +72,7 @@ public abstract class BaseCompiler extends AbstractProcessor {
         typeActivity = elementUtils.getTypeElement(CLASS_NAME_ACTIVITY).asType();
         typeFragment = elementUtils.getTypeElement(CLASS_NAME_FRAGMENT).asType();
         typeFragmentV4 = elementUtils.getTypeElement(Constants.CLASS_NAME_FRAGMENT_V4).asType();
+        typeFragmentX = elementUtils.getTypeElement(Constants.CLASS_NAME_FRAGMENT_X).asType();
         typeService = elementUtils.getTypeElement(Constants.CLASS_NAME_ISERVICE).asType();
         typeInterceptor = processingEnv.getElementUtils().getTypeElement(Constants.CLASS_NAME_IINTERCEPTOR).asType();
     }

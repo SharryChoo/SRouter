@@ -203,6 +203,10 @@ public class RouteCompiler extends BaseCompiler {
             // @Route bind class is child for Fragment.
             logger.i("Found fragment v4 route: " + tm.toString() + " <<<");
             writeLoadInto(loadInto, "FRAGMENT_V4", authority, path, interceptorURIs, element);
+        } else if (types.isSubtype(tm, typeFragmentX)) {
+            // @Route bind class is child for Fragment.
+            logger.i("Found fragment v4 route: " + tm.toString() + " <<<");
+            writeLoadInto(loadInto, "FRAGMENT_X", authority, path, interceptorURIs, element);
         } else if (types.isSubtype(tm, typeService)) {
             // @Route bind class is child for IService.
             logger.i("Found service route: " + tm.toString() + " <<<");

@@ -22,7 +22,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 
 /**
- * Generate SRouter$$Routes$$xxx.java file.
+ * Generate xxx$$QueryBinding.java file.
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
@@ -65,9 +65,6 @@ public class QueryCompiler extends BaseCompiler {
         return false;
     }
 
-    /**
-     * 生成我们的注解支持类
-     */
     private void generateClass(Element classElement, List<Element> fieldElements) {
         // Verify class type.
         final String originClassNameStr = classElement.getSimpleName().toString();
@@ -77,7 +74,8 @@ public class QueryCompiler extends BaseCompiler {
         if (types.isSubtype(classElement.asType(), typeActivity)) {  // Activity, then use getIntent()
             isActivity = true;
         } else if (types.isSubtype(classElement.asType(), typeFragment)
-                || types.isSubtype(classElement.asType(), typeFragmentV4)) {   // Fragment, then use getArguments()
+                || types.isSubtype(classElement.asType(), typeFragmentV4)
+                || types.isSameType(classElement.asType(), typeFragmentX)) {   // Fragment, then use getArguments()
             isActivity = false;
         } else {
             throw new IllegalStateException("The field [" + originClassNameStr + "] need inject " +

@@ -77,6 +77,19 @@ public class SRouter {
     }
 
     /**
+     * Parse intent and inject to fields that @Query marked.
+     *
+     * @param binder The intent holder.
+     */
+    public static <T> void bindQuery(@NonNull T binder) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        Preconditions.checkNotNull(binder);
+        SRouterImpl.bindQuery(binder);
+    }
+
+    /**
      * Build router navigation path.
      */
     public static Request request(@NonNull String authority, @NonNull String path) {
@@ -124,4 +137,5 @@ public class SRouter {
         Preconditions.checkNotNull(request);
         return SRouterImpl.newCall(context, request);
     }
+
 }

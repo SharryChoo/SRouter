@@ -52,9 +52,10 @@ class SRouterImpl {
         LogisticsCenter.addCallAdapter(adapter);
     }
 
-    /**
-     * Build navigation postcard by path.
-     */
+    static <T> void bindQuery(T binder) {
+        LogisticsCenter.bindQuery(binder);
+    }
+
     static Request request(String authority, String path) {
         return Request.create(authority, path);
     }
@@ -63,9 +64,6 @@ class SRouterImpl {
         return Request.parseFrom(url);
     }
 
-    /**
-     * Initiatory perform navigation.
-     */
     static void navigation(final Context context, final Request request, final Callback callback) {
         newCall(context, request).post(new IInterceptor.ChainCallback() {
             @Override
@@ -87,9 +85,6 @@ class SRouterImpl {
         });
     }
 
-    /**
-     * Build an instance of navigation post.
-     */
     static ICall newCall(final Context context, final Request request) {
         // 1. load data to request.
         try {

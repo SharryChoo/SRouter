@@ -1,7 +1,5 @@
 package com.sharry.srouter.support.data;
 
-import androidx.fragment.app.Fragment;
-
 import com.sharry.srouter.annotation.Route;
 import com.sharry.srouter.support.service.IService;
 
@@ -72,27 +70,38 @@ public class RouteMeta {
         /**
          * Type of {@link android.app.Activity}.
          */
-        ACTIVITY,
+        ACTIVITY("android.app.Activity"),
 
         /**
          * Type of {@link android.app.Fragment}.
          */
-        FRAGMENT,
+        FRAGMENT("android.app.Fragment"),
 
         /**
-         * Type of {@link Fragment}.
+         * Type of {@link android.support.v4.app.Fragment}.
          */
-        FRAGMENT_V4,
+        FRAGMENT_V4("android.support.v4.app.Fragment"),
+
+        /**
+         * Type of {@link androidx.fragment.app.Fragmennt}.
+         */
+        FRAGMENT_X("androidx.fragment.app.Fragmennt"),
 
         /**
          * Type of {@link IService}.
          */
-        SERVICE,
+        SERVICE(IService.class.getName()),
 
         /**
          * Type unsupported.
          */
-        UNKNOWN
+        UNKNOWN("");
+
+        public String typeName;
+
+        Type(String typeName) {
+            this.typeName = typeName;
+        }
     }
 
 }

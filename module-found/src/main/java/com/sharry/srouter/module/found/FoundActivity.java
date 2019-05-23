@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.sharry.srouter.annotation.Query;
 import com.sharry.srouter.annotation.Route;
 import com.sharry.srouter.module.base.ModuleConstants;
+import com.sharry.srouter.support.facade.SRouter;
 
 /**
  * 第一个 Module 中的 Activity.
@@ -44,6 +45,7 @@ public class FoundActivity extends AppCompatActivity {
     }
 
     private void parseIntent() {
+        SRouter.bindQuery(this);
         TextView textView = findViewById(R.id.tv_desc);
         textView.setText("oprNo = " + oprNo + ", password = " + password);
     }
