@@ -1,6 +1,8 @@
 package com.sharry.srouter.compiler;
 
 
+import com.sharry.srouter.annotation.QueryType;
+
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -46,31 +48,31 @@ class TypeUtils {
 
         switch (typeMirror.toString()) {
             case Constants.BYTE:
-                return TypeKind.BYTE.ordinal();
+                return QueryType.BYTE.ordinal();
             case Constants.SHORT:
-                return TypeKind.SHORT.ordinal();
+                return QueryType.SHORT.ordinal();
             case Constants.INTEGER:
-                return TypeKind.INT.ordinal();
+                return QueryType.INT.ordinal();
             case Constants.LONG:
-                return TypeKind.LONG.ordinal();
+                return QueryType.LONG.ordinal();
             case Constants.FLOAT:
-                return TypeKind.FLOAT.ordinal();
+                return QueryType.FLOAT.ordinal();
             case Constants.DOUBEL:
-                return TypeKind.DOUBLE.ordinal();
+                return QueryType.DOUBLE.ordinal();
             case Constants.BOOLEAN:
-                return TypeKind.BOOLEAN.ordinal();
+                return QueryType.BOOLEAN.ordinal();
             case Constants.CHAR:
-                return TypeKind.CHAR.ordinal();
+                return QueryType.CHAR.ordinal();
             case Constants.STRING:
-                return TypeKind.STRING.ordinal();
+                return QueryType.STRING.ordinal();
             default:
                 // Other side, maybe the PARCELABLE or SERIALIZABLE or OBJECT.
                 if (types.isSubtype(typeMirror, parcelableType)) {
                     // PARCELABLE
-                    return TypeKind.PARCELABLE.ordinal();
+                    return QueryType.PARCELABLE.ordinal();
                 } else if (types.isSubtype(typeMirror, serializableType)) {
                     // SERIALIZABLE
-                    return TypeKind.SERIALIZABLE.ordinal();
+                    return QueryType.SERIALIZABLE.ordinal();
                 } else {
                     return -1;
                 }

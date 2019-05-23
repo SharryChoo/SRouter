@@ -26,7 +26,7 @@ public enum PriorityRange {
     }
 
     /**
-     * Get value for the enum element.
+     * Get key for the enum element.
      */
     public int value() {
         return value;

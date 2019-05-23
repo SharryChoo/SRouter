@@ -150,7 +150,7 @@ public class RouteInterceptorCompiler extends BaseCompiler {
     }
 
     private void writeToMethodLoadInto(MethodSpec.Builder loadInto, String value, int priority, Element element) {
-        loadInto.addComment("------------------ @RouteInterceptor(value = \"" + value + "\") ------------------");
+        loadInto.addComment("------------------ @RouteInterceptor(key = \"" + value + "\") ------------------");
         TypeMirror tm = element.asType();
         if (types.isSubtype(tm, typeInterceptor)) {
             loadInto.addCode(

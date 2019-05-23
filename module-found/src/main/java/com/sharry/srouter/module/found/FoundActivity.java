@@ -26,10 +26,10 @@ import com.sharry.srouter.support.facade.SRouter;
 )
 public class FoundActivity extends AppCompatActivity {
 
-    @Query("opr")
+    @Query(key = "opr")
     String oprNo;
 
-    @Query("password")
+    @Query(key = "password")
     String password;
 
     @Override

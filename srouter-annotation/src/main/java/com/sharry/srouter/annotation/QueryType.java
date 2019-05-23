@@ -1,13 +1,13 @@
-package com.sharry.srouter.compiler;
+package com.sharry.srouter.annotation;
 
 /**
- * Kind of field type.
+ * Current support of field type.
  *
  * @author Sharry <a href="sharrychoochn@gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2019-05-23
  */
-enum TypeKind {
+public enum QueryType {
     // Base type
     BOOLEAN,
     BYTE,

@@ -22,14 +22,14 @@ public class Warehouse {
     /**
      * Key is path of the route request.{@link Route#path()}
      * <p>
-     * The key mapper special value is data associated with @Route marked class.
+     * The key mapper special key is data associated with @Route marked class.
      */
     public static final Map<String, Map<String, RouteMeta>> TABLE_ROUTES = new HashMap<>();
 
     /**
      * Key is path of the route interceptor.{@link RouteInterceptor#value()} ()}
      * <p>
-     * The key mapper special value is data associated with @RouteInterceptor marked class.
+     * The key mapper special key is data associated with @RouteInterceptor marked class.
      */
     public static final Map<String, InterceptorMeta> TABLE_ROUTES_INTERCEPTORS = new HashMap<>();
 
@@ -41,7 +41,7 @@ public class Warehouse {
     /**
      * Key is name of Class<XXX$$QueryBinding>
      * <p>
-     * The key mapper special value is constructor of the class.
+     * The key mapper special key is constructor of the class.
      */
     public static final Map<String, Constructor> QUERY_BINDING_CONSTRUCTORS = new HashMap<>();
 

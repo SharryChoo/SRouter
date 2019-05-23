@@ -17,20 +17,20 @@ import java.lang.annotation.Target;
 public @interface RouteInterceptor {
 
     /**
-     * Route value associated with RouteInterceptor URI.
+     * Route key associated with RouteInterceptor URI.
      */
     String value();
 
     /**
      * Priority for the interceptor.
      * <pre>
-     * Priority value Range in
+     * Priority key Range in
      *      [
      *           {@link PriorityRange#MINIMUM},
      *           {@link PriorityRange#MAXIMUM}
      *      ]
      * </pre>
-     * If two priority value is equivalent, the path mapper special IInterceptor
+     * If two priority key is equivalent, the path mapper special IInterceptor
      * will be performed in {@link Route#interceptorURIs()} add order.
      */
     int priority() default 1;

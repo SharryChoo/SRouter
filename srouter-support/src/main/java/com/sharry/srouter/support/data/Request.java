@@ -292,8 +292,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a String value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a String key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a String, or null
@@ -307,8 +307,8 @@ public class Request extends RouteMeta {
     // #############################  Follow api copy from #{Bundle}  ##############################
 
     /**
-     * Inserts a Boolean value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a Boolean key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a boolean
@@ -320,8 +320,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a short value into the mapping of this Bundle, replacing
-     * any existing value for the given key.
+     * Inserts a short key into the mapping of this Bundle, replacing
+     * any existing key for the given key.
      *
      * @param key   a String, or null
      * @param value a short
@@ -333,8 +333,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts an int value into the mapping of this Bundle, replacing
-     * any existing value for the given key.
+     * Inserts an int key into the mapping of this Bundle, replacing
+     * any existing key for the given key.
      *
      * @param key   a String, or null
      * @param value an int
@@ -346,8 +346,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a long value into the mapping of this Bundle, replacing
-     * any existing value for the given key.
+     * Inserts a long key into the mapping of this Bundle, replacing
+     * any existing key for the given key.
      *
      * @param key   a String, or null
      * @param value a long
@@ -359,8 +359,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a double value into the mapping of this Bundle, replacing
-     * any existing value for the given key.
+     * Inserts a double key into the mapping of this Bundle, replacing
+     * any existing key for the given key.
      *
      * @param key   a String, or null
      * @param value a double
@@ -372,8 +372,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a byte value into the mapping of this Bundle, replacing
-     * any existing value for the given key.
+     * Inserts a byte key into the mapping of this Bundle, replacing
+     * any existing key for the given key.
      *
      * @param key   a String, or null
      * @param value a byte
@@ -385,8 +385,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a char value into the mapping of this Bundle, replacing
-     * any existing value for the given key.
+     * Inserts a char key into the mapping of this Bundle, replacing
+     * any existing key for the given key.
      *
      * @param key   a String, or null
      * @param value a char
@@ -398,8 +398,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a float value into the mapping of this Bundle, replacing
-     * any existing value for the given key.
+     * Inserts a float key into the mapping of this Bundle, replacing
+     * any existing key for the given key.
      *
      * @param key   a String, or null
      * @param value a float
@@ -411,8 +411,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a CharSequence value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a CharSequence key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a CharSequence, or null
@@ -424,8 +424,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a Parcelable value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a Parcelable key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a Parcelable object, or null
@@ -438,7 +438,7 @@ public class Request extends RouteMeta {
 
     /**
      * Inserts an array of Parcelable values into the mapping of this Bundle,
-     * replacing any existing value for the given key.  Either key or value may
+     * replacing any existing key for the given key.  Either key or key may
      * be null.
      *
      * @param key   a String, or null
@@ -452,7 +452,7 @@ public class Request extends RouteMeta {
 
     /**
      * Inserts a List of Parcelable values into the mapping of this Bundle,
-     * replacing any existing value for the given key.  Either key or value may
+     * replacing any existing key for the given key.  Either key or key may
      * be null.
      *
      * @param key   a String, or null
@@ -466,8 +466,8 @@ public class Request extends RouteMeta {
 
     /**
      * Inserts a SparceArray of Parcelable values into the mapping of this
-     * Bundle, replacing any existing value for the given key.  Either key
-     * or value may be null.
+     * Bundle, replacing any existing key for the given key.  Either key
+     * or key may be null.
      *
      * @param key   a String, or null
      * @param value a SparseArray of Parcelable objects, or null
@@ -479,8 +479,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts an ArrayList value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts an ArrayList key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value an ArrayList object, or null
@@ -492,8 +492,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts an ArrayList value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts an ArrayList key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value an ArrayList object, or null
@@ -505,8 +505,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts an ArrayList value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts an ArrayList key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value an ArrayList object, or null
@@ -518,8 +518,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a Serializable value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a Serializable key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a Serializable object, or null
@@ -531,8 +531,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a byte array value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a byte array key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a byte array object, or null
@@ -544,8 +544,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a short array value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a short array key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a short array object, or null
@@ -557,8 +557,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a char array value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a char array key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a char array object, or null
@@ -570,8 +570,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a float array value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a float array key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a float array object, or null
@@ -583,8 +583,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a CharSequence array value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a CharSequence array key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a CharSequence array object, or null
@@ -596,8 +596,8 @@ public class Request extends RouteMeta {
     }
 
     /**
-     * Inserts a Bundle value into the mapping of this Bundle, replacing
-     * any existing value for the given key.  Either key or value may be null.
+     * Inserts a Bundle key into the mapping of this Bundle, replacing
+     * any existing key for the given key.  Either key or key may be null.
      *
      * @param key   a String, or null
      * @param value a Bundle object, or null

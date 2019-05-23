@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation for field, will auto generate target java file when build.
+ * <p>
+ * Current support bind filed type have {@link QueryType}
  *
  * @author Sharry <a href="sharrychoochn@gmail.com">Contact me.</a>
  * @version 1.0
@@ -16,6 +18,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface Query {
 
-    String value() default "";
+    /**
+     * The key that u want bind.
+     */
+    String key() default "";
+
+    /**
+     * The desc associated with marked field.
+     */
+    String desc() default "";
 
 }

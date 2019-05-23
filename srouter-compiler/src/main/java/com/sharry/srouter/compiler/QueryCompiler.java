@@ -2,6 +2,7 @@ package com.sharry.srouter.compiler;
 
 import com.google.auto.service.AutoService;
 import com.sharry.srouter.annotation.Query;
+import com.sharry.srouter.annotation.QueryType;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
@@ -110,7 +111,7 @@ public class QueryCompiler extends BaseCompiler {
 
     private void addCode(MethodSpec.Builder methodBuilder, Element fieldElement, boolean isActivity) {
         String originalValue = "substitute." + fieldElement.getSimpleName().toString();
-        String value = fieldElement.getAnnotation(Query.class).value();
+        String value = fieldElement.getAnnotation(Query.class).key();
         String statement = originalValue + " = ";
         statement += buildCastCode(fieldElement);
         statement += isActivity ? "substitute.getIntent()." : "substitute.getArgument().";
@@ -120,14 +121,14 @@ public class QueryCompiler extends BaseCompiler {
 
 
     private String buildCastCode(Element element) {
-        if (typeUtils.typeExchange(element) == TypeKind.SERIALIZABLE.ordinal()) {
+        if (typeUtils.typeExchange(element) == QueryType.SERIALIZABLE.ordinal()) {
             return CodeBlock.builder().add("($T) ", ClassName.get(element.asType())).build().toString();
         }
         return "";
     }
 
     private String buildStatement(String originalValue, String statement, int type, boolean isActivity) {
-        switch (TypeKind.values()[type]) {
+        switch (QueryType.values()[type]) {
             case BOOLEAN:
                 statement += (isActivity ? ("getBooleanExtra($S, " + originalValue + ")") : ("getBoolean($S)"));
                 break;
