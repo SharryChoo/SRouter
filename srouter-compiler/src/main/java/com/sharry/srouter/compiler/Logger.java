@@ -25,7 +25,7 @@ class Logger {
      * Print info log.
      */
     void i(CharSequence info) {
-        if (!TextUtils.isEmpty(info)) {
+        if (null != info && info.length() > 0) {
             mMsg.printMessage(Diagnostic.Kind.NOTE, PREFIX_OF_LOGGER + info);
         }
     }
@@ -34,7 +34,7 @@ class Logger {
      * Print waring log.
      */
     void w(CharSequence warning) {
-        if (!TextUtils.isEmpty(warning)) {
+        if (null != warning && warning.length() > 0) {
             mMsg.printMessage(Diagnostic.Kind.WARNING, PREFIX_OF_LOGGER + warning);
         }
     }
@@ -43,7 +43,7 @@ class Logger {
      * Print error log.
      */
     void e(CharSequence error) {
-        if (!TextUtils.isEmpty(error)) {
+        if (null != error && error.length() > 0) {
             mMsg.printMessage(Diagnostic.Kind.ERROR, PREFIX_OF_LOGGER +
                     "An exception is encountered, [" + error + "]");
         }

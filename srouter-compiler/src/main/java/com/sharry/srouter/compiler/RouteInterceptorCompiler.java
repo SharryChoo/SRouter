@@ -11,21 +11,15 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Types;
 
 import static javax.lang.model.element.Modifier.PUBLIC;
 
@@ -37,34 +31,7 @@ import static javax.lang.model.element.Modifier.PUBLIC;
  * @since 2018/8/17 16:28
  */
 @AutoService(Processor.class)
-public class RouteInterceptorCompiler extends AbstractProcessor {
-
-    private Filer mFiler;
-    private Logger mLogger;
-    private Types mTypeUtils;
-    private TypeMirror mTypeInterceptor;
-
-    @Override
-    public synchronized void init(ProcessingEnvironment processingEnvironment) {
-        super.init(processingEnvironment);
-        mFiler = processingEnvironment.getFiler();
-        mLogger = new Logger(processingEnv.getMessager());
-        mTypeUtils = processingEnv.getTypeUtils();
-        mTypeInterceptor = processingEnv.getElementUtils().getTypeElement(Constants.CLASS_NAME_IINTERCEPTOR).asType();
-        mLogger.i(">>>>>>>>>>>>>>>>>>>>> init <<<<<<<<<<<<<<<<<<<<<<<");
-    }
-
-    @Override
-    public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
-    }
-
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        Set<String> annotations = new LinkedHashSet<>();
-        annotations.add(RouteInterceptor.class.getCanonicalName());
-        return annotations;
-    }
+public class RouteInterceptorCompiler extends BaseCompiler {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
@@ -75,7 +42,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
         if (null == elements || elements.isEmpty()) {
             return false;
         }
-        mLogger.i("elements size is " + elements.size());
+        logger.i("elements size is " + elements.size());
         /*
           ```Map<String, RouteInterceptorMeta>```
          */
@@ -118,10 +85,10 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
                     .addFileComment("SRouter-Compiler auto generate.")
                     .indent("    ")
                     .build()
-                    .writeTo(mFiler);
-            mLogger.i("Generated root, name is " + Constants.SIMPLE_NAME_PREFIX_OF_INTERCEPTOR + moduleName);
+                    .writeTo(filer);
+            logger.i("Generated root, name is " + Constants.SIMPLE_NAME_PREFIX_OF_INTERCEPTOR + moduleName);
         } catch (IOException e) {
-            mLogger.e(e);
+            logger.e(e);
         }
         return false;
     }
@@ -135,11 +102,11 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
         if (options != null && !options.isEmpty()) {
             moduleName = options.get(Constants.KEY_MODULE_NAME);
         }
-        if (!TextUtils.isEmpty(moduleName)) {
+        if (null != moduleName && moduleName.length() > 0) {
             moduleName = moduleName.replaceAll("[^0-9a-zA-Z_]+", "");
-            mLogger.i("The user has configuration the module name, it was [" + moduleName + "]");
+            logger.i("The user has configuration the module name, it was [" + moduleName + "]");
         } else {
-            mLogger.e("These no module name, at 'build.gradle', like :\n" +
+            logger.e("These no module name, at 'build.gradle', like :\n" +
                     "apt {\n" +
                     "    arguments {\n" +
                     "        moduleName project.getName();\n" +
@@ -185,7 +152,7 @@ public class RouteInterceptorCompiler extends AbstractProcessor {
     private void writeToMethodLoadInto(MethodSpec.Builder loadInto, String value, int priority, Element element) {
         loadInto.addComment("------------------ @RouteInterceptor(value = \"" + value + "\") ------------------");
         TypeMirror tm = element.asType();
-        if (mTypeUtils.isSubtype(tm, mTypeInterceptor)) {
+        if (types.isSubtype(tm, typeInterceptor)) {
             loadInto.addCode(
                     Constants.METHOD_LOAD_INTO_PARAMETER_NAME_INTERCEPTION_CACHES + ".put(" + "\n" +
                             "      $S, " + "\n" +

@@ -13,26 +13,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 
-import static com.sharry.srouter.compiler.Constants.CLASS_NAME_ACTIVITY;
-import static com.sharry.srouter.compiler.Constants.CLASS_NAME_FRAGMENT;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 /**
@@ -43,41 +34,7 @@ import static javax.lang.model.element.Modifier.PUBLIC;
  * @since 2018/8/17 16:28
  */
 @AutoService(Processor.class)
-public class RouteCompiler extends AbstractProcessor {
-
-    private Filer mFiler;                // File write util
-    private Logger mLogger;
-    private Types mTypeUtils;
-    private Elements mElementUtils;
-    // Special super class type.
-    private TypeMirror mTypeActivity;
-    private TypeMirror mTypeFragment;
-    private TypeMirror mTypeFragmentV4;
-    private TypeMirror mTypeService;
-
-    @Override
-    public synchronized void init(ProcessingEnvironment processingEnvironment) {
-        super.init(processingEnvironment);
-        mFiler = processingEnvironment.getFiler();
-        mLogger = new Logger(processingEnv.getMessager());
-        mTypeUtils = processingEnv.getTypeUtils();            // Get type utils.
-        mElementUtils = processingEnv.getElementUtils();      // Get class meta.
-        // Find base type.
-        findDeclaredSpecialType();
-        mLogger.i(">>>>>>>>>>>>>>>>>>>>> init <<<<<<<<<<<<<<<<<<<<<<<");
-    }
-
-    @Override
-    public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
-    }
-
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        Set<String> annotations = new LinkedHashSet<>();
-        annotations.add(Route.class.getCanonicalName());
-        return annotations;
-    }
+public class RouteCompiler extends BaseCompiler {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
@@ -89,7 +46,7 @@ public class RouteCompiler extends AbstractProcessor {
         if (null == elements || elements.isEmpty()) {
             return false;
         }
-        mLogger.i("elements size is " + elements.size());
+        logger.i("elements size is " + elements.size());
         /*
           ```Map<String, RouteMeta>```
          */
@@ -138,10 +95,10 @@ public class RouteCompiler extends AbstractProcessor {
                     .addFileComment("SRouter-Compiler auto generate.")
                     .indent("    ")
                     .build()
-                    .writeTo(mFiler);
-            mLogger.i("Generated root, name is " + Constants.SIMPLE_NAME_PREFIX_OF_ROUTERS + moduleName);
+                    .writeTo(filer);
+            logger.i("Generated root, name is " + Constants.SIMPLE_NAME_PREFIX_OF_ROUTERS + moduleName);
         } catch (IOException e) {
-            mLogger.e(e);
+            logger.e(e);
         }
         return false;
     }
@@ -155,11 +112,11 @@ public class RouteCompiler extends AbstractProcessor {
         if (options != null && !options.isEmpty()) {
             moduleName = options.get(Constants.KEY_MODULE_NAME);
         }
-        if (!TextUtils.isEmpty(moduleName)) {
+        if (null != moduleName && moduleName.length() > 0) {
             moduleName = moduleName.replaceAll("[^0-9a-zA-Z_]+", "");
-            mLogger.i("The user has configuration the module name, it was [" + moduleName + "]");
+            logger.i("The user has configuration the module name, it was [" + moduleName + "]");
         } else {
-            mLogger.e("These no module name, at 'build.gradle', like :\n" +
+            logger.e("These no module name, at 'build.gradle', like :\n" +
                     "apt {\n" +
                     "    arguments {\n" +
                     "        moduleName project.getName();\n" +
@@ -168,16 +125,6 @@ public class RouteCompiler extends AbstractProcessor {
             throw new RuntimeException("SRouter::Compiler >>> No module name, for more information, look at gradle log.");
         }
         return moduleName;
-    }
-
-    /**
-     * Find declared special type.
-     */
-    private void findDeclaredSpecialType() {
-        mTypeActivity = mElementUtils.getTypeElement(CLASS_NAME_ACTIVITY).asType();
-        mTypeFragment = mElementUtils.getTypeElement(CLASS_NAME_FRAGMENT).asType();
-        mTypeFragmentV4 = mElementUtils.getTypeElement(Constants.CLASS_NAME_FRAGMENT_V4).asType();
-        mTypeService = mElementUtils.getTypeElement(Constants.CLASS_NAME_ISERVICE).asType();
     }
 
     /**
@@ -244,25 +191,25 @@ public class RouteCompiler extends AbstractProcessor {
     private void writeToMethodLoadInto(MethodSpec.Builder loadInto, String authority, String path,
                                        List<String> interceptorURIs, Element element) {
         TypeMirror tm = element.asType();
-        if (mTypeUtils.isSubtype(tm, mTypeActivity)) {
+        if (types.isSubtype(tm, typeActivity)) {
             // @Route bind class is child for Activity.
-            mLogger.i("Found activity route: " + tm.toString() + " <<<");
+            logger.i("Found activity route: " + tm.toString() + " <<<");
             writeLoadInto(loadInto, "ACTIVITY", authority, path, interceptorURIs, element);
-        } else if (mTypeUtils.isSubtype(tm, mTypeFragment)) {
+        } else if (types.isSubtype(tm, typeFragment)) {
             // @Route bind class is child for Fragment.
-            mLogger.i("Found fragment route: " + tm.toString() + " <<<");
+            logger.i("Found fragment route: " + tm.toString() + " <<<");
             writeLoadInto(loadInto, "FRAGMENT", authority, path, interceptorURIs, element);
-        } else if (mTypeUtils.isSubtype(tm, mTypeFragmentV4)) {
+        } else if (types.isSubtype(tm, typeFragmentV4)) {
             // @Route bind class is child for Fragment.
-            mLogger.i("Found fragment v4 route: " + tm.toString() + " <<<");
+            logger.i("Found fragment v4 route: " + tm.toString() + " <<<");
             writeLoadInto(loadInto, "FRAGMENT_V4", authority, path, interceptorURIs, element);
-        } else if (mTypeUtils.isSubtype(tm, mTypeService)) {
+        } else if (types.isSubtype(tm, typeService)) {
             // @Route bind class is child for IService.
-            mLogger.i("Found service route: " + tm.toString() + " <<<");
+            logger.i("Found service route: " + tm.toString() + " <<<");
             writeLoadInto(loadInto, "SERVICE", authority, path, interceptorURIs, element);
         } else {
             // @Route bind class is child for others.
-            mLogger.i("Found other route: " + tm.toString() + " <<<");
+            logger.i("Found other route: " + tm.toString() + " <<<");
             writeLoadInto(loadInto, "UNKNOWN", authority, path, interceptorURIs, element);
         }
     }

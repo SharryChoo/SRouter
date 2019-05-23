@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.sharry.srouter.annotation.Query;
 import com.sharry.srouter.annotation.Route;
 import com.sharry.srouter.module.base.ModuleConstants;
 
@@ -24,6 +25,12 @@ import com.sharry.srouter.module.base.ModuleConstants;
 )
 public class FoundActivity extends AppCompatActivity {
 
+    @Query("opr")
+    String oprNo;
+
+    @Query("password")
+    String password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +44,6 @@ public class FoundActivity extends AppCompatActivity {
     }
 
     private void parseIntent() {
-        String oprNo = getIntent().getStringExtra("opr");
-        String password = getIntent().getStringExtra("password");
         TextView textView = findViewById(R.id.tv_desc);
         textView.setText("oprNo = " + oprNo + ", password = " + password);
     }

@@ -22,6 +22,22 @@ class Constants {
     static final String CLASS_NAME_FRAGMENT_V4 = "android.support.v4.app.Fragment";
     static final String CLASS_NAME_ISERVICE = "com.sharry.srouter.support.service.IService";
     static final String CLASS_NAME_IINTERCEPTOR = "com.sharry.srouter.support.interceptors.IInterceptor";
+    static final String PARCELABLE = "android.os.Parcelable";
+
+    /**
+     * Java type
+     */
+    private static final String LANG = "java.lang";
+    static final String BYTE = LANG + ".Byte";
+    static final String SHORT = LANG + ".Short";
+    static final String INTEGER = LANG + ".Integer";
+    static final String LONG = LANG + ".Long";
+    static final String FLOAT = LANG + ".Float";
+    static final String DOUBEL = LANG + ".Double";
+    static final String BOOLEAN = LANG + ".Boolean";
+    static final String CHAR = LANG + ".Character";
+    static final String STRING = LANG + ".String";
+    static final String SERIALIZABLE = "java.io.Serializable";
 
     /**
      * Sub element for simple class name.
@@ -62,5 +78,10 @@ class Constants {
      */
     static final String SIMPLE_NAME_PREFIX_OF_INTERCEPTOR = SIMPLE_NAME_SUB_PROJECT +
             SIMPLE_NAME_SUB_SEPARATOR + "Interceptors" + SIMPLE_NAME_SUB_SEPARATOR;
+
+    /**
+     * Simple class name suffix: XXX$$QueryBinding
+     */
+    static final String SIMPLE_NAME_SUFFIX_OF_QUERY_BINDING = SIMPLE_NAME_SUB_SEPARATOR + "QueryBinding";
 
 }
