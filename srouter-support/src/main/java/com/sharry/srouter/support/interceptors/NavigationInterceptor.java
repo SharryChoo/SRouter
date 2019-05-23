@@ -55,13 +55,13 @@ public class NavigationInterceptor implements IInterceptor {
                     chain.callback().onFailed(e);
                 }
                 break;
-            case FRAGMENT_V4:
+            case FRAGMENT_X:
                 try {
                     // Instantiation fragment by class name.
-                    Fragment fragmentV4 = (Fragment) request.getRouteClass().newInstance();
-                    fragmentV4.setArguments(request.getDatum());
+                    Fragment fragmentX = (Fragment) request.getRouteClass().newInstance();
+                    fragmentX.setArguments(request.getDatum());
                     // Inject fragment to request provider.
-                    response.setFragmentV4(fragmentV4);
+                    response.setFragmentX(fragmentX);
                     chain.callback().onSuccess(response);
                 } catch (InstantiationException e) {
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()

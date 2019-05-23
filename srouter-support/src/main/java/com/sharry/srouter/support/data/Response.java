@@ -18,7 +18,7 @@ public class Response {
 
     private final Request request;
     private IService service;
-    private Fragment fragmentV4;
+    private Fragment fragmentX;
     private android.app.Fragment fragment;
     private ActivityResult activityResult;
 
@@ -30,12 +30,12 @@ public class Response {
         return request;
     }
 
-    public Fragment getFragmentV4() {
-        return fragmentV4;
+    public Fragment getFragmentX() {
+        return fragmentX;
     }
 
-    public void setFragmentV4(Fragment fragmentV4) {
-        this.fragmentV4 = fragmentV4;
+    public void setFragmentX(Fragment fragmentX) {
+        this.fragmentX = fragmentX;
     }
 
     public android.app.Fragment getFragment() {
@@ -61,5 +61,4 @@ public class Response {
     public ActivityResult getActivityResult() {
         return activityResult;
     }
-
 }
