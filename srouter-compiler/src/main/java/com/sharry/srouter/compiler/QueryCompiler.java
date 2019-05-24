@@ -71,7 +71,7 @@ public class QueryCompiler extends BaseCompiler {
         final String originClassNameStr = classElement.getSimpleName().toString();
         // Guess class name.
         ClassName originClassName = ClassName.bestGuess(originClassNameStr);
-        boolean isActivity = false;
+        boolean isActivity;
         if (types.isSubtype(classElement.asType(), typeActivity)) {  // Activity, then use getIntent()
             isActivity = true;
         } else if (types.isSubtype(classElement.asType(), typeFragment)
@@ -111,12 +111,14 @@ public class QueryCompiler extends BaseCompiler {
 
     private void addCode(MethodSpec.Builder methodBuilder, Element fieldElement, boolean isActivity) {
         String originalValue = "substitute." + fieldElement.getSimpleName().toString();
-        String value = fieldElement.getAnnotation(Query.class).key();
+        String key = fieldElement.getAnnotation(Query.class).key();
+        // Add comment.
+        methodBuilder.addComment("------------------ @Query(key = \"" + key + "\") ------------------");
         String statement = originalValue + " = ";
         statement += buildCastCode(fieldElement);
         statement += isActivity ? "substitute.getIntent()." : "substitute.getArgument().";
         statement = buildStatement(originalValue, statement, typeUtils.typeExchange(fieldElement), isActivity);
-        methodBuilder.addStatement(statement, value);
+        methodBuilder.addStatement(statement, key);
     }
 
 
@@ -154,7 +156,7 @@ public class QueryCompiler extends BaseCompiler {
                 statement += (isActivity ? ("getDoubleExtra($S, " + originalValue + ")") : ("getDouble($S)"));
                 break;
             case STRING:
-                statement += (isActivity ? ("getExtras() == null ? " + originalValue + " : " +
+                statement += (isActivity ? ("getExtras() == null ? " + originalValue + " : \r\n" +
                         "substitute.getIntent().getExtras().getString($S, " + originalValue + ")") : ("getString($S)"));
                 break;
             case SERIALIZABLE:
