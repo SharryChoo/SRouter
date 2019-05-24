@@ -40,12 +40,12 @@ class SRouterImpl {
         return true;
     }
 
-    static void registerComponents(String[] names) {
-        LogisticsCenter.registerComponents(names);
+    static void registerModules(String[] names) {
+        LogisticsCenter.registerModules(names);
     }
 
-    static void unregisterComponents(String[] names) {
-        LogisticsCenter.unregisterComponents(names);
+    static void unregisterModules(String[] names) {
+        LogisticsCenter.unregisterModules(names);
     }
 
     static void addCallAdapter(ICallAdapter adapter) {
