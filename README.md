@@ -26,8 +26,6 @@ allprojects {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     ......
-    // AndroidX 版本
-    api "androidx.appcompat:appcompat:x.x.x"
     // SRouter 依赖
     api "com.github.SharryChoo.SRouter:srouter-support:x.x.x"
 }
