@@ -28,7 +28,7 @@ public class LogisticsCenter {
     /**
      * Register components.
      */
-    public static void registerComponents(String[] names) {
+    public static void registerModules(String[] names) {
         for (String moduleName : names) {
             // 加载根元素(com.sharry.srouter.generate.SRouter$$Routes$$XXX)
             String routesClassName = PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_ROUTERS + SEPARATOR + moduleName;
@@ -53,7 +53,7 @@ public class LogisticsCenter {
     /**
      * Unregister components.
      */
-    public static void unregisterComponents(String[] names) {
+    public static void unregisterModules(String[] names) {
         for (String moduleName : names) {
             Map<String, RouteMeta> metas = Warehouse.TABLE_ROUTES.remove(moduleName);
             if (metas == null) {

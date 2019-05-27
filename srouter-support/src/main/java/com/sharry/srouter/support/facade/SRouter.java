@@ -44,12 +44,12 @@ public class SRouter {
      *
      * @param names the module name must be consistent of U setup module name.
      */
-    public static void registerComponents(@NonNull String... names) {
+    public static void registerModules(@NonNull String... names) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
         Preconditions.checkNotNull(names);
-        SRouterImpl.registerComponents(names);
+        SRouterImpl.registerModules(names);
     }
 
     /**
@@ -57,12 +57,12 @@ public class SRouter {
      *
      * @param names the module name must be consistent of U setup module name.
      */
-    public static void unregisterComponents(@NonNull String... names) {
+    public static void unregisterModules(@NonNull String... names) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
         Preconditions.checkNotNull(names);
-        SRouterImpl.unregisterComponents(names);
+        SRouterImpl.unregisterModules(names);
     }
 
     /**

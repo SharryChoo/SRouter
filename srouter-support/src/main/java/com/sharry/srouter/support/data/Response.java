@@ -3,7 +3,6 @@ package com.sharry.srouter.support.data;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.sharry.srouter.support.service.IService;
 
@@ -18,36 +17,50 @@ public class Response {
 
     private final Request request;
     private IService service;
-    private Fragment fragmentX;
-    private android.app.Fragment fragment;
+    private Object fragment;
     private ActivityResult activityResult;
 
     public Response(@NonNull Request request) {
         this.request = request;
     }
 
+    /**
+     * Get Request that the called.
+     */
     public Request getRequest() {
         return request;
     }
 
-    public Fragment getFragmentX() {
-        return fragmentX;
+    /**
+     * Get a parcel of ActivityResult that route fetched.
+     *
+     * @return A parcel of ActivityResult
+     */
+    public ActivityResult getActivityResult() {
+        return activityResult;
     }
 
-    public void setFragmentX(Fragment fragmentX) {
-        this.fragmentX = fragmentX;
+    /**
+     * Get a fragment instance that route fetched.
+     *
+     * @param <Fragment> the version that u target Fragment.
+     * @return A fragment instance that route fetched.
+     */
+    public <Fragment> Fragment getFragment() {
+        return (Fragment) fragment;
     }
 
-    public android.app.Fragment getFragment() {
-        return fragment;
-    }
-
-    public void setFragment(android.app.Fragment fragment) {
-        this.fragment = fragment;
-    }
-
+    /**
+     * Get An IService instance that route fetched.
+     *
+     * @return An IService instance that route fetched.
+     */
     public IService getService() {
         return service;
+    }
+
+    public void setFragment(Object fragment) {
+        this.fragment = fragment;
     }
 
     public void setService(IService service) {
@@ -56,9 +69,5 @@ public class Response {
 
     public void setActivityResult(int requestCode, int resultCode, Intent data) {
         activityResult = ActivityResult.create(requestCode, resultCode, data);
-    }
-
-    public ActivityResult getActivityResult() {
-        return activityResult;
     }
 }

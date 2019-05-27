@@ -3,10 +3,10 @@ package com.sharry.srouter.support.interceptors;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.fragment.app.Fragment;
 
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
@@ -14,6 +14,9 @@ import com.sharry.srouter.support.service.IService;
 import com.sharry.srouter.support.utils.Logger;
 import com.sharry.srouter.support.utils.RouterCallbackFragment;
 import com.sharry.srouter.support.utils.Utils;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * The final navigation interceptor.
@@ -38,10 +41,16 @@ public class NavigationInterceptor implements IInterceptor {
                 performLaunchActivity(context, intent, request, response, chain.callback());
                 break;
             case FRAGMENT:
+            case FRAGMENT_X:
+            case FRAGMENT_V4:
                 try {
                     // Instantiation fragment by class name.
-                    android.app.Fragment fragment = (android.app.Fragment) request.getRouteClass().newInstance();
-                    fragment.setArguments(request.getDatum());
+                    Object fragment = request.getRouteClass().newInstance();
+                    // Invoke Fragment.setArguments.
+                    Method method = request.getRouteClass().getDeclaredMethod("setArguments",
+                            Bundle.class);
+                    method.setAccessible(true);
+                    method.invoke(fragment, request.getDatum());
                     // Inject fragment to request provider.
                     response.setFragment(fragment);
                     chain.callback().onSuccess(response);
@@ -53,23 +62,9 @@ public class NavigationInterceptor implements IInterceptor {
                     Logger.e("Please ensure " + request.getRouteClass() +
                             "  empty arguments constructor is assessable.", e);
                     chain.callback().onFailed(e);
-                }
-                break;
-            case FRAGMENT_X:
-                try {
-                    // Instantiation fragment by class name.
-                    Fragment fragmentX = (Fragment) request.getRouteClass().newInstance();
-                    fragmentX.setArguments(request.getDatum());
-                    // Inject fragment to request provider.
-                    response.setFragmentX(fragmentX);
-                    chain.callback().onSuccess(response);
-                } catch (InstantiationException e) {
-                    Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
-                            + " failed.", e);
+                } catch (NoSuchMethodException e) {
                     chain.callback().onFailed(e);
-                } catch (IllegalAccessException e) {
-                    Logger.e("Please ensure " + request.getRouteClass() +
-                            "  empty arguments constructor is assessable.", e);
+                } catch (InvocationTargetException e) {
                     chain.callback().onFailed(e);
                 }
                 break;
