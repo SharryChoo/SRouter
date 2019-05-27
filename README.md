@@ -118,7 +118,7 @@ public class BaseApplication extends Application {
 }
 ```
 - SRouter.registerModules
-  - 确保传入参数与 module 中 build.gralde 中声明的描述一致 
+  - 确保传入参数与 module 中 build.gradle 中声明的描述一致 
 - SRouter.unregisterModules()
   - 根据业务需求, 运行时解注册想要使用的 module 
 
@@ -126,7 +126,7 @@ public class BaseApplication extends Application {
 #### 1. 目标声明
 路由目标声明使用 @Route 描述, 其可作用的 class 如下
 - Activity
-- Fragment/Fragment(androidx)
+- Fragment/Fragment(androidx)/Fragment(v4)
 - IService: 用于自己实现目标的服务逻辑
 
 ```
