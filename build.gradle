@@ -9,7 +9,7 @@ buildscript {
         mavenVersion = '2.1'
         // sub project dependencies
         compileSdkVersion = 28
-        minSdkVersion = 14
+        minSdkVersion = 16
         targetSdkVersion = 28
         buildToolsVersion = '28.0.2'
         // third party dependencies

@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         // 尝试跳转到个人中心
         btnPersonal.setOnClickListener {
             SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
-                    .setActivityOptions(ActivityOptionsCompat.makeBasic())
+                    .setActivityOptions(ActivityOptionsCompat.makeBasic().toBundle())
                     .navigation(this)
         }
     }

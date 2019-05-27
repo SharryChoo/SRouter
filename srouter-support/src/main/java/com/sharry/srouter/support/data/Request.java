@@ -10,7 +10,6 @@ import android.util.SparseArray;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityOptionsCompat;
 
 import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.facade.Callback;
@@ -37,44 +36,54 @@ public class Request extends RouteMeta {
 
     public static final int NON_REQUEST_CODE = -1;
     public static final int NON_FLAGS = -1;
+
     /**
      * Navigation authority
      */
     private final String authority;
+
     /**
      * Navigation path.
      */
     private final String path;
+
     /**
      * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
      */
     private final List<IInterceptor> interceptors = new ArrayList<>();
+
     /**
      * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
      */
     private final List<String> interceptorURIs = new ArrayList<>();
+
     /**
      * The datum for the route navigation.
      */
     private Bundle datum;
+
     /**
      * Navigation delay
      * <p>
      * Unit is {@link TimeUnit#MILLISECONDS}
      */
     private long delay = 0;
+
     /**
      * The Flag for the route navigation.
      */
     private int flags = NON_FLAGS;
+
     /**
      * The requestCode for the requestCode.
      */
     private int requestCode = NON_REQUEST_CODE;
+
     /**
      * The jump activity configs for the request.
      */
-    private ActivityOptionsCompat activityOptions;
+    private Bundle activityOptions;
+
     /**
      * if true, it will ignore interceptor.
      */
@@ -240,15 +249,14 @@ public class Request extends RouteMeta {
         return this;
     }
 
-    public ActivityOptionsCompat getActivityOptions() {
+    public Bundle getActivityOptions() {
         return activityOptions;
     }
 
     /**
      * Set Activity jump options.
      */
-    public Request setActivityOptions(@NonNull ActivityOptionsCompat activityOptions) {
-        Preconditions.checkNotNull(activityOptions);
+    public Request setActivityOptions(@Nullable Bundle activityOptions) {
         this.activityOptions = activityOptions;
         return this;
     }

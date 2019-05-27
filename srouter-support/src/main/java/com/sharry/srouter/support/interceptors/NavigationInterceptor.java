@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityOptionsCompat;
 
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.data.Response;
@@ -119,7 +118,7 @@ public class NavigationInterceptor implements IInterceptor {
     private void launchActivityForResultActual(final Activity activity,
                                                final Intent intent,
                                                final int requestCode,
-                                               final ActivityOptionsCompat activityOptions,
+                                               final Bundle activityOptions,
                                                final Response response,
                                                final IInterceptor.ChainCallback callback) {
         // Observer activity onActivityResult Callback.
@@ -133,12 +132,7 @@ public class NavigationInterceptor implements IInterceptor {
             }
         });
         // Launch activity with Activity options.
-        if (activityOptions != null && Utils.isJellyBean()) {
-            callbackFragment.startActivityForResult(intent, requestCode, activityOptions.toBundle());
-        } else {
-            // Launch activity without Activity options.
-            callbackFragment.startActivityForResult(intent, requestCode);
-        }
+        callbackFragment.startActivityForResult(intent, requestCode, activityOptions);
     }
 
     /**
@@ -146,14 +140,10 @@ public class NavigationInterceptor implements IInterceptor {
      */
     private void launchActivityActual(Context context,
                                       Intent intent,
-                                      ActivityOptionsCompat activityOptions,
+                                      Bundle activityOptions,
                                       Response response,
                                       IInterceptor.ChainCallback callback) {
-        if (activityOptions != null && Utils.isJellyBean()) {
-            context.startActivity(intent, activityOptions.toBundle());
-        } else {
-            context.startActivity(intent);
-        }
+        context.startActivity(intent, activityOptions);
         callback.onSuccess(response);
     }
 
