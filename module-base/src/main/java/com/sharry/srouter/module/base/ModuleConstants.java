@@ -20,7 +20,7 @@ public final class ModuleConstants {
 
         public static final String NAME = "found";
 
-        public static final String FOUND_ACTIVITY = "found_activity";
+        public static final String FOUND_FRAGMENT = "found_fragment";
     }
 
     public static final class Personal {

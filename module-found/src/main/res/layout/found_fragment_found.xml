@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FoundActivity">
+    tools:context=".FoundFragment">
 
     <TextView
-        android:id="@+id/tv_desc"
+        android:id="@+id/tv_center_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="发现"
-        android:textSize="20dp" />
+        android:textSize="16dp"
+        tools:text="@string/hello_blank_fragment" />
 
 </FrameLayout>

@@ -1,4 +1,4 @@
-package com.sharry.srouter.app
+package com.sharry.srouter.app.login
 
 import android.Manifest.permission.READ_CONTACTS
 import android.animation.Animator

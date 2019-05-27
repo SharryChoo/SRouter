@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sharry.srouter.module.found">
 
-    <application>
-        <activity android:name="com.sharry.srouter.module.found.FoundActivity" />
-    </application>
+    <application></application>
 
 </manifest>
