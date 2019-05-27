@@ -25,7 +25,7 @@ import static com.sharry.srouter.compiler.Constants.CLASS_NAME_FRAGMENT;
  */
 public abstract class BaseCompiler extends AbstractProcessor {
 
-    protected Filer filer;                // File write util
+    protected Filer filer;
     protected Logger logger;
     protected Types types;
     protected TypeUtils typeUtils;
