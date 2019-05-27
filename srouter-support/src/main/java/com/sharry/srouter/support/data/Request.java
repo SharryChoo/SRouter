@@ -175,18 +175,6 @@ public class Request extends RouteMeta {
         return this;
     }
 
-    public String getAuthority() {
-        return authority;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public Bundle getDatum() {
-        return datum;
-    }
-
     /**
      * BE ATTENTION TO THIS METHOD WAS <P>SET, NOT ADD!</P>
      */
@@ -195,10 +183,6 @@ public class Request extends RouteMeta {
             this.datum = datum;
         }
         return this;
-    }
-
-    public long getDelay() {
-        return delay;
     }
 
     /**
@@ -211,10 +195,6 @@ public class Request extends RouteMeta {
         return this;
     }
 
-    public boolean isGreenChannel() {
-        return isGreenChannel;
-    }
-
     /**
      * Set green channel associated with this Request.
      *
@@ -225,20 +205,12 @@ public class Request extends RouteMeta {
         return this;
     }
 
-    public int getFlags() {
-        return flags;
-    }
-
     /**
      * Set Activity jump flags
      */
     public Request setFlags(int flags) {
         this.flags = flags;
         return this;
-    }
-
-    public int getRequestCode() {
-        return requestCode;
     }
 
     /**
@@ -249,16 +221,44 @@ public class Request extends RouteMeta {
         return this;
     }
 
-    public Bundle getActivityOptions() {
-        return activityOptions;
-    }
-
     /**
      * Set Activity jump options.
      */
     public Request setActivityOptions(@Nullable Bundle activityOptions) {
         this.activityOptions = activityOptions;
         return this;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public Bundle getDatum() {
+        return datum;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public boolean isGreenChannel() {
+        return isGreenChannel;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    public int getRequestCode() {
+        return requestCode;
+    }
+
+    public Bundle getActivityOptions() {
+        return activityOptions;
     }
 
     public List<IInterceptor> getInterceptors() {
