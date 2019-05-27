@@ -8,7 +8,7 @@
 - **支持拓展与 RxJava 无缝衔接**
 
 ## 二. 功能集成
-[![New Version](https://jitpack.io/v/SharryChoo/SRouter.svg)](https://jitpack.io/#SharryChoo/SRouter)
+![New Version](https://jitpack.io/v/SharryChoo/SRouter.svg)
 
 ### Step 1
 在工程的根 build.gradle 中添加 jitpack 的 maven 仓库
@@ -96,6 +96,9 @@ dependencies {
 ```
 kapt 是支持 Java 代码的, 不用担心 kotlin 与 java 的混编问题
 
+#### 模块依赖关系
+![模块依赖关系图](https://i.loli.net/2019/05/27/5ceb9ad053cd327311.jpg)
+
 ## 三. 功能使用
 ### 一) 初始化
 ```
@@ -125,6 +128,7 @@ public class BaseApplication extends Application {
 - Activity
 - Fragment/Fragment(androidx)
 - IService: 用于自己实现目标的服务逻辑
+
 ```
 @Route( 
         authority = ModuleConstants.Personal.NAME,
@@ -416,6 +420,6 @@ val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.L
 这里只是以 RxJava 举例, 你可以自行实现 ICallAdapter 接口, 将路由的 ICall 适配成任何你想要的对象
 
 ## 其他
-更多使用方式请 clone repository 的代码进行探索体验
+更多使用方式请 [clone repository](https://github.com/SharryChoo/SRouter) 的代码进行探索体验
 - 如果您觉得使用不便, 请多多 issue
 - 如果您感觉不错, 请多多 star, 这会让笔者备受鼓舞
