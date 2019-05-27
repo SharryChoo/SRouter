@@ -46,9 +46,8 @@ public class NavigationInterceptor implements IInterceptor {
                     // Instantiation fragment by class name.
                     Object fragment = request.getRouteClass().newInstance();
                     // Invoke Fragment.setArguments.
-                    Method method = request.getRouteClass().getDeclaredMethod("setArguments",
+                    Method method = request.getRouteClass().getMethod("setArguments",
                             Bundle.class);
-                    method.setAccessible(true);
                     method.invoke(fragment, request.getDatum());
                     // Inject fragment to request provider.
                     response.setFragment(fragment);

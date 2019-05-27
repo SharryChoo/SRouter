@@ -116,7 +116,7 @@ public class QueryCompiler extends BaseCompiler {
         methodBuilder.addComment("------------------ @Query(key = \"" + key + "\") ------------------");
         String statement = originalValue + " = ";
         statement += buildCastCode(fieldElement);
-        statement += isActivity ? "substitute.getIntent()." : "substitute.getArgument().";
+        statement += isActivity ? "substitute.getIntent()." : "substitute.getArguments().";
         statement = buildStatement(originalValue, statement, typeUtils.typeExchange(fieldElement), isActivity);
         methodBuilder.addStatement(statement, key);
     }
