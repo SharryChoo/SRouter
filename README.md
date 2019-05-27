@@ -188,13 +188,12 @@ SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL
         .setRequestCode(100)
         ......
         .navigation(this) {it: Response ->
-            // 获取 android.app.Fragment
-            val fragment = it.fragment
-            // 获取 androidx.fragment.app.Fragmennt
-            val fragmentX = it.fragmentX
+            // 获取 Fragment
+            val fragment: Fragment = it.fragment
         }
 ```
-获取 Fragment 的方式与获取 ActivityResult 是一致的, **你可以根据目标 Fragment 的类型调用不同的方法获取**
+获取 Fragment 的方式与获取 ActivityResult 是一致的
+- **需要指定 Fragment 的类型**, 支持 V4 和 Androidx 包下的 Fragment 
 
 ##### 按需跳转
 如果你想控制路由跳转的时机, 以及中途取消等操作, 可以使用以下方式
@@ -285,8 +284,6 @@ SRouter.request(xxx, xxx)
         .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
         ......
 ```
-
-
 
 ### 三) 拓展
 #### 参数的注入
@@ -417,6 +414,6 @@ val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.L
 这里只是以 RxJava 举例, 你可以自行实现 ICallAdapter 接口, 将路由的 ICall 适配成任何你想要的对象
 
 ## 其他
-更多使用方式请下载 Demo 体验
+更多使用方式请 clone repository 的代码进行探索体验
 - 如果您觉得使用不便, 请多多 issue
 - 如果您感觉不错, 请多多 star, 这会让笔者备受鼓舞
