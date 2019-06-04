@@ -8,6 +8,7 @@
     tools:layout_editor_absoluteY="81dp">
 
     <TextView
+        android:id="@+id/tvPersonal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="个人中心"

@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.sharry.srouter.annotation.compiler.Query
 import com.sharry.srouter.annotation.compiler.Route
 import com.sharry.srouter.module.base.ModuleConstants
+import com.sharry.srouter.support.facade.SRouter
+import kotlinx.android.synthetic.main.personal_activity_personal.*
 
 /**
  * 第二个 Module 中的 Activity.
@@ -21,9 +23,14 @@ import com.sharry.srouter.module.base.ModuleConstants
 )
 class PersonalActivity : AppCompatActivity() {
 
+    @Query(key = "content")
+    lateinit var content: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.personal_activity_personal)
+        SRouter.bindQuery(this)
+        tvPersonal.text = "${content} personal center"
     }
 
 }

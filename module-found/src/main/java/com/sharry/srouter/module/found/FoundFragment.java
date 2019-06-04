@@ -28,7 +28,7 @@ import java.io.Serializable;
 public class FoundFragment extends Fragment {
 
     @Query(key = "title")
-    Serializable title;
+    double title;
 
     @Query(key = "content")
     String content;

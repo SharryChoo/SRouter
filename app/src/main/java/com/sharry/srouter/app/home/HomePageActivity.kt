@@ -35,6 +35,7 @@ class HomePageActivity : AppCompatActivity() {
                     // 通过模板方法跳转
                     val disposable = routeApi.personalCenter(
                             this,
+                            "Sharry",
                             11,
                             Intent.FLAG_ACTIVITY_NEW_TASK
                     ).subscribe()

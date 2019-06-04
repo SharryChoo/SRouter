@@ -31,6 +31,10 @@ public interface RouteApi {
             path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
             interceptorURIs = ModuleConstants.App.LOGIN_INTERCEPTOR
     )
-    ResponseObservable personalCenter(Context context, @RequestCode int requestCode, @Flags int flags);
+    ResponseObservable personalCenter(
+            Context context,
+            @QueryParam(key = "content") String content,
+            @RequestCode int requestCode,
+            @Flags int flags);
 
 }
