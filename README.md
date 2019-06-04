@@ -2,9 +2,10 @@
 - 支持解析 URL 直接进行路由跳转
 - 提供可自定义优先级的路由拦截器
 - 支持自定义跳转时的 Transaction 动画
-- **支持路由模块动态装载与卸载**
+- 支持路由模块动态装载与卸载
+- **支持通过路由获取 原生/AppCompat/AndroidX 包下的 Fragment**
 - **支持 Activity/Fragment 中 Intent 数据自动注入**
-- **支持回调获取目标页面的 Intent 返回值**
+- **支持回调获取目标页面的 ActivityResult**
 - **支持灵活拓展实现与 RxJava 无缝衔接**
 - **支持使用接口方法进行路由跳转(与 Retrofit 类似)**
 
@@ -327,6 +328,24 @@ SRouter.request(xxx, xxx)
         // 添加拦截器的 URI
         .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
         ......
+```
+#### 使用方式三
+在模板接口中的 @RouteMethod 中添加
+```
+public interface RouteApi {
+    @RouteMethod(
+            authority = ModuleConstants.Personal.NAME,
+            path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
+	    // 添加跳转时的拦截器
+            interceptorURIs = ModuleConstants.Personal.PERMISSION_INTERCEPTOR
+    )
+    ICall personalCenter(
+            Context context,
+            @QueryParam(key = "content") String content,
+            @RequestCode int requestCode,
+            @Flags int flags
+    );
+}
 ```
 
 ### 三) 拓展
