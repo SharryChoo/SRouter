@@ -29,12 +29,13 @@ public interface RouteApi {
     @RouteMethod(
             authority = ModuleConstants.Personal.NAME,
             path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
-            interceptorURIs = ModuleConstants.App.LOGIN_INTERCEPTOR
+            interceptorURIs = ModuleConstants.Personal.PERMISSION_INTERCEPTOR
     )
     ResponseObservable personalCenter(
             Context context,
             @QueryParam(key = "content") String content,
             @RequestCode int requestCode,
-            @Flags int flags);
+            @Flags int flags
+    );
 
 }

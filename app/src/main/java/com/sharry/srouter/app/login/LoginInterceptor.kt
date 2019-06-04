@@ -27,7 +27,6 @@ class LoginInterceptor : IInterceptor {
             val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
                     // 构建 Activity 相关配置
                     .setRequestCode(100)
-                    .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
                     .newCall(chainContext.baseContext)
                     // 将 ICall 转为 ResponseObservable
                     .adaptTo(ResponseObservable::class.java)
