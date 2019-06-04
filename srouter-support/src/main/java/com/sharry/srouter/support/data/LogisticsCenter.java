@@ -86,7 +86,7 @@ public class LogisticsCenter {
             }
             constructor.newInstance(binder);
         } catch (Throwable e) {
-            Logger.e(e.getMessage(), e);
+            Logger.e(e.getMessage() == null ? "" : e.getMessage(), e);
         }
     }
 
