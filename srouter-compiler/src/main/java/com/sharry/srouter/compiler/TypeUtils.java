@@ -8,7 +8,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import static com.sharry.srouter.compiler.Constants.PARCELABLE;
+import static com.sharry.srouter.compiler.Constants.CLASS_NAME_PARCELABLE;
 import static com.sharry.srouter.compiler.Constants.SERIALIZABLE;
 
 /**
@@ -28,7 +28,7 @@ class TypeUtils {
 
     TypeUtils(Types types, Elements elements) {
         this.types = types;
-        parcelableType = elements.getTypeElement(PARCELABLE).asType();
+        parcelableType = elements.getTypeElement(CLASS_NAME_PARCELABLE).asType();
         serializableType = elements.getTypeElement(SERIALIZABLE).asType();
     }
 
@@ -57,7 +57,7 @@ class TypeUtils {
                 return QueryType.LONG.ordinal();
             case Constants.FLOAT:
                 return QueryType.FLOAT.ordinal();
-            case Constants.DOUBEL:
+            case Constants.DOUBLE:
                 return QueryType.DOUBLE.ordinal();
             case Constants.BOOLEAN:
                 return QueryType.BOOLEAN.ordinal();
@@ -66,9 +66,9 @@ class TypeUtils {
             case Constants.STRING:
                 return QueryType.STRING.ordinal();
             default:
-                // Other side, maybe the PARCELABLE or SERIALIZABLE or OBJECT.
+                // Other side, maybe the CLASS_NAME_PARCELABLE or SERIALIZABLE or OBJECT.
                 if (types.isSubtype(typeMirror, parcelableType)) {
-                    // PARCELABLE
+                    // CLASS_NAME_PARCELABLE
                     return QueryType.PARCELABLE.ordinal();
                 } else if (types.isSubtype(typeMirror, serializableType)) {
                     // SERIALIZABLE

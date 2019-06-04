@@ -19,11 +19,13 @@ class Constants {
      */
     static final String CLASS_NAME_ACTIVITY = "android.app.Activity";
     static final String CLASS_NAME_FRAGMENT = "android.app.Fragment";
+    static final String CLASS_NAME_PARCELABLE = "android.os.Parcelable";
+    static final String CLASS_NAME_BUNDLE = "android.os.Bundle";
     static final String CLASS_NAME_FRAGMENT_V4 = "android.support.v4.app.Fragment";
     static final String CLASS_NAME_FRAGMENT_X = "androidx.fragment.app.Fragment";
     static final String CLASS_NAME_ISERVICE = "com.sharry.srouter.support.service.IService";
     static final String CLASS_NAME_IINTERCEPTOR = "com.sharry.srouter.support.interceptors.IInterceptor";
-    static final String PARCELABLE = "android.os.Parcelable";
+    static final String PACKAGE_NAME_OF_SROUTER_CONSTANTS = "com.sharry.srouter.support.utils.Constants";
 
     /**
      * Java type
@@ -34,7 +36,7 @@ class Constants {
     static final String INTEGER = LANG + ".Integer";
     static final String LONG = LANG + ".Long";
     static final String FLOAT = LANG + ".Float";
-    static final String DOUBEL = LANG + ".Double";
+    static final String DOUBLE = LANG + ".Double";
     static final String BOOLEAN = LANG + ".Boolean";
     static final String CHAR = LANG + ".Character";
     static final String STRING = LANG + ".String";

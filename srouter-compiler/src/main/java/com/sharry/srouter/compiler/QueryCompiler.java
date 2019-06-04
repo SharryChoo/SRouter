@@ -90,10 +90,24 @@ public class QueryCompiler extends BaseCompiler {
         MethodSpec.Builder constructorMethodBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(originClassName, "substitute");
-        // 4. For each element.
+        // 3. Completion constructor.
+         /*
+            Bundle data = substitute.getArguments();
+         */
+        ClassName bundleClassName = ClassName.bestGuess(Constants.CLASS_NAME_BUNDLE);
+        if (isActivity) {
+            constructorMethodBuilder.addStatement("$T data = substitute.getIntent().getExtras()", bundleClassName);
+        } else {
+            constructorMethodBuilder.addStatement("$T data = substitute.getArguments()", bundleClassName);
+        }
+        /*
+           Bundle urlDatum = data.getBundle(Constants.INTENT_EXTRA_URL_DATUM)
+         */
+        constructorMethodBuilder.addStatement("$T urlDatum = data.getBundle($T.INTENT_EXTRA_URL_DATUM)",
+                bundleClassName, ClassName.bestGuess(Constants.PACKAGE_NAME_OF_SROUTER_CONSTANTS));
+        // For each element.
         for (Element fieldElement : fieldElements) {
-            // add code.
-            addCode(constructorMethodBuilder, fieldElement, isActivity);
+            addCode(constructorMethodBuilder, fieldElement);
         }
         // 5. Add constructor.
         classBuilder.addMethod(constructorMethodBuilder.build());
@@ -109,67 +123,148 @@ public class QueryCompiler extends BaseCompiler {
         }
     }
 
-    private void addCode(MethodSpec.Builder methodBuilder, Element fieldElement, boolean isActivity) {
+
+    /**
+     * <pre>
+     *     public FoundFragment$$QueryBinding(FoundFragment substitute) {
+     *         ......
+     *         // ------------------ @Query(key = "title") ------------------
+     *         if (data.containsKey("title")) {
+     *             substitute.title = data.getString("title");
+     *         } else if (urlDatum != null && urlDatum.containsKey("title")) {
+     *             substitute.title = (String) urlDatum.getString("title");
+     *         } else {
+     *             // do nothing
+     *         }
+     *         ......
+     *     }
+     * </pre>
+     */
+    private void addCode(MethodSpec.Builder methodBuilder, Element fieldElement) {
+        /*
+          if (data.containsKey("title")) {
+              substitute.title = data.getString("title");
+          } else if (urlDatum != null && urlDatum.containsKey("title")) {
+              substitute.title = String.parse urlDatum.getString("title");
+          } else {
+              // do nothing
+          }
+         */
         String originalValue = "substitute." + fieldElement.getSimpleName().toString();
         String key = fieldElement.getAnnotation(Query.class).key();
-        // Add comment.
-        methodBuilder.addComment("------------------ @Query(key = \"" + key + "\") ------------------");
-        String statement = originalValue + " = ";
-        statement += buildCastCode(fieldElement);
-        statement += isActivity ? "substitute.getIntent()." : "substitute.getArguments().";
-        statement = buildStatement(originalValue, statement, typeUtils.typeExchange(fieldElement), isActivity);
-        methodBuilder.addStatement(statement, key);
+        methodBuilder.addComment("------------------------------------ @Query(key = \"" + key + "\")------------------------------------");
+        methodBuilder.addCode(
+                "if (data.containsKey($S)) {  \n"
+                        + buildDataFetchCode(key, originalValue, fieldElement, typeUtils.typeExchange(fieldElement)) + "; \n"
+                        + "} else if (urlDatum != null && urlDatum.containsKey($S)) { \n"
+                        + buildURLFetchCode(key, originalValue, fieldElement, typeUtils.typeExchange(fieldElement)) + "; \n"
+                        + "} else { \n"
+                        + "    // do nothing...... \n"
+                        + "} \n"
+                        + "\n",
+                key, key
+        );
+
     }
 
-
-    private String buildCastCode(Element element) {
-        if (typeUtils.typeExchange(element) == QueryType.SERIALIZABLE.ordinal()) {
-            return CodeBlock.builder().add("($T) ", ClassName.get(element.asType())).build().toString();
-        }
-        return "";
-    }
-
-    private String buildStatement(String originalValue, String statement, int type, boolean isActivity) {
+    private String buildDataFetchCode(String key, String originalValue, Element fieldElement, int type) {
+        String fetchDataCode = "    substitute." + fieldElement.getSimpleName().toString() + " = "
+                + CodeBlock.builder().add("($T) ", ClassName.get(fieldElement.asType())).build().toString();
         switch (QueryType.values()[type]) {
             case BOOLEAN:
-                statement += (isActivity ? ("getBooleanExtra($S, " + originalValue + ")") : ("getBoolean($S)"));
+                fetchDataCode += "data.getBoolean($S, " + originalValue + ")";
                 break;
             case BYTE:
-                statement += (isActivity ? ("getByteExtra($S, " + originalValue + ")") : ("getByte($S)"));
+                fetchDataCode += "data.getByte($S, " + originalValue + ")";
                 break;
             case SHORT:
-                statement += (isActivity ? ("getShortExtra($S, " + originalValue + ")") : ("getShort($S)"));
+                fetchDataCode += "data.getShort($S, " + originalValue + ")";
                 break;
             case INT:
-                statement += (isActivity ? ("getIntExtra($S, " + originalValue + ")") : ("getInt($S)"));
+                fetchDataCode += "data.getInt($S, " + originalValue + ")";
                 break;
             case LONG:
-                statement += (isActivity ? ("getLongExtra($S, " + originalValue + ")") : ("getLong($S)"));
+                fetchDataCode += "data.getLong($S, " + originalValue + ")";
                 break;
             case CHAR:
-                statement += (isActivity ? ("getCharExtra($S, " + originalValue + ")") : ("getChar($S)"));
+                fetchDataCode += "data.getChar($S, " + originalValue + ")";
                 break;
             case FLOAT:
-                statement += (isActivity ? ("getFloatExtra($S, " + originalValue + ")") : ("getFloat($S)"));
+                fetchDataCode += "data.getFloat($S, " + originalValue + ")";
                 break;
             case DOUBLE:
-                statement += (isActivity ? ("getDoubleExtra($S, " + originalValue + ")") : ("getDouble($S)"));
+                fetchDataCode += "data.getDouble($S, " + originalValue + ")";
                 break;
             case STRING:
-                statement += (isActivity ? ("getExtras() == null ? " + originalValue + " : \r\n" +
-                        "substitute.getIntent().getExtras().getString($S, " + originalValue + ")") : ("getString($S)"));
+                fetchDataCode += "data.getString($S, " + originalValue + ")";
                 break;
             case SERIALIZABLE:
-                statement += (isActivity ? ("getSerializableExtra($S)") : ("getSerializable($S)"));
+                fetchDataCode += "data.getSerializable($S)";
                 break;
             case PARCELABLE:
-                statement += (isActivity ? ("getParcelableExtra($S)") : ("getParcelable($S)"));
+                fetchDataCode += "data.getParcelable($S)";
                 break;
             default:
-                break;
+                return CodeBlock.builder()
+                        .add("    throw new $T($S)",
+                                UnsupportedOperationException.class,
+                                "cannot support this convert that type is " + ClassName.get(fieldElement.asType()))
+                        .build().toString();
         }
+        return CodeBlock.builder().add(fetchDataCode, key).build().toString();
+    }
 
-        return statement;
+    private String buildURLFetchCode(String key, String originalValue, Element fieldElement, int type) {
+        String fetchDataCode = "    substitute." + fieldElement.getSimpleName().toString() + " = ";
+        switch (QueryType.values()[type]) {
+            case BOOLEAN:
+                fetchDataCode += CodeBlock.builder()
+                        .add("$T.parseBoolean(urlDatum.getString($S))", Boolean.class, key)
+                        .build().toString();
+                break;
+            case BYTE:
+                fetchDataCode += CodeBlock.builder()
+                        .add("$T.parseByte(urlDatum.getString($S))", Byte.class, key)
+                        .build().toString();
+                break;
+            case SHORT:
+                fetchDataCode += CodeBlock.builder()
+                        .add("$T.parseShort(urlDatum.getString($S))", Short.class, key)
+                        .build().toString();
+                break;
+            case INT:
+                fetchDataCode += CodeBlock.builder()
+                        .add("$T.parseInt(urlDatum.getString($S))", Integer.class, key)
+                        .build().toString();
+                break;
+            case LONG:
+                fetchDataCode += CodeBlock.builder()
+                        .add("$T.parseInt(urlDatum.getString($S))", Integer.class, key)
+                        .build().toString();
+                break;
+            case FLOAT:
+                fetchDataCode += CodeBlock.builder()
+                        .add("$T.parseFloat(urlDatum.getString($S))", Float.class, key)
+                        .build().toString();
+                break;
+            case DOUBLE:
+                fetchDataCode += CodeBlock.builder()
+                        .add("$T.parseDouble(urlDatum.getString($S))", Double.class, key)
+                        .build().toString();
+                break;
+            case STRING:
+                fetchDataCode += CodeBlock.builder()
+                        .add("urlDatum.getString($S, " + originalValue + ")", key)
+                        .build().toString();
+                break;
+            default:
+                return CodeBlock.builder()
+                        .add("    throw new $T($S)",
+                                UnsupportedOperationException.class,
+                                "cannot support this convert that type is " + ClassName.get(fieldElement.asType()))
+                        .build().toString();
+        }
+        return fetchDataCode;
     }
 
 }

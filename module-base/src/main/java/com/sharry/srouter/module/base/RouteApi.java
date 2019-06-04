@@ -19,7 +19,7 @@ public interface RouteApi {
             path = ModuleConstants.Found.FOUND_FRAGMENT
     )
     ResponseObservable foundFragment(
-            @QueryParam(key = "title") int title,
+            @QueryParam(key = "title") double title,
             @QueryParam(key = "content") String content
     );
 

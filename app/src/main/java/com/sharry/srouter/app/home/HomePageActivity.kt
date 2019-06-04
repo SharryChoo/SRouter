@@ -12,6 +12,7 @@ import com.sharry.srouter.support.facade.SRouter
 class HomePageActivity : AppCompatActivity() {
 
     private lateinit var foundFragment: Fragment
+    private val routeApi = SRouter.createApi(RouteApi::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +33,6 @@ class HomePageActivity : AppCompatActivity() {
                 }
                 R.id.navigation_personal -> {
                     // 通过模板方法跳转
-                    val routeApi = SRouter.createApi(RouteApi::class.java)
                     val disposable = routeApi.personalCenter(
                             this,
                             11,
@@ -51,7 +51,7 @@ class HomePageActivity : AppCompatActivity() {
 
     private fun initData() {
         // 路由获取 Fragment 并展示
-        SRouter.request("router://found/found_fragment?title=found&content=FoundContent")
+        SRouter.request("router://found/found_fragment?title=123.45&content=FoundContent")
                 .navigation(this) {
                     val transaction = supportFragmentManager.beginTransaction()
                     foundFragment = it.getFragment()

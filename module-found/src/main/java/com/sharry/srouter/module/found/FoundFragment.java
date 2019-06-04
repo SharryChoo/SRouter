@@ -14,6 +14,8 @@ import com.sharry.srouter.annotation.compiler.Route;
 import com.sharry.srouter.module.base.ModuleConstants;
 import com.sharry.srouter.support.facade.SRouter;
 
+import java.io.Serializable;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,11 +28,10 @@ import com.sharry.srouter.support.facade.SRouter;
 public class FoundFragment extends Fragment {
 
     @Query(key = "title")
-    String title;
+    Serializable title;
 
     @Query(key = "content")
     String content;
-
 
     public FoundFragment() {
         // Required empty public constructor

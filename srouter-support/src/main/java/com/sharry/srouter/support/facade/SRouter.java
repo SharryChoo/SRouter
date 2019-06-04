@@ -10,6 +10,7 @@ import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.call.ICallAdapter;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.exceptions.RouteUninitializedException;
+import com.sharry.srouter.support.utils.Constants;
 import com.sharry.srouter.support.utils.Logger;
 import com.sharry.srouter.support.utils.Preconditions;
 
@@ -117,6 +118,9 @@ public class SRouter {
 
     /**
      * Build router navigation path.
+     * <p>
+     * the url query value will inject to Bundle.
+     * the Bundle mapping special key is {@link Constants#INTENT_EXTRA_URL_DATUM}
      */
     public static Request request(@NonNull String url) {
         if (!sHasInit) {

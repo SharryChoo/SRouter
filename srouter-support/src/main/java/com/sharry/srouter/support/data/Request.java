@@ -15,6 +15,7 @@ import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.facade.Callback;
 import com.sharry.srouter.support.facade.SRouter;
 import com.sharry.srouter.support.interceptors.IInterceptor;
+import com.sharry.srouter.support.utils.Constants;
 import com.sharry.srouter.support.utils.Logger;
 import com.sharry.srouter.support.utils.Preconditions;
 
@@ -102,6 +103,7 @@ public class Request extends RouteMeta {
         return new Request(Preconditions.checkNotEmpty(authority), Preconditions.checkNotEmpty(path));
     }
 
+
     /**
      * U can instant Request by parse URL
      */
@@ -113,9 +115,11 @@ public class Request extends RouteMeta {
         String path = Preconditions.checkNotEmpty(uri.getPath()).substring(1);
         // Fetch query items.
         Bundle datum = new Bundle();
+        Bundle urlDatum = new Bundle();
         for (String queryParameterName : uri.getQueryParameterNames()) {
-            datum.putString(queryParameterName, uri.getQueryParameter(queryParameterName));
+            urlDatum.putString(queryParameterName, uri.getQueryParameter(queryParameterName));
         }
+        datum.putBundle(Constants.INTENT_EXTRA_URL_DATUM, urlDatum);
         Request request = create(authority, path);
         request.setDatum(datum);
         return request;

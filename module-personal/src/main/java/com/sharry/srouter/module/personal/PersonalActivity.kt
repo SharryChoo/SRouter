@@ -2,6 +2,7 @@ package com.sharry.srouter.module.personal
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.sharry.srouter.annotation.compiler.Query
 import com.sharry.srouter.annotation.compiler.Route
 import com.sharry.srouter.module.base.ModuleConstants
 
