@@ -4,8 +4,9 @@
 - 支持自定义跳转时的 Transaction 动画
 - **支持路由模块动态装载与卸载**
 - **支持 Activity/Fragment 中 Intent 数据自动注入**
-- **支持直接获取目标页面的 Intent 返回值**
-- **支持拓展与 RxJava 无缝衔接**
+- **支持回调获取目标页面的 Intent 返回值**
+- **支持灵活拓展实现与 RxJava 无缝衔接**
+- **支持使用接口方法进行路由跳转(与 Retrofit 类似)**
 
 ## 二. 功能集成
 ![New Version](https://jitpack.io/v/SharryChoo/SRouter.svg)
