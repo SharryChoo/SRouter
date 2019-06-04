@@ -2,8 +2,8 @@ package com.sharry.srouter.app.login
 
 import android.app.Activity.RESULT_OK
 import com.sharry.srouter.annotation.RouteInterceptor
-import com.sharry.srouter.module.base.ResponseObservable
 import com.sharry.srouter.module.base.ModuleConstants
+import com.sharry.srouter.module.base.ResponseObservable
 import com.sharry.srouter.support.facade.SRouter
 import com.sharry.srouter.support.interceptors.IInterceptor
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -34,7 +34,7 @@ class LoginInterceptor : IInterceptor {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        if (it.activityResult.resultCode == RESULT_OK) {
+                        if (it.activityResult?.resultCode == RESULT_OK) {
                             SRouter.navigation(chainContext.baseContext, chainContext.request)
                         }
                     }

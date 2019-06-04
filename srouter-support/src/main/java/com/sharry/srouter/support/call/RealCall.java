@@ -29,7 +29,7 @@ public class RealCall implements ICall {
 
 
     /**
-     * The factory method help U create instance.
+     * The factory method help U createApi instance.
      */
     public static RealCall create(@NonNull Context context,
                                   @NonNull Request request,

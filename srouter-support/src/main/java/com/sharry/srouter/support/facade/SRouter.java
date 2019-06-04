@@ -77,6 +77,20 @@ public class SRouter {
     }
 
     /**
+     * Create an instance of Router template interfaces.
+     *
+     * @param <T> the type of class.
+     * @return an instance of Router template class.
+     */
+    public static <T> T createApi(Class<T> templateClass) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        Preconditions.checkNotNull(templateClass);
+        return SRouterImpl.createApi(templateClass);
+    }
+
+    /**
      * Parse intent and inject to fields that @Query marked.
      *
      * @param binder The intent holder.
@@ -137,5 +151,4 @@ public class SRouter {
         Preconditions.checkNotNull(request);
         return SRouterImpl.newCall(context, request);
     }
-
 }

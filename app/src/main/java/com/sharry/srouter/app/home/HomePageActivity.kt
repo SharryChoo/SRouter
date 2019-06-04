@@ -2,11 +2,10 @@ package com.sharry.srouter.app.home
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.sharry.srouter.R
-import com.sharry.srouter.module.base.ModuleConstants
+import com.sharry.srouter.module.base.RouteApi
 import com.sharry.srouter.support.facade.SRouter
 
 class HomePageActivity : AppCompatActivity() {
@@ -31,14 +30,18 @@ class HomePageActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_personal -> {
-                    SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
-                            .setActivityOptions(ActivityOptionsCompat.makeBasic().toBundle())
-                            .navigation(this)
+                    // 通过模板方法跳转
+                    val routeApi = SRouter.createApi(RouteApi::class.java)
+                    val disposable = routeApi.personalCenter(this).subscribe()
                     false
+                }
+                else -> {
+                    // do nothing.
                 }
             }
             false
         }
+
     }
 
     private fun initData() {
@@ -51,4 +54,5 @@ class HomePageActivity : AppCompatActivity() {
                     transaction.commitAllowingStateLoss()
                 }
     }
+
 }

@@ -1,12 +1,20 @@
 package com.sharry.srouter.support.data;
 
+import android.content.Context;
+
+import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.call.ICallAdapter;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
+import com.sharry.srouter.support.facade.SRouter;
 import com.sharry.srouter.support.templates.IRoute;
 import com.sharry.srouter.support.templates.IRouteInterceptor;
 import com.sharry.srouter.support.utils.Logger;
+import com.sharry.srouter.support.utils.RouterApiUtil;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Map;
 
 import static com.sharry.srouter.support.utils.Constants.DOT;
@@ -80,6 +88,43 @@ public class LogisticsCenter {
         } catch (Throwable e) {
             Logger.e(e.getMessage(), e);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T createApi(Class<T> templateClass) {
+        if (!templateClass.isInterface()) {
+            throw new UnsupportedOperationException("Please ensure the template class "
+                    + templateClass.getSimpleName() + " is interface");
+        }
+        return (T) Proxy.newProxyInstance(
+                templateClass.getClassLoader(),
+                new Class[]{templateClass},
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        Request request = RouterApiUtil.parseMethod(method, args);
+                        if (request == null) {
+                            Logger.e("Cannot parse method to SRouter Request, method is: " + method.getName());
+                            return null;
+                        }
+                        // Get an instance of ICall.
+                        ICall call = null;
+                        if (args != null) {
+                            for (Object arg : args) {
+                                if (arg instanceof Context) {
+                                    call = SRouter.newCall((Context) arg, request);
+                                    break;
+                                }
+                            }
+                        }
+                        if (call == null) {
+                            call = SRouter.newCall(null, request);
+                        }
+                        // adapt 2 target type.
+                        return call.adaptTo(method.getReturnType());
+                    }
+                }
+        );
     }
 
     /**

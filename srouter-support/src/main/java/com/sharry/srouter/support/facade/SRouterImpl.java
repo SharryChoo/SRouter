@@ -64,6 +64,10 @@ class SRouterImpl {
         return Request.parseFrom(url);
     }
 
+    public static <T> T createApi(Class<T> templateClass) {
+        return LogisticsCenter.createApi(templateClass);
+    }
+
     static void navigation(final Context context, final Request request, final Callback callback) {
         newCall(context, request).post(new IInterceptor.ChainCallback() {
             @Override
