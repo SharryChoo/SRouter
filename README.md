@@ -4,8 +4,9 @@
 - 支持自定义跳转时的 Transaction 动画
 - **支持路由模块动态装载与卸载**
 - **支持 Activity/Fragment 中 Intent 数据自动注入**
-- **支持直接获取目标页面的 Intent 返回值**
-- **支持拓展与 RxJava 无缝衔接**
+- **支持回调获取目标页面的 Intent 返回值**
+- **支持灵活拓展实现与 RxJava 无缝衔接**
+- **支持使用接口方法进行路由跳转(与 Retrofit 类似)**
 
 ## 二. 功能集成
 ![New Version](https://jitpack.io/v/SharryChoo/SRouter.svg)
@@ -95,7 +96,7 @@ dependencies {
 kapt 是支持 Java 代码的, 不用担心 kotlin 与 java 的混编问题
 
 #### 模块依赖关系
-![模块依赖关系图](https://i.loli.net/2019/05/27/5ceb9ad053cd327311.jpg)
+![模块依赖关系图](https://i.loli.net/2019/06/04/5cf61d6ea8b7576967.jpg)
 
 ## 三. 功能使用
 ### 一) 初始化
@@ -222,6 +223,42 @@ val cancelable: ICancelable = call.post(object : IInterceptor.ChainCallback {
     })
 // 自定义取消时机
 cancelable.cancel()
+```
+
+##### 模板接口跳转
+定义模板接口
+```
+public interface RouteApi {
+
+    @RouteMethod(
+            authority = ModuleConstants.Found.NAME,
+            path = ModuleConstants.Found.FOUND_FRAGMENT
+    )
+    ResponseObservable foundFragment(
+            @QueryParam(key = "title") int title,
+            @QueryParam(key = "content") String content
+    );
+
+    /**
+     * @param context 若无 context 参数, 会使用 application context 跳转
+     */
+    @RouteMethod(
+            authority = ModuleConstants.Personal.NAME,
+            path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
+            interceptorURIs = ModuleConstants.App.LOGIN_INTERCEPTOR,
+            desc = "跳转到个人中心页面"
+    )
+    ResponseObservable personalCenter(Context context);
+
+}
+```
+实例化路由接口
+```
+ val routeApi = SRouter.createApi(RouteApi::class.java)
+```
+使用路由接口跳转
+```
+ val disposable = routeApi.personalCenter(this).subscribe()
 ```
 
 ### 二) 拦截器
