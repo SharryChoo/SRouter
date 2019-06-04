@@ -1,4 +1,4 @@
-package com.sharry.srouter.annotation;
+package com.sharry.srouter.annotation.compiler;
 
 /**
  * Current support of field type.

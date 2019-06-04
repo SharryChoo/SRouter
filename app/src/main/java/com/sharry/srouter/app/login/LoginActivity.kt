@@ -23,7 +23,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.sharry.srouter.R
-import com.sharry.srouter.annotation.Route
+import com.sharry.srouter.annotation.compiler.Route
 import com.sharry.srouter.module.base.ModuleConstants
 import kotlinx.android.synthetic.main.app_activity_login.*
 import java.util.*

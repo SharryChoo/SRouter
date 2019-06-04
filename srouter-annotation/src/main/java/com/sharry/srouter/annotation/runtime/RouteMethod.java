@@ -1,4 +1,4 @@
-package com.sharry.srouter.annotation;
+package com.sharry.srouter.annotation.runtime;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,9 +12,9 @@ import java.lang.annotation.Target;
  * @version 1.0
  * @since 2018/8/16 23:20
  */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.CLASS)
-public @interface Route {
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface RouteMethod {
 
     /**
      * The authority associated with Route URI.
@@ -30,10 +30,5 @@ public @interface Route {
      * The interceptor URIs for this Route.
      */
     String[] interceptorURIs() default {};
-
-    /**
-     * Description for this Route.
-     */
-    String desc() default "";
 
 }

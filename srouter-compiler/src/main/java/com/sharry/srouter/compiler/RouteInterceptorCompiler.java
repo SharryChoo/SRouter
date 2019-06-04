@@ -1,8 +1,8 @@
 package com.sharry.srouter.compiler;
 
 import com.google.auto.service.AutoService;
-import com.sharry.srouter.annotation.PriorityRange;
-import com.sharry.srouter.annotation.RouteInterceptor;
+import com.sharry.srouter.annotation.compiler.PriorityRange;
+import com.sharry.srouter.annotation.compiler.RouteInterceptor;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;

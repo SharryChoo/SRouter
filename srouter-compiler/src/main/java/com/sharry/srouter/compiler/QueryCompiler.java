@@ -1,8 +1,8 @@
 package com.sharry.srouter.compiler;
 
 import com.google.auto.service.AutoService;
-import com.sharry.srouter.annotation.Query;
-import com.sharry.srouter.annotation.QueryType;
+import com.sharry.srouter.annotation.compiler.Query;
+import com.sharry.srouter.annotation.compiler.QueryType;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;

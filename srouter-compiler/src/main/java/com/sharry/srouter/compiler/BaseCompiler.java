@@ -1,8 +1,8 @@
 package com.sharry.srouter.compiler;
 
-import com.sharry.srouter.annotation.Query;
-import com.sharry.srouter.annotation.Route;
-import com.sharry.srouter.annotation.RouteInterceptor;
+import com.sharry.srouter.annotation.compiler.Query;
+import com.sharry.srouter.annotation.compiler.Route;
+import com.sharry.srouter.annotation.compiler.RouteInterceptor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

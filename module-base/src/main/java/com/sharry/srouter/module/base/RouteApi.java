@@ -2,8 +2,10 @@ package com.sharry.srouter.module.base;
 
 import android.content.Context;
 
-import com.sharry.srouter.annotation.QueryParam;
-import com.sharry.srouter.annotation.RouteMethod;
+import com.sharry.srouter.annotation.runtime.Flags;
+import com.sharry.srouter.annotation.runtime.QueryParam;
+import com.sharry.srouter.annotation.runtime.RequestCode;
+import com.sharry.srouter.annotation.runtime.RouteMethod;
 
 /**
  * @author Sharry <a href="xiaoyu.zhu@1hai.cn">Contact me.</a>
@@ -27,9 +29,8 @@ public interface RouteApi {
     @RouteMethod(
             authority = ModuleConstants.Personal.NAME,
             path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
-            interceptorURIs = ModuleConstants.App.LOGIN_INTERCEPTOR,
-            desc = "跳转到个人中心页面"
+            interceptorURIs = ModuleConstants.App.LOGIN_INTERCEPTOR
     )
-    ResponseObservable personalCenter(Context context);
+    ResponseObservable personalCenter(Context context, @RequestCode int requestCode, @Flags int flags);
 
 }

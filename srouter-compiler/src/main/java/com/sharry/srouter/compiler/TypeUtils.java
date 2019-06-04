@@ -1,7 +1,7 @@
 package com.sharry.srouter.compiler;
 
 
-import com.sharry.srouter.annotation.QueryType;
+import com.sharry.srouter.annotation.compiler.QueryType;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;

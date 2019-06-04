@@ -1,6 +1,8 @@
 package com.sharry.srouter.support.data;
 
-import com.sharry.srouter.annotation.RouteInterceptor;
+import android.content.Intent;
+
+import com.sharry.srouter.annotation.compiler.RouteInterceptor;
 
 /**
  * Save data associated with {@link RouteInterceptor} marked class.

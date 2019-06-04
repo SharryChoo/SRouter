@@ -1,4 +1,4 @@
-package com.sharry.srouter.annotation;
+package com.sharry.srouter.annotation.compiler;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,7 +1,7 @@
 package com.sharry.srouter.app.login
 
 import android.app.Activity.RESULT_OK
-import com.sharry.srouter.annotation.RouteInterceptor
+import com.sharry.srouter.annotation.compiler.RouteInterceptor
 import com.sharry.srouter.module.base.ModuleConstants
 import com.sharry.srouter.module.base.ResponseObservable
 import com.sharry.srouter.support.facade.SRouter

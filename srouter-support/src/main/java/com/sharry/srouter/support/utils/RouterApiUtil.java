@@ -6,8 +6,10 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.sharry.srouter.annotation.QueryParam;
-import com.sharry.srouter.annotation.RouteMethod;
+import com.sharry.srouter.annotation.runtime.Flags;
+import com.sharry.srouter.annotation.runtime.QueryParam;
+import com.sharry.srouter.annotation.runtime.RequestCode;
+import com.sharry.srouter.annotation.runtime.RouteMethod;
 import com.sharry.srouter.support.data.Request;
 import com.sharry.srouter.support.exceptions.NoRouteMethodAnnotationFoundException;
 
@@ -57,28 +59,41 @@ public class RouterApiUtil {
             CACHE.put(method.getName(), request);
         }
         // Parse parameter annotation
-        Bundle bundle = parseParameter(method, args);
-        request.setDatum(bundle);
+        completionRequest(request, method, args);
         return request;
     }
 
-    @NonNull
-    private static Bundle parseParameter(Method method, Object[] args) {
+    private static void completionRequest(Request request, Method method, Object[] args) {
         Bundle bundle = new Bundle();
         Annotation[][] annotations = method.getParameterAnnotations();
+        QueryParam queryParam = null;
         for (int i = 0; i < annotations.length; i++) {
             Annotation[] paramAnnotations = annotations[i];
-            QueryParam queryParam = null;
+            Object value = args[i];
             for (Annotation annotation : paramAnnotations) {
                 if (annotation instanceof QueryParam) {
                     queryParam = (QueryParam) annotation;
+                    completionBundle(bundle, queryParam, value);
+                }
+                if (annotation instanceof Flags) {
+                    if (value instanceof Integer) {
+                        request.setFlags((Integer) value);
+                    } else {
+                        throw new UnsupportedOperationException("@Flags annotation only support " +
+                                "marked on Integer parameter.");
+                    }
+                }
+                if (annotation instanceof RequestCode) {
+                    if (value instanceof Integer) {
+                        request.setRequestCode((Integer) value);
+                    } else {
+                        throw new UnsupportedOperationException("@RequestCode annotation only " +
+                                "support marked on Integer parameter.");
+                    }
                 }
             }
-            if (queryParam != null) {
-                completionBundle(bundle, queryParam, args[i]);
-            }
         }
-        return bundle;
+        request.setDatum(bundle);
     }
 
     private static void completionBundle(Bundle bundle,

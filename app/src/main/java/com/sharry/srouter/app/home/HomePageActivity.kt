@@ -1,5 +1,6 @@
 package com.sharry.srouter.app.home
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -32,7 +33,11 @@ class HomePageActivity : AppCompatActivity() {
                 R.id.navigation_personal -> {
                     // 通过模板方法跳转
                     val routeApi = SRouter.createApi(RouteApi::class.java)
-                    val disposable = routeApi.personalCenter(this).subscribe()
+                    val disposable = routeApi.personalCenter(
+                            this,
+                            11,
+                            Intent.FLAG_ACTIVITY_NEW_TASK
+                    ).subscribe()
                     false
                 }
                 else -> {

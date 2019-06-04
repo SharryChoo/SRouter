@@ -1,6 +1,6 @@
 package com.sharry.srouter.support.data;
 
-import com.sharry.srouter.annotation.Route;
+import com.sharry.srouter.annotation.compiler.Route;
 import com.sharry.srouter.support.service.IService;
 
 /**
