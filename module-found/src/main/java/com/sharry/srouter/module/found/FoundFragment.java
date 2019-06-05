@@ -14,8 +14,6 @@ import com.sharry.srouter.annotation.compiler.Route;
 import com.sharry.srouter.module.base.ModuleConstants;
 import com.sharry.srouter.support.facade.SRouter;
 
-import java.io.Serializable;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,10 +26,10 @@ import java.io.Serializable;
 public class FoundFragment extends Fragment {
 
     @Query(key = "title")
-    double title;
+    String title = "default_title";
 
-    @Query(key = "content")
-    String content;
+    @Query(key = "amount")
+    double amount = 1.0;
 
     public FoundFragment() {
         // Required empty public constructor
@@ -50,7 +48,7 @@ public class FoundFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.found_fragment_found, container, false);
         TextView textView = view.findViewById(R.id.tv_center_text);
-        textView.setText("title = " + title + ", content = " + content);
+        textView.setText("title = " + title + ", amount = " + amount);
         return view;
     }
 

@@ -123,7 +123,6 @@ public class QueryCompiler extends BaseCompiler {
         }
     }
 
-
     /**
      * <pre>
      *     public FoundFragment$$QueryBinding(FoundFragment substitute) {

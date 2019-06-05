@@ -163,7 +163,7 @@ SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL
 ```
 ##### url 跳转
 ```
-val url = "router://found/found_activity?opr=15533&password=1234456"
+val url = "{Custom u scheme}://found/found_fragment?title=HelloWorld&amount=12.34"
 SRouter.request(url)
         ......
         .navigation(this)
@@ -330,31 +330,21 @@ SRouter.request(xxx, xxx)
 #### 参数的注入
 如果你不想写 Intent 参数注入的代码, @Query 注解可以帮你完成这个操作
 ```
-@Route(
-        authority = ModuleConstants.Found.NAME,
-        path = ModuleConstants.Found.FOUND_ACTIVITY,
-        desc = "组件1的入口页面"
-)
-public class FoundActivity extends AppCompatActivity {
+public class FoundFragment extends Fragment {
 
-    @Query(key = "opr")
-    String oprNo = "123456";
+    @Query(key = "title")
+    String title = "default_title";
 
-    @Query(key = "password")
-    String password = "123456";
+    @Query(key = "amount")
+    double amount = 1.0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.found_activity_found);
-        parseIntent();
-    }
-
-    private void parseIntent() {
-        // 调用 SRouter.bindQuery 便可以将 Intent 的值注入到对应的属性中
         SRouter.bindQuery(this);
-        ...... // 编写输入注入后的代码 
+        ......// 处理后续操作
     }
+    
 }
 ```
 
