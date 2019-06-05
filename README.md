@@ -182,7 +182,7 @@ SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL
             }
         }
 ```
-navigation 方法支持传入一个 Callback, 当路由成功后可以获取到 Rresponse 对象, 在 Response 中可以获取到你想要的所有数据
+navigation 方法支持传入一个 Callback, 当路由成功后可以获取到 Response 对象, 在 Response 中可以获取到你想要的所有数据
 - ActivityResult
 - Fragment
 - Request
