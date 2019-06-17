@@ -500,3 +500,20 @@ public interface RouteApi {
 更多使用方式请 [clone repository](https://github.com/SharryChoo/SRouter) 的代码进行探索体验
 - 如果您觉得使用不便, 请多多 issue
 - 如果您感觉不错, 请多多 star, 这会让笔者备受鼓舞
+
+## License
+```
+Copyright 2019 drakeet.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
