@@ -5,6 +5,7 @@ import com.sharry.srouter.annotation.compiler.RouteInterceptor;
 import com.sharry.srouter.support.call.ICallAdapter;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,9 +42,16 @@ public class Warehouse {
     /**
      * Key is name of Class<XXX$$QueryBinding>
      * <p>
-     * The key mapper special key is constructor of the class.
+     * The key mapper special value is constructor of the class.
      */
     public static final Map<String, Constructor> QUERY_BINDING_CONSTRUCTORS = new HashMap<>();
+
+    /**
+     * Key is name of Class<XXX$$QueryBinding>
+     * <p>
+     * The key mapper special value is  <method> bind </method> of the class.
+     */
+    public static final Map<String, Method> QUERY_BINDING_METHOD_BINDS = new HashMap<>();
 
     static {
         CALL_ADAPTERS.add(ICallAdapter.DEFAULT);

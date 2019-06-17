@@ -7,6 +7,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
@@ -82,36 +83,52 @@ public class QueryCompiler extends BaseCompiler {
             throw new IllegalStateException("The field [" + originClassNameStr + "] need inject " +
                     "from intent, its parent must be activity or fragment!");
         }
-        // 1. Create class like XXXX$$QueryBinding.java
-        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(originClassNameStr +
-                Constants.SIMPLE_NAME_SUFFIX_OF_QUERY_BINDING)
-                .addModifiers(Modifier.FINAL, Modifier.PUBLIC);
-        // 2. Create constructor.
-        MethodSpec.Builder constructorMethodBuilder = MethodSpec.constructorBuilder()
+
+        // 1. Create method.
+        /*
+           public void bind(FoundActivity target) {
+               ......
+           }
+        */
+        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(Constants.METHOD_BIND)
+                .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(originClassName, "substitute");
-        // 3. Completion constructor.
+                .addParameter(originClassName, Constants.METHOD_BIND_PARAMETER_NAME_TARGET);
+
+        // 2. Completion method.
          /*
-            Bundle data = substitute.getArguments();
+            Bundle data = target.getArguments();
          */
         ClassName bundleClassName = ClassName.bestGuess(Constants.CLASS_NAME_BUNDLE);
         if (isActivity) {
-            constructorMethodBuilder.addStatement("$T data = substitute.getIntent().getExtras()", bundleClassName);
+            methodBuilder.addStatement("$T data = " + Constants.METHOD_BIND_PARAMETER_NAME_TARGET
+                    + ".getIntent().getExtras()", bundleClassName);
         } else {
-            constructorMethodBuilder.addStatement("$T data = substitute.getArguments()", bundleClassName);
+            methodBuilder.addStatement("$T data = " + Constants.METHOD_BIND_PARAMETER_NAME_TARGET
+                    + ".getArguments()", bundleClassName);
         }
         /*
            Bundle urlDatum = data.getBundle(Constants.INTENT_EXTRA_URL_DATUM)
          */
-        constructorMethodBuilder.addStatement("$T urlDatum = data.getBundle($T.INTENT_EXTRA_URL_DATUM)",
+        methodBuilder.addStatement("$T urlDatum = data.getBundle($T.INTENT_EXTRA_URL_DATUM)",
                 bundleClassName, ClassName.bestGuess(Constants.PACKAGE_NAME_OF_SROUTER_CONSTANTS));
         // For each element.
         for (Element fieldElement : fieldElements) {
-            addCode(constructorMethodBuilder, fieldElement);
+            addCode(methodBuilder, fieldElement);
         }
-        // 5. Add constructor.
-        classBuilder.addMethod(constructorMethodBuilder.build());
-        // 6. Generate java class.
+
+        // 3. Create class like XXXX$$QueryBinding.java
+        TypeSpec.Builder classBuilder = TypeSpec.classBuilder(originClassNameStr +
+                Constants.SIMPLE_NAME_SUFFIX_OF_QUERY_BINDING)
+                .addSuperinterface(
+                        // Add implements IQueryBinding<XXXX>
+                        ParameterizedTypeName.get(ClassName.get(Constants.PACKAGE_NAME_TEMPLATE,
+                                Constants.SIMPLE_NAME_IQUERY_BINDING), originClassName)
+                )
+                .addModifiers(Modifier.FINAL, Modifier.PUBLIC)
+                .addMethod(methodBuilder.build());
+
+        // 4. Generate java class.
         try {
             String packageName = elementUtils.getPackageOf(classElement).getQualifiedName().toString();
             JavaFile.builder(packageName, classBuilder.build())
@@ -125,13 +142,13 @@ public class QueryCompiler extends BaseCompiler {
 
     /**
      * <pre>
-     *     public FoundFragment$$QueryBinding(FoundFragment substitute) {
+     *     public void bind(FoundFragment target) {
      *         ......
      *         // ------------------ @Query(key = "title") ------------------
      *         if (data.containsKey("title")) {
-     *             substitute.title = data.getString("title");
+     *             target.title =  (String) data.getString("title");
      *         } else if (urlDatum != null && urlDatum.containsKey("title")) {
-     *             substitute.title = (String) urlDatum.getString("title");
+     *             target.title = (String) urlDatum.getString("title");
      *         } else {
      *             // do nothing
      *         }
@@ -142,32 +159,32 @@ public class QueryCompiler extends BaseCompiler {
     private void addCode(MethodSpec.Builder methodBuilder, Element fieldElement) {
         /*
           if (data.containsKey("title")) {
-              substitute.title = data.getString("title");
+              target.title =  (String) data.getString("title");
           } else if (urlDatum != null && urlDatum.containsKey("title")) {
-              substitute.title = String.parse urlDatum.getString("title");
+              target.title =  (String) String.parse urlDatum.getString("title");
           } else {
               // do nothing
           }
          */
-        String originalValue = "substitute." + fieldElement.getSimpleName().toString();
+        String originalValue = "target." + fieldElement.getSimpleName().toString();
         String key = fieldElement.getAnnotation(Query.class).key();
         methodBuilder.addComment("------------------------------------ @Query(key = \"" + key + "\")------------------------------------");
         methodBuilder.addCode(
                 "if (data.containsKey($S)) {  \n"
-                        + buildDataFetchCode(key, originalValue, fieldElement, typeUtils.typeExchange(fieldElement)) + "; \n"
-                        + "} else if (urlDatum != null && urlDatum.containsKey($S)) { \n"
-                        + buildURLFetchCode(key, originalValue, fieldElement, typeUtils.typeExchange(fieldElement)) + "; \n"
-                        + "} else { \n"
+                        + buildDataFetchCode(key, originalValue, fieldElement, typeUtils.typeExchange(fieldElement)) + ";\n"
+                        + "} else if (urlDatum != null && urlDatum.containsKey($S)) {\n"
+                        + buildURLFetchCode(key, originalValue, fieldElement, typeUtils.typeExchange(fieldElement)) + ";\n"
+                        + "} else {\n"
                         + "    // do nothing...... \n"
-                        + "} \n"
-                        + "\n",
-                key, key
+                        + "}\n",
+                key,
+                key
         );
 
     }
 
     private String buildDataFetchCode(String key, String originalValue, Element fieldElement, int type) {
-        String fetchDataCode = "    substitute." + fieldElement.getSimpleName().toString() + " = "
+        String fetchDataCode = "    target." + fieldElement.getSimpleName().toString() + " = "
                 + CodeBlock.builder().add("($T) ", ClassName.get(fieldElement.asType())).build().toString();
         switch (QueryType.values()[type]) {
             case BOOLEAN:
@@ -214,7 +231,8 @@ public class QueryCompiler extends BaseCompiler {
     }
 
     private String buildURLFetchCode(String key, String originalValue, Element fieldElement, int type) {
-        String fetchDataCode = "    substitute." + fieldElement.getSimpleName().toString() + " = ";
+        String fetchDataCode = "    target." + fieldElement.getSimpleName().toString() + " = "
+                + CodeBlock.builder().add("($T) ", ClassName.get(fieldElement.asType())).build().toString();
         switch (QueryType.values()[type]) {
             case BOOLEAN:
                 fetchDataCode += CodeBlock.builder()

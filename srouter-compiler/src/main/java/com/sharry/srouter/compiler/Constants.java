@@ -53,6 +53,7 @@ class Constants {
     static final String PACKAGE_NAME_TEMPLATE = "com.sharry.srouter.support.templates";
     static final String SIMPLE_NAME_IROUTE = "IRoute";
     static final String SIMPLE_NAME_IROUTE_INTERCEPTOR = "IRouteInterceptor";
+    static final String SIMPLE_NAME_IQUERY_BINDING = "IQueryBinding";
 
     /**
      * IRoute override method name.
@@ -60,6 +61,9 @@ class Constants {
     static final String METHOD_LOAD_INTO = "loadInto";
     static final String METHOD_LOAD_INTO_PARAMETER_NAME_ROUTE_CACHES = "caches";
     static final String METHOD_LOAD_INTO_PARAMETER_NAME_INTERCEPTION_CACHES = "caches";
+    static final String METHOD_BIND = "bind";
+    static final String METHOD_BIND_PARAMETER_NAME_TARGET = "target";
+
 
     /**
      * Write data class name

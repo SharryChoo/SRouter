@@ -6,8 +6,10 @@ import com.sharry.srouter.support.call.ICall;
 import com.sharry.srouter.support.call.ICallAdapter;
 import com.sharry.srouter.support.exceptions.NoRouteFoundException;
 import com.sharry.srouter.support.facade.SRouter;
+import com.sharry.srouter.support.templates.IQueryBinding;
 import com.sharry.srouter.support.templates.IRoute;
 import com.sharry.srouter.support.templates.IRouteInterceptor;
+import com.sharry.srouter.support.utils.Constants;
 import com.sharry.srouter.support.utils.Logger;
 import com.sharry.srouter.support.utils.RouterApiUtil;
 
@@ -77,14 +79,23 @@ public class LogisticsCenter {
         Class binderClass = binder.getClass();
         String queryBindingClassName = binderClass.getName() + SEPARATOR + SUFFIX_OF_QUERY_BINDING;
         try {
+            // 1. fetch constructor from cache.
+            Class queryBindingClass = Class.forName(queryBindingClassName);
             Constructor constructor = Warehouse.QUERY_BINDING_CONSTRUCTORS.get(queryBindingClassName);
             if (constructor == null) {
-                Class queryBindingClass = Class.forName(queryBindingClassName);
-                constructor = queryBindingClass.getConstructor(binderClass);
-                constructor.setAccessible(true);
+                constructor = queryBindingClass.getConstructor();
                 Warehouse.QUERY_BINDING_CONSTRUCTORS.put(queryBindingClassName, constructor);
             }
-            constructor.newInstance(binder);
+            // 2. instantiate queryBinding.
+            IQueryBinding queryBinding = (IQueryBinding) constructor.newInstance();
+            // 3. fetch method from cache
+            Method bindMethod = Warehouse.QUERY_BINDING_METHOD_BINDS.get(queryBindingClassName);
+            if (bindMethod == null) {
+                bindMethod = queryBindingClass.getMethod(Constants.METHOD_NAME_OF_BIND, binderClass);
+                Warehouse.QUERY_BINDING_METHOD_BINDS.put(queryBindingClassName, bindMethod);
+            }
+            // 4. invoke bind method.
+            bindMethod.invoke(queryBinding, binder);
         } catch (Throwable e) {
             Logger.e(e.getMessage() == null ? "" : e.getMessage(), e);
         }
