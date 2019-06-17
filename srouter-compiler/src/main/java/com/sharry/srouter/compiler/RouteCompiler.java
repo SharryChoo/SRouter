@@ -27,6 +27,8 @@ import javax.lang.model.type.TypeMirror;
 import static javax.lang.model.element.Modifier.PUBLIC;
 
 /**
+ * Process annotation {@link Route}
+ * <p>
  * Generate SRouter$$Routes$$xxx.java file.
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>

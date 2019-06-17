@@ -19,6 +19,8 @@ import static com.sharry.srouter.compiler.Constants.CLASS_NAME_ACTIVITY;
 import static com.sharry.srouter.compiler.Constants.CLASS_NAME_FRAGMENT;
 
 /**
+ * The base class for processors
+ *
  * @author Sharry <a href="sharrychoochn@gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2019-05-23

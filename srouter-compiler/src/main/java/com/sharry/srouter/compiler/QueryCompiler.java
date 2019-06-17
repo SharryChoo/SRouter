@@ -24,6 +24,8 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 
 /**
+ * Process annotation {@link Query}
+ * <p>
  * Generate xxx$$QueryBinding.java file.
  *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
