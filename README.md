@@ -102,30 +102,32 @@ kapt 是支持 Java 代码的, 不用担心 kotlin 与 java 的混编问题
 ![模块依赖关系图](https://i.loli.net/2019/06/04/5cf61d6ea8b7576967.jpg)
 
 ## 三. 功能使用
-### 一) 组件初始化
+### 一) 初始化
+SRouter 的初始化操作通过 SRouter.init() 方法执行, 推荐在 BaseApplication 的 onCreate 中进行
 ```
 public class BaseApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
-        // 1. 在 BaseApplication 中调用 init 方法执行初始化操作
+        // 在 BaseApplication 中调用 init 方法执行初始化操作
         SRouter.init(this);
-        // 2. 注册想要使用的 Module
-        SRouter.registerModules(xxx, xxx, xxx);
-        // 根据需求动态的解注册想要使用的 Module
-        // SRouter.unregisterModules();
     }
-
 }
 ```
-- SRouter.registerModules
-  - 确保传入参数与 module 中 build.gradle 中声明的描述一致 
-- SRouter.unregisterModules()
-  - 根据业务需求, 运行时解注册想要使用的 module 
 
-### 二) 声明寻址目标 
-SRouter **通过 @Route 注解声明一个 Class 为一个路由目标地址**, 如下所示, 其可作用的 class 如下
+### 二) 模块的装载与卸载 
+SRouter 根据**模块的唯一标识**进行装载与卸载, 如下所示
+```
+// 装载想要使用的 Module
+SRouter.registerModules(xxx, ...);
+// 卸载要使用的 Module
+SRouter.unregisterModules(xxx, ...);
+```
+请确保传入的模块标识与 module 中 build.gradle 中声明的描述一致
+
+### 三) 声明寻址目标 
+SRouter **通过 @Route 注解声明一个 Class 为一个路由目标地址**, 其可作用的 class 如下
 - Activity
 - Fragment/Fragment(androidx)/Fragment(v4)
 - IService: 用于自己实现目标的服务逻辑
@@ -150,7 +152,7 @@ class PersonalActivity : AppCompatActivity() {
 
 请确保 authority 与 path 的组合是唯一的
 
-### 三) 寻址发起
+### 四) 寻址发起
 #### 1. 普通寻址
 ```
 SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
@@ -173,33 +175,8 @@ SRouter.request(url)
 ```
 url 跳转即 request 构造时不同, 其他使用方式一致
 
-#### 3. 可中断寻址
-如果你想控制路由跳转的时机, 以及中途取消等操作, 可以使用以下方式
-```
-// 获取可跳转的 ICall 对象
-val call:ICall = SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
-        .setActivityOptions(ActivityOptionsCompat.makeBasic())
-        .newCall(this)
-// 自定义跳转时机
-val cancelable: ICancelable = call.post(object : IInterceptor.ChainCallback {
-        override fun onSuccess(response: Response) {
-            // 寻址成功, 获取 Response
-        }
-
-        override fun onFailed(throwable: Throwable?) {
-            // 寻址失败
-        }
-
-        override fun onCanceled() {
-            // 寻址被中途取消了
-        }
-    })
-// 自定义取消时机
-cancelable.cancel()
-```
-
-#### 4. 模板方法寻址
-SRouter 可通过 @RouteMethod 注解声明该方法为一个寻址入口
+#### 3. 模板方法寻址
+SRouter 可通过 @RouteMethod 注解声明一个方法为寻址入口
 ```
 public interface RouteApi {
 
@@ -219,18 +196,44 @@ public interface RouteApi {
 
 }
 ```
-实例化路由接口
+实例化模板方法
 ```
  val routeApi = SRouter.createApi(RouteApi::class.java)
 ```
-使用路由接口跳转
+使用接口进行路由寻址
 ```
 val cancelable: ICancelable = routeApi.personalCenter(this).call()
-......
 ```
 使用方式与 Retrofit 的模板接口类似, 使用这种方式可以更快捷更精准的进行寻址操作
 
-### 四) 获取寻址结果
+#### 4. 中断寻址
+如果你想控制路由跳转的时机, 以及中途取消等操作, 可以使用以下方式
+```
+// 获取可跳转的 ICall 对象
+val call:ICall = SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
+        .setActivityOptions(ActivityOptionsCompat.makeBasic())
+        .newCall(this)
+
+// 自定义跳转时机
+val cancelable: ICancelable = call.post(object : IInterceptor.ChainCallback {
+        override fun onSuccess(response: Response) {
+            // 寻址成功, 获取 Response
+        }
+
+        override fun onFailed(throwable: Throwable?) {
+            // 寻址失败
+        }
+
+        override fun onCanceled() {
+            // 寻址被中途取消了
+        }
+    })
+// 自定义取消时机
+cancelable.cancel()
+```
+调用了 ICall.call() 可以获取到一个 ICancelable 对象, 通过这个 ICancelable.cancel 可以在路由寻址过程中执行中断操作
+
+### 五) 获取寻址结果
 #### 获取 ActivityResult
 ```
 SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
@@ -261,7 +264,7 @@ SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL
 获取 Fragment 的方式与获取 ActivityResult 是一致的
 - **需要指定 Fragment 的类型**, 支持 V4 和 Androidx 包下的 Fragment 
 
-### 五) 拦截器
+### 六) 拦截器
 注: SRouter 的所有拦截器均在主线程执行
 
 #### 1. 拦截器的定义
