@@ -269,6 +269,8 @@ val cancelable: ICancelable = routeApi.personalCenter(this).call()
 ```
 
 ### 二) 拦截器
+注: SRouter 的所有拦截器均在主线程执行
+
 #### 1. 拦截器的定义
 拦截器的定义需要实现 IInterceptor 接口
 ```
