@@ -278,6 +278,7 @@ SRouter.request(xxx, xxx)
         }
 ```
 获取到 IService 服务之后, 可以调用 IService.connect() 建立连接, 也可以通过 IService.connectAsync() 异步建立连接
+- 无论是同步还是异步建立连接, 最终都会返回 Object 对象, 因此 **IService 也充当做跨模块提供数据来使用**
 
 ### 六) 拦截器
 注: SRouter 的所有拦截器均在主线程执行
