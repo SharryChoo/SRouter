@@ -1,3 +1,6 @@
+## SRouter
+SRouter 是一款对 Android 端的**提供渐进式组件化服务的路由框架**
+
 ## 功能介绍
 - 支持路由模块动态装载与卸载
 - 支持自定义页面跳转时的 Transaction 动画
@@ -9,7 +12,7 @@
 - **支持通过路由获取 原生/AppCompat/AndroidX 包下的 Fragment**
 - **支持添加寻址回调适配器, 可实现与 RxJava 无缝衔接**
 
-## 功能集成
+## 安装指南
 ![New Version](https://jitpack.io/v/SharryChoo/SRouter.svg)
 
 ### Step 1
