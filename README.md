@@ -103,7 +103,7 @@ kapt 是支持 Java 代码的, 不用担心 kotlin 与 java 的混编问题
 
 ## 三. 功能使用
 ### 一) 初始化
-SRouter 的初始化操作通过 SRouter.init() 方法执行, 推荐在 BaseApplication 的 onCreate 中进行
+SRouter 的初始化操作通过 **SRouter.init()** 方法执行, 推荐在 BaseApplication 的 onCreate 中进行
 ```
 public class BaseApplication extends Application {
 
@@ -176,7 +176,7 @@ SRouter.request(url)
 url 跳转即 request 构造时不同, 其他使用方式一致
 
 #### 3. 模板方法寻址
-SRouter 可通过 @RouteMethod 注解声明一个方法为寻址入口
+SRouter 可**通过 @RouteMethod 注解声明一个方法为寻址入口**
 ```
 public interface RouteApi {
 
@@ -204,7 +204,7 @@ public interface RouteApi {
 ```
 val cancelable: ICancelable = routeApi.personalCenter(this).call()
 ```
-使用方式与 Retrofit 的模板接口类似, 使用这种方式可以更快捷更精准的进行寻址操作
+使用方式与 Retrofit 的模板接口类似, 使用这种方式可以**更快捷、更精准**的进行寻址操作
 
 #### 4. 中断寻址
 如果你想控制路由跳转的时机, 以及中途取消等操作, 可以使用以下方式
@@ -231,7 +231,7 @@ val cancelable: ICancelable = call.post(object : IInterceptor.ChainCallback {
 // 自定义取消时机
 cancelable.cancel()
 ```
-调用了 ICall.call() 可以获取到一个 ICancelable 对象, 通过这个 ICancelable.cancel 可以在路由寻址过程中执行中断操作
+调用 ICall.call() 方法可以获取到一个 ICancelable 对象, 通过 ICancelable.cancel() 可以在路由寻址过程中执行中断操作
 
 ### 五) 获取寻址结果
 #### 获取 ActivityResult
