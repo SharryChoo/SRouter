@@ -1,8 +1,10 @@
 ## 一. 功能介绍
 - 支持解析 URL 直接进行路由跳转
-- 提供可自定义优先级的路由拦截器
 - 支持自定义跳转时的 Transaction 动画
 - 支持路由模块动态装载与卸载
+- **提供了多种维度的拦截器**
+  - 动态拦截器
+  - 静态拦截器
 - **支持通过路由获取 原生/AppCompat/AndroidX 包下的 Fragment**
 - **支持 Activity/Fragment 中 Intent 数据自动注入**
 - **支持回调获取目标页面的 ActivityResult**
@@ -269,7 +271,7 @@ val cancelable: ICancelable = routeApi.personalCenter(this).call()
 ### 二) 拦截器
 在 SRouter 中有效的拦截器, 需要用户实现 IInterceptor 接口
 
-#### 拦截器的定义
+#### 1. 拦截器的定义
 ```
 public class PermissionInterceptor implements IInterceptor {
 
@@ -306,8 +308,11 @@ public class PermissionInterceptor implements IInterceptor {
 
 路由跳转时会根据优先级进行排序
 
-#### 使用方式一
-配合路由使用
+#### 2. 拦截器的使用
+SRouter 提供了 **静态** 和 **动态** 两种方式进行拦截器的添加
+
+##### 1) 静态拦截器
+静态拦截器可定义在页面上, 如下所示
 ```
 @Route(
         authority = ModuleConstants.Personal.NAME,
@@ -319,24 +324,13 @@ public class PermissionInterceptor implements IInterceptor {
 class PersonalActivity : AppCompatActivity() {
 }
 ```
-#### 使用方式二
-在路由跳转时可以通过两种方式添加拦截器
-```
-SRouter.request(xxx, xxx)
-        // 直接添加拦截器对象
-        .addInterceptor(new PermissionInterceptor())
-        // 添加拦截器的 URI
-        .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
-        ......
-```
-#### 使用方式三
-在模板接口中的 @RouteMethod 中添加
+静态拦截器可定义在模板接口方法上, 如下所示
 ```
 public interface RouteApi {
     @RouteMethod(
             authority = ModuleConstants.Personal.NAME,
             path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
-	    // 添加跳转时的拦截器
+	        // 添加寻址时的拦截器
             interceptorURIs = ModuleConstants.Personal.PERMISSION_INTERCEPTOR
     )
     ICall personalCenter(
@@ -348,8 +342,22 @@ public interface RouteApi {
 }
 ```
 
-### 三) 拓展
-#### 参数的注入
+##### 2) 动态拦截器
+动态拦截器是指, 在路由跳转时动态添加的拦截器
+- 支持添加拦截器对象
+- 支持通过拦截器 URI 添加拦截器
+```
+SRouter.request(xxx, xxx)
+        // 直接添加拦截器对象
+        .addInterceptor(new PermissionInterceptor())
+        // 添加拦截器的 URI
+        .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
+        ......
+```
+
+
+### 三) 进阶使用
+#### 1. 参数的注入
 如果你不想写 Intent 参数注入的代码, @Query 注解可以帮你完成这个操作
 ```
 public class FoundFragment extends Fragment {
@@ -370,8 +378,8 @@ public class FoundFragment extends Fragment {
 }
 ```
 
-#### RxJava 的拓展
-##### 1. 编写适配器类
+#### 2. RxJava 的拓展
+##### 1) 编写适配器类
 实现 ICallAdapter 接口编写 RxJava 的适配器
 ```
 public class RxJavaAdapter implements ICallAdapter<ResponseObservable> {
@@ -388,7 +396,7 @@ public class RxJavaAdapter implements ICallAdapter<ResponseObservable> {
 
 }
 ```
-##### 2. 编写以 Response 为数据源的 Observable 类
+##### 2) 编写以 Response 为数据源的 Observable 类
 ```
 public final class ResponseObservable extends Observable<Response> {
 
@@ -441,12 +449,12 @@ public final class ResponseObservable extends Observable<Response> {
 }
 ```
 
-##### 3. 添加适配器
+##### 3) 添加适配器
 ```
 SRouter.addCallAdapter(new RxJavaAdapter());
 ```
 
-##### 4. 链式调用
+##### 4) 链式调用
 ```
 val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
         // 构建 Activity 相关配置
@@ -464,7 +472,7 @@ val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.L
                 }
         }
 ```
-##### 5. 模板方法调用
+##### 5) 模板方法调用
 ```
 public interface RouteApi {
 
