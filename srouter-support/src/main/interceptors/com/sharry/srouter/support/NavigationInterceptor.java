@@ -24,9 +24,11 @@ class NavigationInterceptor implements IInterceptor {
         ChainContext context = chain.chainContext();
         Request request = context.request;
         Response response = new Response(request);
-        switch (request.getType()) {
+        RouteMeta meta = request.getRouteMeta();
+        assert meta != null;
+        switch (meta.getType()) {
             case ACTIVITY:
-                Intent intent = new Intent(context, request.getRouteClass());
+                Intent intent = new Intent(context, meta.getRouteClass());
                 // Inject user extra info to intent.
                 intent.putExtras(request.getDatum());
                 // Real perform activity launch.
@@ -37,20 +39,20 @@ class NavigationInterceptor implements IInterceptor {
             case FRAGMENT_V4:
                 try {
                     // Instantiation fragment by class name.
-                    Object fragment = request.getRouteClass().newInstance();
+                    Object fragment = meta.getRouteClass().newInstance();
                     // Invoke Fragment.setArguments.
-                    Method method = request.getRouteClass().getMethod("setArguments",
+                    Method method = meta.getRouteClass().getMethod("setArguments",
                             Bundle.class);
                     method.invoke(fragment, request.getDatum());
                     // Inject fragment to request provider.
                     response.setFragment(fragment);
                     chain.callback().onSuccess(response);
                 } catch (InstantiationException e) {
-                    Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
+                    Logger.e("Instantiation " + meta.getRouteClass().getSimpleName()
                             + " failed.", e);
                     chain.callback().onFailed(e);
                 } catch (IllegalAccessException e) {
-                    Logger.e("Please ensure " + request.getRouteClass() +
+                    Logger.e("Please ensure " + meta.getRouteClass() +
                             "  empty arguments constructor is assessable.", e);
                     chain.callback().onFailed(e);
                 } catch (NoSuchMethodException e) {
@@ -61,15 +63,15 @@ class NavigationInterceptor implements IInterceptor {
                 break;
             case SERVICE:
                 try {
-                    IService service = (IService) request.getRouteClass().newInstance();
+                    IService service = (IService) meta.getRouteClass().newInstance();
                     service.attach(context);
                     response.setService(service);
                 } catch (InstantiationException e) {
-                    Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
+                    Logger.e("Instantiation " + meta.getRouteClass().getSimpleName()
                             + " failed.", e);
                     chain.callback().onFailed(e);
                 } catch (IllegalAccessException e) {
-                    Logger.e("Please ensure " + request.getRouteClass() +
+                    Logger.e("Please ensure " + meta.getRouteClass() +
                             "  empty arguments constructor is assessable.", e);
                     chain.callback().onFailed(e);
                 }

@@ -35,8 +35,20 @@ class SRouterImpl {
         LogisticsCenter.unregisterModules(names);
     }
 
+    static void addGlobalInterceptor(IInterceptor interceptor) {
+        Warehouse.GLOBAL_INTERCEPTORS.add(interceptor);
+    }
+
+    static void addGlobalInterceptor(String interceptorUri) {
+        Warehouse.GLOBAL_INTERCEPTOR_URIS.add(interceptorUri);
+    }
+
     static void addCallAdapter(ICallAdapter adapter) {
         LogisticsCenter.addCallAdapter(adapter);
+    }
+
+    static void isDebug(boolean debug) {
+        Logger.isDebug(debug);
     }
 
     static <T> void bindQuery(T binder) {
@@ -77,52 +89,64 @@ class SRouterImpl {
     }
 
     static ICall newCall(final Context context, final Request request) {
-        // 1. load data to request.
+        // 1. completion request.
         try {
             LogisticsCenter.completion(request);
         } catch (NoRouteFoundException e) {
             Logger.e(e.getMessage(), e);
             return ICall.DEFAULT;
         }
-        // 2. Add user added interceptors before route interceptor.
-        final List<IInterceptor> interceptors = new ArrayList<>(request.getInterceptors());
-        // 3. Parse interceptor URIS.
-        final List<String> interceptorURIs = new ArrayList<>(request.getInterceptorURIs());
-        interceptorURIs.addAll(Arrays.asList(request.getRouteInterceptorURIs()));
-        if (!request.isGreenChannel()) {
-            // 3.1 Sort interceptor URIs by priority.
-            final List<InterceptorMeta> orderedMetas = new LinkedList<>();
-            for (String value : interceptorURIs) {
-                InterceptorMeta meta = Warehouse.TABLE_ROUTES_INTERCEPTORS.get(value);
-                if (null == meta) {
-                    continue;
-                }
-                // Add meta data to comfortable position.
-                int insertIndex = 0;
-                for (InterceptorMeta orderedMeta : orderedMetas) {
-                    if (orderedMeta.getPriority() < meta.getPriority()) {
-                        break;
-                    } else {
-                        insertIndex++;
-                    }
-                }
-                orderedMetas.add(insertIndex, meta);
+        // 2. completion interceptors.
+        final List<IInterceptor> interceptors = new ArrayList<>();
+        // 2.1 add user interceptors
+        if (request.isGreenChannel()) {
+            Logger.i("Request is green channel, ignore interceptors that not global.");
+        } else {
+            interceptors.addAll(request.getInterceptors());
+            instantiateAndSortInterceptorUris(
+                    Arrays.asList(request.getRouteMeta().getRouteInterceptorURIs()),
+                    interceptors
+            );
+        }
+        // 2.2 add global interceptors.
+        instantiateAndSortInterceptorUris(Warehouse.GLOBAL_INTERCEPTOR_URIS, interceptors);
+        interceptors.addAll(Warehouse.GLOBAL_INTERCEPTORS);
+        // 2.3 Add finalize navigation Interceptor.
+        interceptors.add(new NavigationInterceptor());
+        // 3. Create call.
+        return RealCall.create(null == context ? sContext : context, request, interceptors);
+    }
+
+    private static void instantiateAndSortInterceptorUris(List<String> sourceSet, List<IInterceptor> destSet) {
+        // 3.1 Sort interceptor URIs by priority.
+        final List<InterceptorMeta> orderedMetas = new LinkedList<>();
+        for (String value : sourceSet) {
+            InterceptorMeta meta = Warehouse.TABLE_ROUTES_INTERCEPTORS.get(value);
+            if (null == meta) {
+                continue;
             }
-            // 3.2 Put sorted metas to interceptors.
-            for (InterceptorMeta meta : orderedMetas) {
-                try {
-                    IInterceptor interceptor = (IInterceptor) meta.getInterceptorClass().newInstance();
-                    interceptors.add(interceptor);
-                } catch (IllegalAccessException e) {
-                    Logger.e(meta.getInterceptorClass().getName() + " cannot access, please ensure this class " +
-                            "have public and no args Constructor", e);
-                } catch (InstantiationException e) {
-                    Logger.e(meta.getInterceptorClass().getName() + " instantiation failed.", e);
+            // Add meta data to comfortable position.
+            int insertIndex = 0;
+            for (InterceptorMeta orderedMeta : orderedMetas) {
+                if (orderedMeta.getPriority() < meta.getPriority()) {
+                    break;
+                } else {
+                    insertIndex++;
                 }
+            }
+            orderedMetas.add(insertIndex, meta);
+        }
+        // 3.2 Put sorted metas to interceptors.
+        for (InterceptorMeta meta : orderedMetas) {
+            try {
+                IInterceptor interceptor = (IInterceptor) meta.getInterceptorClass().newInstance();
+                destSet.add(interceptor);
+            } catch (IllegalAccessException e) {
+                Logger.e(meta.getInterceptorClass().getName() + " cannot access, please ensure this class " +
+                        "have public and no args Constructor", e);
+            } catch (InstantiationException e) {
+                Logger.e(meta.getInterceptorClass().getName() + " instantiation failed.", e);
             }
         }
-        // 4. Add finalize navigation Interceptor.
-        interceptors.add(new NavigationInterceptor());
-        return RealCall.create(null == context ? sContext : context, request, interceptors);
     }
 }

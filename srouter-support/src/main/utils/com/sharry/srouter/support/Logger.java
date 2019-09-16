@@ -2,6 +2,10 @@ package com.sharry.srouter.support;
 
 import androidx.annotation.NonNull;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
 /**
  * @author think <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
@@ -10,21 +14,38 @@ import androidx.annotation.NonNull;
 class Logger {
 
     private static final String TAG_DEFAULT = Logger.class.getSimpleName();
-    private static final ILoggerEngine sLoggerEngine = new ILoggerEngine.DefaultEngine();
+    private static boolean isDebug = false;
+    private static final ILoggerEngine REAL_ENGINE = new ILoggerEngine.DefaultEngine();
+    private static final ILoggerEngine PROXY_ENGINE = (ILoggerEngine) Proxy.newProxyInstance(
+            ILoggerEngine.class.getClassLoader(),
+            new Class<?>[]{ILoggerEngine.class},
+            new InvocationHandler() {
+                @Override
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    if (isDebug) {
+                        return method.invoke(REAL_ENGINE, args);
+                    }
+                    return null;
+                }
+            });
 
     private Logger() {
         throw new UnsupportedOperationException("cannot be instantiated");
     }
 
+    static void isDebug(boolean debug) {
+        isDebug = debug;
+    }
+
     /**
      * =============================== Verbose =================================
      */
-    public static void v(@NonNull CharSequence content) {
+    static void v(@NonNull CharSequence content) {
         v(defaultTag(), content.toString());
     }
 
     static void v(@NonNull String tag, @NonNull CharSequence content) {
-        sLoggerEngine.v(tag, content.toString());
+        PROXY_ENGINE.v(tag, content.toString());
     }
 
     static void v(@NonNull CharSequence content, @NonNull Throwable e) {
@@ -32,7 +53,7 @@ class Logger {
     }
 
     static void v(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        sLoggerEngine.v(tag, e, content.toString());
+        PROXY_ENGINE.v(tag, e, content.toString());
     }
 
     /**
@@ -43,7 +64,7 @@ class Logger {
     }
 
     static void d(@NonNull String tag, @NonNull CharSequence content) {
-        sLoggerEngine.d(tag, content.toString());
+        PROXY_ENGINE.d(tag, content.toString());
     }
 
     static void d(@NonNull CharSequence content, @NonNull Throwable e) {
@@ -51,7 +72,7 @@ class Logger {
     }
 
     static void d(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        sLoggerEngine.d(tag, e, content.toString());
+        PROXY_ENGINE.d(tag, e, content.toString());
     }
 
     /**
@@ -62,7 +83,7 @@ class Logger {
     }
 
     static void i(@NonNull String tag, @NonNull CharSequence content) {
-        sLoggerEngine.i(tag, content.toString());
+        PROXY_ENGINE.i(tag, content.toString());
     }
 
     public static void i(@NonNull CharSequence content, @NonNull Throwable e) {
@@ -70,7 +91,7 @@ class Logger {
     }
 
     static void i(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        sLoggerEngine.i(tag, e, content.toString());
+        PROXY_ENGINE.i(tag, e, content.toString());
     }
 
     /**
@@ -81,7 +102,7 @@ class Logger {
     }
 
     static void w(@NonNull String tag, @NonNull CharSequence content) {
-        sLoggerEngine.w(tag, content.toString());
+        PROXY_ENGINE.w(tag, content.toString());
     }
 
     public static void w(@NonNull CharSequence content, @NonNull Throwable e) {
@@ -89,7 +110,7 @@ class Logger {
     }
 
     static void w(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        sLoggerEngine.w(tag, e, content.toString());
+        PROXY_ENGINE.w(tag, e, content.toString());
     }
 
     /**
@@ -100,7 +121,7 @@ class Logger {
     }
 
     static void e(@NonNull String tag, @NonNull CharSequence content) {
-        sLoggerEngine.e(tag, content.toString());
+        PROXY_ENGINE.e(tag, content.toString());
     }
 
     static void e(@NonNull CharSequence content, @NonNull Throwable e) {
@@ -108,12 +129,9 @@ class Logger {
     }
 
     static void e(@NonNull String tag, @NonNull Throwable e, @NonNull CharSequence content) {
-        sLoggerEngine.e(tag, e, content.toString());
+        PROXY_ENGINE.e(tag, e, content.toString());
     }
 
-    /**
-     * 获取默认的 TAG
-     */
     private static String defaultTag() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         // 获取线程任务栈中深度为 4 的元素信息
@@ -126,5 +144,4 @@ class Logger {
         int subIndex = className.lastIndexOf(".") + 1;
         return className.substring(subIndex);
     }
-
 }

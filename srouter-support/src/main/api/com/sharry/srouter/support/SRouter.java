@@ -59,6 +59,28 @@ public class SRouter {
     }
 
     /**
+     * Add interceptor used in global.
+     */
+    public static void addGlobalInterceptor(@NonNull IInterceptor interceptor) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        Preconditions.checkNotNull(interceptor);
+        SRouterImpl.addGlobalInterceptor(interceptor);
+    }
+
+    /**
+     * Add interceptor used in global.
+     */
+    public static void addGlobalInterceptor(@NonNull String interceptorUri) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        Preconditions.checkNotNull(interceptorUri);
+        SRouterImpl.addGlobalInterceptor(interceptorUri);
+    }
+
+    /**
      * Add ICall adapter.
      */
     public static void addCallAdapter(@NonNull ICallAdapter adapter) {
@@ -146,5 +168,12 @@ public class SRouter {
         }
         Preconditions.checkNotNull(request);
         return SRouterImpl.newCall(context, request);
+    }
+
+    /**
+     * @param debug if true open logger, false will close.
+     */
+    public static void isDebug(boolean debug) {
+        SRouterImpl.isDebug(debug);
     }
 }

@@ -25,10 +25,10 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @since 2018/8/13
  */
-public class Request extends RouteMeta {
+public final class Request {
 
-    public static final int NON_REQUEST_CODE = -1;
-    public static final int NON_FLAGS = -1;
+    static final int NON_REQUEST_CODE = -1;
+    static final int NON_FLAGS = -1;
 
     /**
      * Navigation authority
@@ -82,6 +82,11 @@ public class Request extends RouteMeta {
      */
     private boolean isGreenChannel;
 
+    /**
+     * The meta holder target address.
+     */
+    private RouteMeta routeMeta;
+
     private Request(String authority, String path) {
         this.authority = authority;
         this.path = path;
@@ -94,7 +99,6 @@ public class Request extends RouteMeta {
     public static Request create(@NonNull String authority, @NonNull String path) {
         return new Request(Preconditions.checkNotEmpty(authority), Preconditions.checkNotEmpty(path));
     }
-
 
     /**
      * U can instant Request by parse URL
@@ -206,6 +210,18 @@ public class Request extends RouteMeta {
      */
     public Request setFlags(int flags) {
         this.flags = flags;
+        return this;
+    }
+
+    /**
+     * Add flag.
+     */
+    public Request addFlag(@FlagInt int flag) {
+        if (this.flags != NON_FLAGS) {
+            this.flags |= flag;
+        } else {
+            this.flags = flag;
+        }
         return this;
     }
 
@@ -635,7 +651,33 @@ public class Request extends RouteMeta {
             Intent.FLAG_RECEIVER_REGISTERED_ONLY
     })
     @Retention(RetentionPolicy.SOURCE)
-    public @interface FlagInt {
+    @interface FlagInt {
+    }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "authority='" + authority + '\'' +
+                ", path='" + path + '\'' +
+                ", delay=" + delay +
+                ", flags=" + flags +
+                ", requestCode=" + requestCode +
+                ", isGreenChannel=" + isGreenChannel +
+                '}';
+    }
+
+
+    /**
+     * Set route target address meta data.
+     *
+     * @param routeMeta target meta data.
+     */
+    void setRouteMeta(@NonNull RouteMeta routeMeta) {
+        this.routeMeta = routeMeta;
+    }
+
+    RouteMeta getRouteMeta() {
+        return routeMeta;
     }
 
 }

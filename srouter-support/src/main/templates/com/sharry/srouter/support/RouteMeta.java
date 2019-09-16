@@ -1,5 +1,7 @@
 package com.sharry.srouter.support;
 
+import androidx.annotation.NonNull;
+
 import com.sharry.srouter.annotation.compiler.Route;
 
 /**
@@ -9,57 +11,46 @@ import com.sharry.srouter.annotation.compiler.Route;
  * @version 1.0
  * @since 2018/8/13
  */
-public class RouteMeta {
-
-    /**
-     * Navigation route type.
-     */
-    private Type type;
-    /**
-     * Navigation route target class.
-     */
-    private Class<?> routeClass;
-    /**
-     * Navigation interceptorURIs.
-     */
-    private String[] routeInterceptorURIs;
-
-    RouteMeta() {
-    }
+public final class RouteMeta {
 
     /**
      * Get an instance of RouteMeta
      */
-    public static RouteMeta create(Type type, Class<?> routeCls, String[] interceptorURIs) {
-        RouteMeta result = new RouteMeta();
-        result.type = type;
-        result.routeClass = routeCls;
-        result.routeInterceptorURIs = interceptorURIs;
-        return result;
+    public static RouteMeta create(Type type, Class<?> routeCls, @NonNull String[] interceptorURIs) {
+        return new RouteMeta(type, routeCls, interceptorURIs);
+    }
+
+    /**
+     * Navigation route type.
+     */
+    private final Type type;
+    /**
+     * Navigation route target class.
+     */
+    private final Class<?> routeClass;
+    /**
+     * Navigation interceptorURIs.
+     */
+    @NonNull
+    private final String[] routeInterceptorURIs;
+
+    private RouteMeta(@NonNull Type type, @NonNull Class<?> routeClass, @NonNull String[] routeInterceptorURIs) {
+        this.type = type;
+        this.routeClass = routeClass;
+        this.routeInterceptorURIs = routeInterceptorURIs;
     }
 
     public Type getType() {
         return type;
     }
 
-    public void setType(Type type) {
-        this.type = type;
-    }
-
     public Class<?> getRouteClass() {
         return routeClass;
     }
 
-    public void setRouteClass(Class<?> routeClass) {
-        this.routeClass = routeClass;
-    }
-
+    @NonNull
     public String[] getRouteInterceptorURIs() {
         return routeInterceptorURIs;
-    }
-
-    public void setRouteInterceptorURIs(String[] routeInterceptorURIs) {
-        this.routeInterceptorURIs = routeInterceptorURIs;
     }
 
     /**

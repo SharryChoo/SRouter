@@ -144,9 +144,7 @@ class LogisticsCenter {
             throw new NoRouteFoundException("SRouter cannot found path: " + path);
         }
         // Load data to request before navigation
-        request.setType(routeMeta.getType());
-        request.setRouteClass(routeMeta.getRouteClass());
-        request.setRouteInterceptorURIs(routeMeta.getRouteInterceptorURIs());
+        request.setRouteMeta(routeMeta);
         // If Type is SERVICE, the request cannot be intercepted.
         request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.SERVICE);
     }

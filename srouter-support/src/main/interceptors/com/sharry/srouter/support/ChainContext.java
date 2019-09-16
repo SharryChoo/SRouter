@@ -18,17 +18,21 @@ public class ChainContext extends ContextWrapper {
      * Get an instance of ChainContext.
      */
     static ChainContext obtain(@NonNull Context context,
-                                      @NonNull Request request,
-                                      @NonNull ICancelable cancelable) {
+                               @NonNull Request request,
+                               @NonNull ICancelable cancelable) {
         Preconditions.checkNotNull(context);
         Preconditions.checkNotNull(request);
+        Preconditions.checkNotNull(cancelable);
         return new ChainContext(context, request, cancelable);
     }
 
+    @NonNull
     public ICancelable cancelable;
+
+    @NonNull
     public Request request;
 
-    private ChainContext(Context base, Request request, ICancelable cancelable) {
+    private ChainContext(Context base, @NonNull Request request, @NonNull ICancelable cancelable) {
         super(base);
         this.request = request;
         this.cancelable = cancelable;

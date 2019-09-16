@@ -52,6 +52,10 @@ class Warehouse {
      */
     static final Map<String, Method> QUERY_BINDING_METHOD_BINDS = new HashMap<>();
 
+    static final List<IInterceptor> GLOBAL_INTERCEPTORS = new ArrayList<>();
+
+    static final List<String> GLOBAL_INTERCEPTOR_URIS = new ArrayList<>();
+
     static {
         CALL_ADAPTERS.add(ICallAdapter.DEFAULT);
     }

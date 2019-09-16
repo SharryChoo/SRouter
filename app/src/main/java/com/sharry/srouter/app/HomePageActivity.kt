@@ -1,4 +1,4 @@
-package com.sharry.srouter.app.home
+package com.sharry.srouter.app
 
 import android.content.Intent
 import android.os.Bundle
