@@ -1,15 +1,13 @@
 ## 一. 功能介绍
-- 支持解析 URL 直接进行路由跳转
-- 支持自定义跳转时的 Transaction 动画
 - 支持路由模块动态装载与卸载
-- **提供了多种维度的拦截器**
-  - 动态拦截器
-  - 静态拦截器
-- **支持通过路由获取 原生/AppCompat/AndroidX 包下的 Fragment**
+- 支持解析 URL 直接进行路由跳转
+- 支持自定义页面跳转时的 Transaction 动画
+- **支持使用模板接口方法进行路由寻址(与 Retrofit 类似)**
+- **提供静态拦截器和动态拦截器, 以满足不同场景的 Hook 需求**
 - **支持 Activity/Fragment 中 Intent 数据自动注入**
 - **支持回调获取目标页面的 ActivityResult**
-- **支持灵活拓展实现与 RxJava 无缝衔接**
-- **支持使用接口方法进行路由跳转(与 Retrofit 类似)**
+- **支持通过路由获取 原生/AppCompat/AndroidX 包下的 Fragment**
+- **支持添加寻址回调适配器, 灵活拓展实现与 RxJava 无缝衔接**
 
 ## 二. 功能集成
 ![New Version](https://jitpack.io/v/SharryChoo/SRouter.svg)
