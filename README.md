@@ -125,13 +125,11 @@ public class BaseApplication extends Application {
   - 根据业务需求, 运行时解注册想要使用的 module 
 
 ### 二) 声明寻址目标 
-#### 方式一
-SRouter 的**寻址目标可定义在 class 上**, 其可作用的 class 如下
+SRouter **通过 @Route 注解声明一个 Class 为一个路由目标地址**, 如下所示, 其可作用的 class 如下
 - Activity
 - Fragment/Fragment(androidx)/Fragment(v4)
 - IService: 用于自己实现目标的服务逻辑
 
-**通过 @Route 注解声明该 Class 为一个路由目标地址**, 如下所示
 ```
 @Route( 
         authority = ModuleConstants.Personal.NAME,
@@ -151,28 +149,6 @@ class PersonalActivity : AppCompatActivity() {
 - path: 对应的路径
 
 请确保 authority 与 path 的组合是唯一的
-
-#### 方式二
-SRouter 的**寻址目标可作用在方法上**, 通过 @RouteMethod 注解声明该方法为一个寻址入口
-```
-public interface RouteApi {
-
-    /**
-     * @param context 若无 context 参数, 会使用 application context 跳转
-     */
-    @RouteMethod(
-            authority = ModuleConstants.Personal.NAME,
-            path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
-    )
-    ICall personalCenter(
-            Context context,
-            @QueryParam(key = "content") String content,
-            @RequestCode int requestCode,
-            @Flags int flags
-    );
-
-}
-```
 
 ### 三) 寻址发起
 #### 1. 普通寻址
@@ -197,7 +173,52 @@ SRouter.request(url)
 ```
 url 跳转即 request 构造时不同, 其他使用方式一致
 
+#### 3. 可中断寻址
+如果你想控制路由跳转的时机, 以及中途取消等操作, 可以使用以下方式
+```
+// 获取可跳转的 ICall 对象
+val call:ICall = SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
+        .setActivityOptions(ActivityOptionsCompat.makeBasic())
+        .newCall(this)
+// 自定义跳转时机
+val cancelable: ICancelable = call.post(object : IInterceptor.ChainCallback {
+        override fun onSuccess(response: Response) {
+            // 寻址成功, 获取 Response
+        }
+
+        override fun onFailed(throwable: Throwable?) {
+            // 寻址失败
+        }
+
+        override fun onCanceled() {
+            // 寻址被中途取消了
+        }
+    })
+// 自定义取消时机
+cancelable.cancel()
+```
+
 #### 4. 模板方法寻址
+SRouter 可通过 @RouteMethod 注解声明该方法为一个寻址入口
+```
+public interface RouteApi {
+
+    /**
+     * @param context 若无 context 参数, 会使用 application context 跳转
+     */
+    @RouteMethod(
+            authority = ModuleConstants.Personal.NAME,
+            path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
+    )
+    ICall personalCenter(
+            Context context,
+            @QueryParam(key = "content") String content,
+            @RequestCode int requestCode,
+            @Flags int flags
+    );
+
+}
+```
 实例化路由接口
 ```
  val routeApi = SRouter.createApi(RouteApi::class.java)
@@ -208,31 +229,6 @@ val cancelable: ICancelable = routeApi.personalCenter(this).call()
 ......
 ```
 使用方式与 Retrofit 的模板接口类似, 使用这种方式可以更快捷更精准的进行寻址操作
-
-#### 5. 可中断寻址
-如果你想控制路由跳转的时机, 以及中途取消等操作, 可以使用以下方式
-```
-// 获取可跳转的 ICall 对象
-val call:ICall = SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
-        .setActivityOptions(ActivityOptionsCompat.makeBasic())
-        .newCall(this)
-// 自定义跳转时机
-val cancelable: ICancelable = call.post(object : IInterceptor.ChainCallback {
-        override fun onSuccess(response: Response) {
-            // 路由成功, 获取 Response
-        }
-
-        override fun onFailed(throwable: Throwable?) {
-            // 路由失败
-        }
-
-        override fun onCanceled() {
-            // 路由被中途取消了
-        }
-    })
-// 自定义取消时机
-cancelable.cancel()
-```
 
 ### 四) 获取寻址结果
 #### 获取 ActivityResult
