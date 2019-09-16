@@ -507,6 +507,4 @@ public interface RouteApi {
 这里只是以 RxJava 举例, 你可以自行实现 ICallAdapter 接口, 将路由的 ICall 适配成任何你想要的对象
 
 ## 其他
-更多使用方式请 [clone repository](https://github.com/SharryChoo/SRouter) 的代码进行探索体验
-- 如果您觉得使用不便, 请多多 issue
-- 如果您感觉不错, 请多多 star, 这会让笔者备受鼓舞
+更多使用方式请查看 Repository 中的示例代码
