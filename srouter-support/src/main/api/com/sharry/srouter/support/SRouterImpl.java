@@ -39,7 +39,7 @@ class SRouterImpl {
         Warehouse.GLOBAL_INTERCEPTORS.add(interceptor);
     }
 
-    static void addGlobalInterceptor(String interceptorUri) {
+    static void addGlobalInterceptorUri(String interceptorUri) {
         Warehouse.GLOBAL_INTERCEPTOR_URIS.add(interceptorUri);
     }
 

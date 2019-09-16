@@ -72,12 +72,12 @@ public class SRouter {
     /**
      * Add interceptor used in global.
      */
-    public static void addGlobalInterceptor(@NonNull String interceptorUri) {
+    public static void addGlobalInterceptorUri(@NonNull String interceptorUri) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
-        Preconditions.checkNotNull(interceptorUri);
-        SRouterImpl.addGlobalInterceptor(interceptorUri);
+        Preconditions.checkNotEmpty(interceptorUri);
+        SRouterImpl.addGlobalInterceptorUri(interceptorUri);
     }
 
     /**

@@ -31,6 +31,8 @@ public class BaseApplication extends Application {
         SRouter.addCallAdapter(new RxJavaAdapter());
         // 添加全局拦截器
         SRouter.addGlobalInterceptor(new LoggerGlobalInterceptor());
+        // 通过 URI 添加拦截器
+        SRouter.addGlobalInterceptorUri("XXX");
     }
 
 }

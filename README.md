@@ -6,7 +6,9 @@ SRouter 是一款对 Android 端的**提供渐进式组件化服务的路由框�
 - 支持自定义页面跳转时的 Transaction 动画
 - 支持通过 URL 进行路由寻址
 - **支持通过接口中的模板方法进行路由寻址(与 Retrofit 类似)**
-- **提供静态拦截器和动态拦截器, 以满足不同场景的 Hook 需求**
+- **提供局部和全局两种类型的拦截器, 以满足不同场景的 Hook 需求**
+  - 局部拦截器包含**路由拦截器、页面拦截器和模板方法拦截器**
+  - 支持拦截器按照优先级排序
 - **支持 Activity/Fragment 中 Intent 数据自动注入**
 - **支持回调获取目标页面的 ActivityResult**
 - **支持通过路由获取 原生/AppCompat/AndroidX 包下的 Fragment**
@@ -16,7 +18,7 @@ SRouter 是一款对 Android 端的**提供渐进式组件化服务的路由框�
 ![New Version](https://jitpack.io/v/SharryChoo/SRouter.svg)
 
 ### Step 1
-在工程的根 build.gradle 中添加 jitpack 的 maven 仓库
+在工程的根目录的 build.gradle 中添加 jitpack 的 maven 仓库
 ```
 allprojects {
     repositories {
@@ -284,7 +286,9 @@ SRouter.request(xxx, xxx)
 - 无论是同步还是异步建立连接, 最终都会返回 Object 对象, 因此 **IService 也充当做跨模块提供数据来使用**
 
 ## 拦截器使用
-SRouter 的所有拦截器均在主线程执行, 提供了**静态**和**动态**两种添加方式
+SRouter 的所有拦截器均在主线程执行, 提供了**局部**和**全局**两种类型的拦截器
+- 局部拦截器包含**路由拦截器、页面拦截器和模板方法拦截器**
+- 支持拦截器按照优先级排序
 
 ### 一) 拦截器的定义
 拦截器的定义需要实现 IInterceptor 接口
@@ -324,21 +328,50 @@ public class PermissionInterceptor implements IInterceptor {
 - **priority: 拦截器的优先级**
   - range in [0, 10] 逐级递增, 路由跳转时会根据优先级进行排序
 
-### 二) 拦截器的添加
-#### 1. 静态添加
-静态拦截器集成到了 @Route 注解中, 凡是可使用 @Route 的地方均提供静态拦截器的支持
+### 二) 拦截器的使用
+SRouter 的拦截器根据使用场景, 可以分为如下几种类型
+- 局部拦截器
+  - 路由拦截器
+  - 页面拦截器
+  - 模板方法拦截器
+- 全区拦截器
+
+接下来对其使用方式进行逐一介绍
+
+#### 1. 局部拦截器
+##### 1) 路由拦截器
+路由拦截器是指在构建寻址请求时添加的拦截器
+- 支持通过拦截器 URI 添加拦截器
+  - **通过 URI 添加的拦截器, 可以享受优先级排序**
+- 支持直接添加拦截器对象
+  - 这种方式当做最高优先级处理
+
+```
+SRouter.request(xxx, xxx)
+        // 添加拦截器的 URI
+        .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
+        // 添加拦截器对象
+        .addInterceptor(new PermissionInterceptor())
+        ......
+```
+
+##### 2) 页面拦截器
+页面拦截器集成在了 @Route 注解中, 只支持通过拦截器的 URI 进行添加
+- 支持添加多个页面拦截器
 ```
 @Route(
         authority = ModuleConstants.Personal.NAME,
         path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
         // 指定跳转到该页面, 要经过的拦截器
-        interceptorURIs = [ModuleConstants.App.PERMISSION_INTERCEPTOR],
+        interceptorURIs = [ModuleConstants.login.LOGIN_INTERCEPTOR],
         desc = "个人中心页面"
 )
 class PersonalActivity : AppCompatActivity() {
 }
 ```
-静态拦截器集成到了 @RouteMethod 注解中, 凡是可使用 @RouteMethod 的地方均提供静态拦截器的支持
+##### 3) 模板方法拦截器
+模板方法拦截器集成到了 @RouteMethod 注解中, 只支持通过拦截器的 URI 进行添加
+- 支持添加多个页面拦截器
 ```
 public interface RouteApi {
     @RouteMethod(
@@ -356,20 +389,18 @@ public interface RouteApi {
 }
 ```
 
-#### 2. 动态添加
-动态添加是指在路由寻址时动态添加的拦截器的方式
-- 支持添加拦截器对象
-  - 直接添加拦截器对象, 不支持优先级排序
-- 支持通过拦截器 URI 添加拦截器
-  - **通过 URI 添加的拦截器, 可以享受优先级排序**
+#### 2. 全局拦截器
+全局拦截器即添加之后作用于全局的拦截器, 使用方式如下
 ```
-SRouter.request(xxx, xxx)
-        // 动态添加拦截器对象
-        .addInterceptor(new PermissionInterceptor())
-        // 动态添加拦截器的 URI
-        .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
-        ......
+// 添加全局拦截器对象
+SRouter.addGlobalInterceptor(xxx);
+// 添加全局拦截器 URI
+SRouter.addGlobalInterceptorUri(xxx);
 ```
+全局拦截器可以用来记录路由寻址的数据或者用于进行埋点统计等
+
+### 三) 执行流程图
+![拦截器执行流程图](https://i.loli.net/2019/09/16/196XmZsDeI5TlLH.jpg)
 
 ## 拓展
 ### 一) 参数注入
