@@ -232,9 +232,9 @@ cancelable.cancel()
 调用 ICall.call() 方法可以获取到一个 ICancelable 对象, 通过 ICancelable.cancel() 可以在路由寻址过程中执行中断操作
 
 ### 五) 获取寻址结果
-#### 获取 ActivityResult
+#### 1. 获取 ActivityResult
 ```
-SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_ACTIVITY)
+SRouter.request(xxx, xxx)
         .setRequestCode(100)
         ......
         .navigation(this) {it: Response ->
@@ -249,9 +249,9 @@ navigation 方法支持传入一个 Callback, 当路由成功后可以获取到 
 - Fragment
 - Request
 
-#### 获取 Fragment
+#### 2. 获取 Fragment
 ```
-SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL_FRGAMENT)
+SRouter.request(xxx, xxx)
         .setRequestCode(100)
         ......
         .navigation(this) {it: Response ->
@@ -261,6 +261,23 @@ SRouter.request(ModuleConstants.Personal.NAME, ModuleConstants.Personal.PERSONAL
 ```
 获取 Fragment 的方式与获取 ActivityResult 是一致的
 - **需要指定 Fragment 的类型**, 支持 V4 和 Androidx 包下的 Fragment 
+
+#### 3. 获取服务
+```
+SRouter.request(xxx, xxx)
+        ......
+        .navigation(this) {it: Response ->
+            // 获取 IService
+            val service: IService = it.service
+            // 同步建立连接, 获取数据
+            val obj = service.connect();
+            // 异步建立连接
+            it.service.connectAsync {
+                // TODO 获取数据 
+            }
+        }
+```
+获取到 IService 服务之后, 可以调用 IService.connect() 建立连接, 也可以通过 IService.connectAsync() 异步建立连接
 
 ### 六) 拦截器
 注: SRouter 的所有拦截器均在主线程执行

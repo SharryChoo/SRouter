@@ -69,7 +69,7 @@ public class NavigationInterceptor implements IInterceptor {
             case SERVICE:
                 try {
                     IService service = (IService) request.getRouteClass().newInstance();
-                    service.init(context);
+                    service.attach(context);
                     response.setService(service);
                 } catch (InstantiationException e) {
                     Logger.e("Instantiation " + request.getRouteClass().getSimpleName()
