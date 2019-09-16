@@ -55,7 +55,7 @@ public class RouteCompiler extends BaseCompiler {
         ParameterizedTypeName inputInnerMapTypeName = ParameterizedTypeName.get(
                 ClassName.get(Map.class),
                 ClassName.get(String.class),
-                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META)
+                ClassName.get(Constants.PACKAGE_NAME_SROUTER, Constants.SIMPLE_NAME_ROUTE_META)
         );
         /*
           ```Map<String, Map<String, RouteMeta>>```
@@ -86,14 +86,14 @@ public class RouteCompiler extends BaseCompiler {
           Build class : SRouter$$Route$$xxx
           public class SRouter$$Route$$module_name implements IRouter
         */
-        ClassName superClassName = ClassName.get(Constants.PACKAGE_NAME_TEMPLATE, Constants.SIMPLE_NAME_IROUTE);
+        ClassName superClassName = ClassName.get(Constants.PACKAGE_NAME_SROUTER, Constants.SIMPLE_NAME_IROUTE);
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(Constants.SIMPLE_NAME_PREFIX_OF_ROUTERS + moduleName)
                 .addModifiers(Modifier.FINAL, PUBLIC)
                 .addSuperinterface(superClassName)
                 .addMethod(loadIntoMethodSpec.build());
         // Perform generate java file
         try {
-            JavaFile.builder(Constants.PACKAGE_NAME_OF_GENERATE_FILE, classBuilder.build())
+            JavaFile.builder(Constants.PACKAGE_NAME_OF_GENERATE, classBuilder.build())
                     .addFileComment("SRouter-Compiler auto generate.")
                     .indent("    ")
                     .build()
@@ -162,7 +162,7 @@ public class RouteCompiler extends BaseCompiler {
                 "$T<$T, $T> metas = null",
                 ClassName.get(Map.class),
                 ClassName.get(String.class),
-                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META)
+                ClassName.get(Constants.PACKAGE_NAME_SROUTER, Constants.SIMPLE_NAME_ROUTE_META)
         );
         /*
           Write for each.
@@ -287,8 +287,8 @@ public class RouteCompiler extends BaseCompiler {
         loadInto.addCode(
                 builder.toString(),
                 path,
-                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
-                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_ROUTE_META),
+                ClassName.get(Constants.PACKAGE_NAME_SROUTER, Constants.SIMPLE_NAME_ROUTE_META),
+                ClassName.get(Constants.PACKAGE_NAME_SROUTER, Constants.SIMPLE_NAME_ROUTE_META),
                 element
         );
     }

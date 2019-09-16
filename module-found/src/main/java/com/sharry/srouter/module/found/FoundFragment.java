@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import com.sharry.srouter.annotation.compiler.Query;
 import com.sharry.srouter.annotation.compiler.Route;
 import com.sharry.srouter.module.base.ModuleConstants;
-import com.sharry.srouter.support.facade.SRouter;
+import com.sharry.srouter.support.SRouter;
 
 
 /**

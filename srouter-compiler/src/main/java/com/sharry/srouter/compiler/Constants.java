@@ -15,7 +15,7 @@ class Constants {
     static final String KEY_MODULE_NAME = "moduleName";
 
     /**
-     * Class name will be used route verify work.
+     * Class name of Android type.
      */
     static final String CLASS_NAME_ACTIVITY = "android.app.Activity";
     static final String CLASS_NAME_FRAGMENT = "android.app.Fragment";
@@ -23,72 +23,61 @@ class Constants {
     static final String CLASS_NAME_BUNDLE = "android.os.Bundle";
     static final String CLASS_NAME_FRAGMENT_V4 = "android.support.v4.app.Fragment";
     static final String CLASS_NAME_FRAGMENT_X = "androidx.fragment.app.Fragment";
-    static final String CLASS_NAME_ISERVICE = "com.sharry.srouter.support.service.IService";
-    static final String CLASS_NAME_IINTERCEPTOR = "com.sharry.srouter.support.interceptors.IInterceptor";
-    static final String PACKAGE_NAME_OF_SROUTER_CONSTANTS = "com.sharry.srouter.support.utils.Constants";
 
     /**
-     * Java type
+     * Class name of Java type
      */
-    private static final String LANG = "java.lang";
-    static final String BYTE = LANG + ".Byte";
-    static final String SHORT = LANG + ".Short";
-    static final String INTEGER = LANG + ".Integer";
-    static final String LONG = LANG + ".Long";
-    static final String FLOAT = LANG + ".Float";
-    static final String DOUBLE = LANG + ".Double";
-    static final String BOOLEAN = LANG + ".Boolean";
-    static final String CHAR = LANG + ".Character";
-    static final String STRING = LANG + ".String";
-    static final String SERIALIZABLE = "java.io.Serializable";
+    private static final String PACKAGE_NAME_LANG = "java.lang";
+    static final String CLASS_NAME_BYTE = PACKAGE_NAME_LANG + ".Byte";
+    static final String CLASS_NAME_SHORT = PACKAGE_NAME_LANG + ".Short";
+    static final String CLASS_NAME_INTEGER = PACKAGE_NAME_LANG + ".Integer";
+    static final String CLASS_NAME_LONG = PACKAGE_NAME_LANG + ".Long";
+    static final String CLASS_NAME_FLOAT = PACKAGE_NAME_LANG + ".Float";
+    static final String CLASS_NAME_DOUBLE = PACKAGE_NAME_LANG + ".Double";
+    static final String CLASS_NAME_BOOLEAN = PACKAGE_NAME_LANG + ".Boolean";
+    static final String CLASS_NAME_CHAR = PACKAGE_NAME_LANG + ".Character";
+    static final String CLASS_NAME_STRING = PACKAGE_NAME_LANG + ".String";
+    static final String CLASS_NAME_SERIALIZABLE = "java.io.Serializable";
 
     /**
-     * Sub element for simple class name.
+     * Package name of srouter-compeiler generate.
      */
-    static final String PACKAGE_NAME_OF_GENERATE_FILE = "com.sharry.srouter.generate";
+    static final String PACKAGE_NAME_OF_GENERATE = "com.sharry.srouter.generate";
 
     /**
-     * Description parents for generation classes.
+     * Package name of srouter-support.
      */
-    static final String PACKAGE_NAME_TEMPLATE = "com.sharry.srouter.support.templates";
-    static final String SIMPLE_NAME_IROUTE = "IRoute";
-    static final String SIMPLE_NAME_IROUTE_INTERCEPTOR = "IRouteInterceptor";
-    static final String SIMPLE_NAME_IQUERY_BINDING = "IQueryBinding";
+    static final String PACKAGE_NAME_SROUTER = "com.sharry.srouter.support";
 
     /**
-     * IRoute override method name.
+     * Class name of srouter-support.
      */
-    static final String METHOD_LOAD_INTO = "loadInto";
-    static final String METHOD_LOAD_INTO_PARAMETER_NAME_ROUTE_CACHES = "caches";
-    static final String METHOD_LOAD_INTO_PARAMETER_NAME_INTERCEPTION_CACHES = "caches";
-    static final String METHOD_BIND = "bind";
-    static final String METHOD_BIND_PARAMETER_NAME_TARGET = "target";
+    static final String CLASS_NAME_OF_SROUTER_ISERVICE = "com.sharry.srouter.support.IService";
+    static final String CLASS_NAME_OF_SROUTER_IINTERCEPTOR = "com.sharry.srouter.support.IInterceptor";
+    static final String CLASS_NAME_OF_SROUTER_CONSTANTS = "com.sharry.srouter.support.Constants";
 
-
-    /**
-     * Write data class name
-     */
-    static final String PACKAGE_NAME_DATA = "com.sharry.srouter.support.data";
-    static final String SIMPLE_NAME_ROUTE_META = "RouteMeta";
-    static final String SIMPLE_NAME_INTERCEPTOR_META = "InterceptorMeta";
     private static final String SIMPLE_NAME_SUB_PROJECT = "SRouter";
     private static final String SIMPLE_NAME_SUB_SEPARATOR = "$$";
 
-    /**
-     * Simple class name prefix: SRouter$$Routes$$
-     */
+    ///////////////////////////////////////////// com.sharry.srouter.generate.SRouter$$Routes$$XXXX //////////////////////////////////////////////////
     static final String SIMPLE_NAME_PREFIX_OF_ROUTERS = SIMPLE_NAME_SUB_PROJECT +
             SIMPLE_NAME_SUB_SEPARATOR + "Routes" + SIMPLE_NAME_SUB_SEPARATOR;
+    static final String SIMPLE_NAME_IROUTE = "IRoute";
+    static final String SIMPLE_NAME_ROUTE_META = "RouteMeta";
+    static final String METHOD_LOAD_INTO = "loadInto";
+    static final String METHOD_LOAD_INTO_PARAMETER_NAME_ROUTE_CACHES = "caches";
 
-    /**
-     * Simple class name prefix: SRouter$$Interceptors$$
-     */
+    ///////////////////////////////////////////// com.sharry.srouter.generate.SRouter$$Routes$$XXXX //////////////////////////////////////////////////
     static final String SIMPLE_NAME_PREFIX_OF_INTERCEPTOR = SIMPLE_NAME_SUB_PROJECT +
             SIMPLE_NAME_SUB_SEPARATOR + "Interceptors" + SIMPLE_NAME_SUB_SEPARATOR;
+    static final String SIMPLE_NAME_IROUTE_INTERCEPTOR = "IRouteInterceptor";
+    static final String METHOD_LOAD_INTO_PARAMETER_NAME_INTERCEPTION_CACHES = "caches";
+    static final String SIMPLE_NAME_INTERCEPTOR_META = "InterceptorMeta";
 
-    /**
-     * Simple class name suffix: XXX$$QueryBinding
-     */
+    ///////////////////////////////////////////// com.sharry.srouter.generate.XXX$$QueryBinding //////////////////////////////////////////////////
     static final String SIMPLE_NAME_SUFFIX_OF_QUERY_BINDING = SIMPLE_NAME_SUB_SEPARATOR + "QueryBinding";
+    static final String SIMPLE_NAME_IQUERY_BINDING = "IQueryBinding";
+    static final String METHOD_BIND = "bind";
+    static final String METHOD_BIND_PARAMETER_NAME_TARGET = "target";
 
 }

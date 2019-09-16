@@ -113,7 +113,7 @@ public class QueryCompiler extends BaseCompiler {
            Bundle urlDatum = data.getBundle(Constants.INTENT_EXTRA_URL_DATUM)
          */
         methodBuilder.addStatement("$T urlDatum = data.getBundle($T.INTENT_EXTRA_URL_DATUM)",
-                bundleClassName, ClassName.bestGuess(Constants.PACKAGE_NAME_OF_SROUTER_CONSTANTS));
+                bundleClassName, ClassName.bestGuess(Constants.CLASS_NAME_OF_SROUTER_CONSTANTS));
         // For each element.
         for (Element fieldElement : fieldElements) {
             addCode(methodBuilder, fieldElement);
@@ -124,7 +124,7 @@ public class QueryCompiler extends BaseCompiler {
                 Constants.SIMPLE_NAME_SUFFIX_OF_QUERY_BINDING)
                 .addSuperinterface(
                         // Add implements IQueryBinding<XXXX>
-                        ParameterizedTypeName.get(ClassName.get(Constants.PACKAGE_NAME_TEMPLATE,
+                        ParameterizedTypeName.get(ClassName.get(Constants.PACKAGE_NAME_SROUTER,
                                 Constants.SIMPLE_NAME_IQUERY_BINDING), originClassName)
                 )
                 .addModifiers(Modifier.FINAL, Modifier.PUBLIC)

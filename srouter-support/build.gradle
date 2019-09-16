@@ -8,6 +8,19 @@ android {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
     }
+    sourceSets {
+        main {
+            java.srcDirs += 'src/main/api'
+            java.srcDirs += 'src/main/interceptors'
+            java.srcDirs += 'src/main/service'
+            java.srcDirs += 'src/main/data'
+            java.srcDirs += 'src/main/call'
+            java.srcDirs += 'src/main/exceptions'
+            java.srcDirs += 'src/main/scheduler'
+            java.srcDirs += 'src/main/templates'
+            java.srcDirs += 'src/main/utils'
+        }
+    }
 }
 
 dependencies {

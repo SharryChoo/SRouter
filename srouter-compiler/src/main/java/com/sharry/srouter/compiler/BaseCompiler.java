@@ -75,8 +75,8 @@ public abstract class BaseCompiler extends AbstractProcessor {
         typeFragment = elementUtils.getTypeElement(CLASS_NAME_FRAGMENT).asType();
         typeFragmentV4 = elementUtils.getTypeElement(Constants.CLASS_NAME_FRAGMENT_V4).asType();
         typeFragmentX = elementUtils.getTypeElement(Constants.CLASS_NAME_FRAGMENT_X).asType();
-        typeService = elementUtils.getTypeElement(Constants.CLASS_NAME_ISERVICE).asType();
-        typeInterceptor = processingEnv.getElementUtils().getTypeElement(Constants.CLASS_NAME_IINTERCEPTOR).asType();
+        typeService = elementUtils.getTypeElement(Constants.CLASS_NAME_OF_SROUTER_ISERVICE).asType();
+        typeInterceptor = processingEnv.getElementUtils().getTypeElement(Constants.CLASS_NAME_OF_SROUTER_IINTERCEPTOR).asType();
     }
 
 }

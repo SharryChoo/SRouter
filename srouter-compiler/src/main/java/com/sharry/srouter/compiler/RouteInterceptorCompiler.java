@@ -51,7 +51,7 @@ public class RouteInterceptorCompiler extends BaseCompiler {
         ParameterizedTypeName inputMapTypeName = ParameterizedTypeName.get(
                 ClassName.get(Map.class),
                 ClassName.get(String.class),
-                ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_INTERCEPTOR_META)
+                ClassName.get(Constants.PACKAGE_NAME_SROUTER, Constants.SIMPLE_NAME_INTERCEPTOR_META)
         );
         /*
            Build input param name.
@@ -74,7 +74,7 @@ public class RouteInterceptorCompiler extends BaseCompiler {
           Build class : SRouter$$Route$$xxx
           public class SRouter$$Route$$module_name implements IRouter
         */
-        ClassName superClassName = ClassName.get(Constants.PACKAGE_NAME_TEMPLATE,
+        ClassName superClassName = ClassName.get(Constants.PACKAGE_NAME_SROUTER,
                 Constants.SIMPLE_NAME_IROUTE_INTERCEPTOR);
         TypeSpec.Builder classBuilder = TypeSpec.classBuilder(
                 Constants.SIMPLE_NAME_PREFIX_OF_INTERCEPTOR + moduleName)
@@ -83,7 +83,7 @@ public class RouteInterceptorCompiler extends BaseCompiler {
                 .addMethod(loadIntoMethodSpec.build());
         // Perform generate java file
         try {
-            JavaFile.builder(Constants.PACKAGE_NAME_OF_GENERATE_FILE, classBuilder.build())
+            JavaFile.builder(Constants.PACKAGE_NAME_OF_GENERATE, classBuilder.build())
                     .addFileComment("SRouter-Compiler auto generate.")
                     .indent("    ")
                     .build()
@@ -164,12 +164,12 @@ public class RouteInterceptorCompiler extends BaseCompiler {
                             "      )" + "\n" +
                             ");" + "\n",
                     value,
-                    ClassName.get(Constants.PACKAGE_NAME_DATA, Constants.SIMPLE_NAME_INTERCEPTOR_META),
+                    ClassName.get(Constants.PACKAGE_NAME_SROUTER, Constants.SIMPLE_NAME_INTERCEPTOR_META),
                     element
             );
         } else {
             throw new IllegalArgumentException("Please ensure @RouteInterceptor marked class is sub class for "
-                    + Constants.CLASS_NAME_IINTERCEPTOR);
+                    + Constants.CLASS_NAME_OF_SROUTER_IINTERCEPTOR);
         }
     }
 

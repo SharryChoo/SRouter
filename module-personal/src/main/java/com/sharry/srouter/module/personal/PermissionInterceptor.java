@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.sharry.srouter.annotation.compiler.RouteInterceptor;
 import com.sharry.srouter.module.base.ModuleConstants;
-import com.sharry.srouter.support.interceptors.IInterceptor;
+import com.sharry.srouter.support.IInterceptor;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>

@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.sharry.srouter.module.base.ModuleConstants;
 import com.sharry.srouter.module.base.RxJavaAdapter;
-import com.sharry.srouter.support.facade.SRouter;
+import com.sharry.srouter.support.SRouter;
 
 /**
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>

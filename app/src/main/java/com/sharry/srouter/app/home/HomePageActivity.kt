@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.sharry.srouter.R
 import com.sharry.srouter.module.base.RouteApi
-import com.sharry.srouter.support.facade.SRouter
+import com.sharry.srouter.support.SRouter
 
 class HomePageActivity : AppCompatActivity() {
 

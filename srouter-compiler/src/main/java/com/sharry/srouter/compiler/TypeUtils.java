@@ -9,7 +9,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import static com.sharry.srouter.compiler.Constants.CLASS_NAME_PARCELABLE;
-import static com.sharry.srouter.compiler.Constants.SERIALIZABLE;
+import static com.sharry.srouter.compiler.Constants.CLASS_NAME_SERIALIZABLE;
 
 /**
  * Utils for type exchange
@@ -29,7 +29,7 @@ class TypeUtils {
     TypeUtils(Types types, Elements elements) {
         this.types = types;
         parcelableType = elements.getTypeElement(CLASS_NAME_PARCELABLE).asType();
-        serializableType = elements.getTypeElement(SERIALIZABLE).asType();
+        serializableType = elements.getTypeElement(CLASS_NAME_SERIALIZABLE).asType();
     }
 
     /**
@@ -47,31 +47,31 @@ class TypeUtils {
         }
 
         switch (typeMirror.toString()) {
-            case Constants.BYTE:
+            case Constants.CLASS_NAME_BYTE:
                 return QueryType.BYTE.ordinal();
-            case Constants.SHORT:
+            case Constants.CLASS_NAME_SHORT:
                 return QueryType.SHORT.ordinal();
-            case Constants.INTEGER:
+            case Constants.CLASS_NAME_INTEGER:
                 return QueryType.INT.ordinal();
-            case Constants.LONG:
+            case Constants.CLASS_NAME_LONG:
                 return QueryType.LONG.ordinal();
-            case Constants.FLOAT:
+            case Constants.CLASS_NAME_FLOAT:
                 return QueryType.FLOAT.ordinal();
-            case Constants.DOUBLE:
+            case Constants.CLASS_NAME_DOUBLE:
                 return QueryType.DOUBLE.ordinal();
-            case Constants.BOOLEAN:
+            case Constants.CLASS_NAME_BOOLEAN:
                 return QueryType.BOOLEAN.ordinal();
-            case Constants.CHAR:
+            case Constants.CLASS_NAME_CHAR:
                 return QueryType.CHAR.ordinal();
-            case Constants.STRING:
+            case Constants.CLASS_NAME_STRING:
                 return QueryType.STRING.ordinal();
             default:
-                // Other side, maybe the CLASS_NAME_PARCELABLE or SERIALIZABLE or OBJECT.
+                // Other side, maybe the CLASS_NAME_PARCELABLE or CLASS_NAME_SERIALIZABLE or OBJECT.
                 if (types.isSubtype(typeMirror, parcelableType)) {
                     // CLASS_NAME_PARCELABLE
                     return QueryType.PARCELABLE.ordinal();
                 } else if (types.isSubtype(typeMirror, serializableType)) {
-                    // SERIALIZABLE
+                    // CLASS_NAME_SERIALIZABLE
                     return QueryType.SERIALIZABLE.ordinal();
                 } else {
                     return -1;
