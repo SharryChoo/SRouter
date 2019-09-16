@@ -102,7 +102,7 @@ kapt 是支持 Java 代码的, 不用担心 kotlin 与 java 的混编问题
 ![模块依赖关系图](https://i.loli.net/2019/06/04/5cf61d6ea8b7576967.jpg)
 
 ## 三. 功能使用
-### 一) 初始化
+### 一) 组件初始化
 ```
 public class BaseApplication extends Application {
 
