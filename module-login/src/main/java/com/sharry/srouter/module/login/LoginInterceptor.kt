@@ -1,4 +1,4 @@
-package com.sharry.srouter.app.login
+package com.sharry.srouter.module.login
 
 import android.app.Activity.RESULT_OK
 import com.sharry.srouter.annotation.compiler.RouteInterceptor
@@ -15,7 +15,7 @@ import io.reactivex.schedulers.Schedulers
  * @since 2019/2/19 20:15
  */
 @RouteInterceptor(
-        value = ModuleConstants.App.LOGIN_INTERCEPTOR,
+        value = ModuleConstants.Login.LOGIN_INTERCEPTOR,
         priority = 10
 )
 class LoginInterceptor : IInterceptor {
@@ -23,8 +23,8 @@ class LoginInterceptor : IInterceptor {
     override fun intercept(chain: IInterceptor.Chain) {
         val chainContext = chain.chainContext()
         // 若没有登录, 则先跳转到登录页面
-        if (!ModuleConstants.App.isLogin) {
-            val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
+        if (!ModuleConstants.Login.isLogin) {
+            val disposable = SRouter.request(ModuleConstants.Login.NAME, ModuleConstants.Login.LOGIN_ACTIVITY)
                     // 构建 Activity 相关配置
                     .setRequestCode(100)
                     .newCall(chainContext.baseContext)

@@ -1,4 +1,4 @@
-package com.sharry.srouter.app.login
+package com.sharry.srouter.module.login
 
 import android.Manifest.permission.READ_CONTACTS
 import android.animation.Animator
@@ -22,7 +22,6 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import com.sharry.srouter.R
 import com.sharry.srouter.annotation.compiler.Route
 import com.sharry.srouter.module.base.ModuleConstants
 import kotlinx.android.synthetic.main.app_activity_login.*
@@ -32,8 +31,8 @@ import java.util.*
  * A login screen that offers login via email/password.
  */
 @Route(
-        authority = ModuleConstants.App.NAME,
-        path = ModuleConstants.App.LOGIN_ACTIVITY
+        authority = ModuleConstants.Login.NAME,
+        path = ModuleConstants.Login.LOGIN_ACTIVITY
 )
 class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
@@ -58,7 +57,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     }
 
     override fun finish() {
-        if (ModuleConstants.App.isLogin) {
+        if (ModuleConstants.Login.isLogin) {
             setResult(Activity.RESULT_OK)
         }
         super.finish()
@@ -278,7 +277,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             showProgress(false)
 
             if (success!!) {
-                ModuleConstants.App.isLogin = true
+                ModuleConstants.Login.isLogin = true
                 setResult(Activity.RESULT_OK)
                 finish()
             } else {

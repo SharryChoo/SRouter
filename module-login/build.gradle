@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
@@ -6,19 +6,25 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion rootProject.compileSdkVersion
     defaultConfig {
-        applicationId "com.sharry.srouter"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        vectorDrawables.useSupportLibrary = true
+    }
+}
+
+/**
+ * Kotlin 的 Module 使用该方式进行编译时注解扫描, 兼容 Java 文夹
+ */
+kapt {
+    arguments {
+        arg("moduleName", "login")
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    // 依赖库
-    implementation project(path: ':module-personal')
-    implementation project(path: ':module-found')
-    implementation project(path: ':module-login')
-    implementation project(path: ':module-base')
+    // 依赖基础库
+    api project(path: ':module-base')
+    // Kotlin 的编译时注解处理依赖
+    kapt project(path: ':srouter-compiler')
 }

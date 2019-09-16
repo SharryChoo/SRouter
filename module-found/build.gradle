@@ -19,9 +19,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     // 依赖基础库
     api project(path: ':module-base')
     // Java 的编译时注解处理依赖
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     annotationProcessor project(path: ':srouter-compiler')
 }

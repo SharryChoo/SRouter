@@ -7,9 +7,8 @@ package com.sharry.srouter.module.base;
  */
 public final class ModuleConstants {
 
-    public static final class App {
-
-        public static final String NAME = "app";
+    public static final class Login {
+        public static final String NAME = "login";
         public static final String LOGIN_ACTIVITY = "login_activity";
         // interceptors
         public static final String LOGIN_INTERCEPTOR = NAME + "/login_interceptor";

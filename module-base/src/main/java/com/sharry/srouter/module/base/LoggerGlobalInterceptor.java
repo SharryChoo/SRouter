@@ -1,4 +1,4 @@
-package com.sharry.srouter.app;
+package com.sharry.srouter.module.base;
 
 import android.util.Log;
 
@@ -11,9 +11,9 @@ import com.sharry.srouter.support.IInterceptor;
  * @version 1.0
  * @since 2019/9/16
  */
-public class LogInterceptor implements IInterceptor {
+public class LoggerGlobalInterceptor implements IInterceptor {
 
-    private static final String TAG = LogInterceptor.class.getSimpleName();
+    private static final String TAG = LoggerGlobalInterceptor.class.getSimpleName();
 
     @Override
     public void intercept(@NonNull Chain chain) {

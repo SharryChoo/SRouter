@@ -51,7 +51,7 @@ class HomePageActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        // 路由获取 Fragment 并展示
+        // 通过 URL 跳转, 获取 Fragment 并展示
         SRouter.request("{Custom u scheme}://found/found_fragment?title=HelloWorld&amount=12.34")
                 .navigation(this) {
                     val transaction = supportFragmentManager.beginTransaction()

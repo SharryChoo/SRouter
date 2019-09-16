@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.personal_activity_personal.*
 @Route(
         authority = ModuleConstants.Personal.NAME,
         path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
-        interceptorURIs = [ModuleConstants.App.LOGIN_INTERCEPTOR],
+        interceptorURIs = [ModuleConstants.Login.LOGIN_INTERCEPTOR],
         desc = "个人中心页面"
 )
 class PersonalActivity : AppCompatActivity() {
