@@ -1,4 +1,4 @@
-## 一. 功能介绍
+## 功能介绍
 - 支持路由模块动态装载与卸载
 - 支持自定义页面跳转时的 Transaction 动画
 - 支持通过 URL 进行路由寻址
@@ -9,7 +9,7 @@
 - **支持通过路由获取 原生/AppCompat/AndroidX 包下的 Fragment**
 - **支持添加寻址回调适配器, 可实现与 RxJava 无缝衔接**
 
-## 二. 功能集成
+## 功能集成
 ![New Version](https://jitpack.io/v/SharryChoo/SRouter.svg)
 
 ### Step 1
@@ -99,7 +99,7 @@ kapt 是支持 Java 代码的, 不用担心 kotlin 与 java 的混编问题
 #### 模块依赖关系
 ![模块依赖关系图](https://i.loli.net/2019/06/04/5cf61d6ea8b7576967.jpg)
 
-## 三. 功能使用
+## 基础功能
 ### 一) 初始化
 SRouter 的初始化操作通过 **SRouter.init()** 方法执行, 推荐在 BaseApplication 的 onCreate 中进行
 ```
@@ -280,10 +280,10 @@ SRouter.request(xxx, xxx)
 获取到 IService 服务之后, 可以调用 IService.connect() 建立连接, 也可以通过 IService.connectAsync() 异步建立连接
 - 无论是同步还是异步建立连接, 最终都会返回 Object 对象, 因此 **IService 也充当做跨模块提供数据来使用**
 
-### 六) 拦截器
-注: SRouter 的所有拦截器均在主线程执行
+## 拦截器使用
+SRouter 的所有拦截器均在主线程执行, 提供了**静态**和**动态**两种添加方式
 
-#### 1. 拦截器的定义
+### 一) 拦截器的定义
 拦截器的定义需要实现 IInterceptor 接口
 ```
 public class PermissionInterceptor implements IInterceptor {
@@ -304,10 +304,10 @@ public class PermissionInterceptor implements IInterceptor {
 ```
 - Chain: 描述分发的责任链
 - Chain.chainContext(): 获取责任链的上下文
+  - 通过上下文对象可以获取上游的所有数据
+- chain.dispatch(): 若需要继续往下分发, 需要主动调用该方法
 
-这是最基本的拦截器定义, 你只能够通过 new 对象添加
-
-除此之外还可以通过注解 @RouteInterceptor 标注一个拦截器, 如下所示
+拦截器实现完成之后, 还可以选择**使用 @RouteInterceptor 标注, 拓展拦截器优先级排序的功能支持**, 如下所示
 ```
 @RouteInterceptor(
         value = ModuleConstants.Personal.PERMISSION_INTERCEPTOR,
@@ -321,25 +321,8 @@ public class PermissionInterceptor implements IInterceptor {
 - **priority: 拦截器的优先级**
   - range in [0, 10] 逐级递增, 路由跳转时会根据优先级进行排序
 
-通过 @RouteInterceptor 标识的拦截器**可通过拦截器的唯一标识进行添加**
-
-#### 2. 拦截器的使用
-SRouter 提供了 **动态** 和 **静态** 两种方式进行拦截器的添加
-
-##### 1) 动态拦截器
-动态拦截器是指, 在路由寻址时动态添加的拦截器
-- 支持添加拦截器对象
-- 支持通过拦截器 URI 添加拦截器
-```
-SRouter.request(xxx, xxx)
-        // 直接添加拦截器对象
-        .addInterceptor(new PermissionInterceptor())
-        // 添加拦截器的 URI
-        .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
-        ......
-```
-
-##### 2) 静态拦截器
+### 二) 拦截器的添加
+#### 1. 静态添加
 静态拦截器集成到了 @Route 注解中, 凡是可使用 @Route 的地方均提供静态拦截器的支持
 ```
 @Route(
@@ -358,7 +341,7 @@ public interface RouteApi {
     @RouteMethod(
             authority = ModuleConstants.Personal.NAME,
             path = ModuleConstants.Personal.PERSONAL_ACTIVITY,
-	        // 添加寻址时的拦截器
+	    // 在方法注解中添加静态拦截器
             interceptorURIs = ModuleConstants.Personal.PERMISSION_INTERCEPTOR
     )
     ICall personalCenter(
@@ -370,7 +353,22 @@ public interface RouteApi {
 }
 ```
 
-## 四. 进阶使用
+#### 2. 动态添加
+动态添加是指在路由寻址时动态添加的拦截器的方式
+- 支持添加拦截器对象
+  - 直接添加拦截器对象, 不支持优先级排序
+- 支持通过拦截器 URI 添加拦截器
+  - **通过 URI 添加的拦截器, 可以享受优先级排序**
+```
+SRouter.request(xxx, xxx)
+        // 动态添加拦截器对象
+        .addInterceptor(new PermissionInterceptor())
+        // 动态添加拦截器的 URI
+        .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
+        ......
+```
+
+## 拓展
 ### 一) 参数注入
 如果你不想写 Intent 参数注入的代码, @Query 注解可以帮你完成这个操作
 ```
