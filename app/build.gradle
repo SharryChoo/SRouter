@@ -16,9 +16,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    // 依赖库
+    // 依赖业务库
     implementation project(path: ':module-personal')
     implementation project(path: ':module-found')
     implementation project(path: ':module-login')
-    implementation project(path: ':module-base')
+    // 依赖基础库
+    api project(path: ':module-base')
 }
