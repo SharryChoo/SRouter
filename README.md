@@ -269,9 +269,8 @@ val cancelable: ICancelable = routeApi.personalCenter(this).call()
 ```
 
 ### 二) 拦截器
-在 SRouter 中有效的拦截器, 需要用户实现 IInterceptor 接口
-
 #### 1. 拦截器的定义
+拦截器的定义需要实现 IInterceptor 接口
 ```
 public class PermissionInterceptor implements IInterceptor {
 
@@ -292,7 +291,9 @@ public class PermissionInterceptor implements IInterceptor {
 - Chain: 描述分发的责任链
 - Chain.chainContext(): 获取责任链的上下文
 
-这是最基本的拦截器定义, 你只能够通过 new 对象添加, 除此之外还可以通过注解标注一个拦截器
+这是最基本的拦截器定义, 你只能够通过 new 对象添加
+
+除此之外还可以通过注解 @RouteInterceptor 标注一个拦截器, 如下所示
 ```
 @RouteInterceptor(
         value = ModuleConstants.Personal.PERMISSION_INTERCEPTOR,
@@ -304,15 +305,28 @@ public class PermissionInterceptor implements IInterceptor {
 ```
 - **value: 拦截器的唯一标识符 URI**
 - **priority: 拦截器的优先级**
-  - range in [0, 10], 逐级递增
+  - range in [0, 10] 逐级递增, 路由跳转时会根据优先级进行排序
 
-路由跳转时会根据优先级进行排序
+通过 @RouteInterceptor 标识的拦截器**可通过拦截器的唯一标识进行添加**
 
 #### 2. 拦截器的使用
-SRouter 提供了 **静态** 和 **动态** 两种方式进行拦截器的添加
+SRouter 提供了 **动态** 和 **静态** 两种方式进行拦截器的添加
 
-##### 1) 静态拦截器
-静态拦截器可定义在页面上, 如下所示
+##### 1) 动态拦截器
+动态拦截器是指, 在路由寻址时动态添加的拦截器
+- 支持添加拦截器对象
+- 支持通过拦截器 URI 添加拦截器
+```
+SRouter.request(xxx, xxx)
+        // 直接添加拦截器对象
+        .addInterceptor(new PermissionInterceptor())
+        // 添加拦截器的 URI
+        .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
+        ......
+```
+
+##### 2) 静态拦截器
+静态拦截器集成到了 @Route 注解中, 凡是可使用 @Route 的地方均提供静态拦截器的支持
 ```
 @Route(
         authority = ModuleConstants.Personal.NAME,
@@ -324,7 +338,7 @@ SRouter 提供了 **静态** 和 **动态** 两种方式进行拦截器的添加
 class PersonalActivity : AppCompatActivity() {
 }
 ```
-静态拦截器可定义在模板接口方法上, 如下所示
+静态拦截器集成到了 @RouteMethod 注解中, 凡是可使用 @RouteMethod 的地方均提供静态拦截器的支持
 ```
 public interface RouteApi {
     @RouteMethod(
@@ -342,22 +356,8 @@ public interface RouteApi {
 }
 ```
 
-##### 2) 动态拦截器
-动态拦截器是指, 在路由跳转时动态添加的拦截器
-- 支持添加拦截器对象
-- 支持通过拦截器 URI 添加拦截器
-```
-SRouter.request(xxx, xxx)
-        // 直接添加拦截器对象
-        .addInterceptor(new PermissionInterceptor())
-        // 添加拦截器的 URI
-        .addInterceptorURI(ModuleConstants.Personal.PERMISSION_INTERCEPTOR)
-        ......
-```
-
-
-### 三) 进阶使用
-#### 1. 参数的注入
+## 进阶使用
+### 一) 参数注入
 如果你不想写 Intent 参数注入的代码, @Query 注解可以帮你完成这个操作
 ```
 public class FoundFragment extends Fragment {
@@ -378,8 +378,12 @@ public class FoundFragment extends Fragment {
 }
 ```
 
-#### 2. RxJava 的拓展
-##### 1) 编写适配器类
+### 二) 回调适配器
+如果你习惯了 RxJava 的链式调用, 并为 navigation 是异步回调导致不能链式编写代码而苦恼, 那么这个回调适配器可能会解决你的问题 
+
+这里以将 ICall 适配成 RxJava 的 Observable 为例
+
+#### 1. 编写适配器类
 实现 ICallAdapter 接口编写 RxJava 的适配器
 ```
 public class RxJavaAdapter implements ICallAdapter<ResponseObservable> {
@@ -396,7 +400,7 @@ public class RxJavaAdapter implements ICallAdapter<ResponseObservable> {
 
 }
 ```
-##### 2) 编写以 Response 为数据源的 Observable 类
+#### 2. 编写以 Response 为数据源的 Observable 类
 ```
 public final class ResponseObservable extends Observable<Response> {
 
@@ -449,12 +453,12 @@ public final class ResponseObservable extends Observable<Response> {
 }
 ```
 
-##### 3) 添加适配器
+#### 3. 添加适配器
 ```
 SRouter.addCallAdapter(new RxJavaAdapter());
 ```
 
-##### 4) 链式调用
+#### 4. 链式调用
 ```
 val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.LOGIN_ACTIVITY)
         // 构建 Activity 相关配置
@@ -472,7 +476,7 @@ val disposable = SRouter.request(ModuleConstants.App.NAME, ModuleConstants.App.L
                 }
         }
 ```
-##### 5) 模板方法调用
+#### 5. 模板方法调用
 ```
 public interface RouteApi {
 
