@@ -80,11 +80,11 @@ class PendingIntentInterceptor implements IInterceptor {
     private void getActivityPendingIntentActual(Context context,
                                                 Intent intent,
                                                 Bundle activityOptions,
-                                                int flags,
+                                                int pendingIntentFlags,
                                                 Response response,
                                                 ChainCallback callback) {
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
-                0, intent, flags, activityOptions);
+                0, intent, pendingIntentFlags, activityOptions);
         context.startActivity(intent, activityOptions);
         response.setPendingIntent(pendingIntent);
         callback.onSuccess(response);
