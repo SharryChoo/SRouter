@@ -87,15 +87,15 @@ class NavigationInterceptor implements IInterceptor {
     private void performLaunchActivity(Context context, Intent intent, Request request,
                                        Response response, IInterceptor.ChainCallback callback) {
         // Inject flags.
-        if (Request.NON_FLAGS != request.getFlags()) {
-            intent.setFlags(request.getFlags());
+        if (Request.NON_FLAGS != request.getActivityFlags()) {
+            intent.setFlags(request.getActivityFlags());
         }
         // perform launch activity.
         Activity activity = Utils.findActivity(context);
         if (Utils.isIllegalState(activity)) {
             // Activity at illegal state, use application context do jump.
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            launchActivityActual(context, intent, request.getActivityOptions(), response, callback);
+            launchActivityActual(SRouterImpl.sAppContext, intent, request.getActivityOptions(), response, callback);
         } else {
             if (Request.NON_REQUEST_CODE != request.getRequestCode()) {
                 launchActivityForResultActual(activity, intent, request.getRequestCode(),

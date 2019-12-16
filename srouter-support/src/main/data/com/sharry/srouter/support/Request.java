@@ -31,6 +31,35 @@ public final class Request {
     static final int NON_FLAGS = -1;
 
     /**
+     * U can get an instance of Request from this method.
+     */
+    public static Request create(@NonNull String authority, @NonNull String path) {
+        return new Request(Preconditions.checkNotEmpty(authority), Preconditions.checkNotEmpty(path));
+    }
+
+    /**
+     * U can instant Request by parse URL
+     */
+    public static Request parseFrom(@NonNull String url) {
+        Uri uri = Uri.parse(Preconditions.checkNotEmpty(url));
+        // Fetch authority.
+        String authority = Preconditions.checkNotEmpty(uri.getAuthority());
+        // Fetch path and remove '/' at start.
+        String path = Preconditions.checkNotEmpty(uri.getPath()).substring(1);
+        // Fetch query items.
+        Bundle datum = new Bundle();
+        Bundle urlDatum = new Bundle();
+        for (String queryParameterName : uri.getQueryParameterNames()) {
+            urlDatum.putString(queryParameterName, uri.getQueryParameter(queryParameterName));
+        }
+        datum.putBundle(Constants.INTENT_EXTRA_URL_DATUM, urlDatum);
+        Request request = create(authority, path);
+        request.setDatum(datum);
+        return request;
+    }
+
+
+    /**
      * Navigation authority
      */
     private final String authority;
@@ -41,12 +70,12 @@ public final class Request {
     private final String path;
 
     /**
-     * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
+     * The interceptorURIs will be intercept before {@link DataSource#TABLE_ROUTES_INTERCEPTORS}
      */
     private final List<IInterceptor> interceptors = new ArrayList<>();
 
     /**
-     * The interceptorURIs will be intercept before {@link Warehouse#TABLE_ROUTES_INTERCEPTORS}
+     * The interceptorURIs will be intercept before {@link DataSource#TABLE_ROUTES_INTERCEPTORS}
      */
     private final List<String> interceptorURIs = new ArrayList<>();
 
@@ -65,7 +94,12 @@ public final class Request {
     /**
      * The Flag for the route navigation.
      */
-    private int flags = NON_FLAGS;
+    private int activityFlags = NON_FLAGS;
+
+    /**
+     * The Flag for the pending Intent.
+     */
+    private int pendingIntentFlags = NON_FLAGS;
 
     /**
      * The requestCode for the requestCode.
@@ -93,33 +127,102 @@ public final class Request {
         datum = new Bundle();
     }
 
+
+    // ///////////////////////////////////////// Do request ////////////////////////////////////////////////////
+
     /**
-     * U can get an instance of Request from this method.
+     * Start navigation.
      */
-    public static Request create(@NonNull String authority, @NonNull String path) {
-        return new Request(Preconditions.checkNotEmpty(authority), Preconditions.checkNotEmpty(path));
+    public void navigation() {
+        navigation(null, null);
+    }
+
+    public void navigation(@Nullable Context context) {
+        navigation(context, null);
+    }
+
+    public void navigation(@Nullable Callback callback) {
+        navigation(null, callback);
+    }
+
+    public void navigation(@Nullable Context context, @Nullable Callback callback) {
+        SRouter.navigation(context, this, callback);
+    }
+
+    public ICall newNavigationCall() {
+        return newNavigationCall(null);
+    }
+
+    public ICall newNavigationCall(@Nullable Context context) {
+        return SRouter.newNavigationCall(context, this);
     }
 
     /**
-     * U can instant Request by parse URL
+     * Start fetch PendingIntent
      */
-    public static Request parseFrom(@NonNull String url) {
-        Uri uri = Uri.parse(Preconditions.checkNotEmpty(url));
-        // Fetch authority.
-        String authority = Preconditions.checkNotEmpty(uri.getAuthority());
-        // Fetch path and remove '/' at start.
-        String path = Preconditions.checkNotEmpty(uri.getPath()).substring(1);
-        // Fetch query items.
-        Bundle datum = new Bundle();
-        Bundle urlDatum = new Bundle();
-        for (String queryParameterName : uri.getQueryParameterNames()) {
-            urlDatum.putString(queryParameterName, uri.getQueryParameter(queryParameterName));
-        }
-        datum.putBundle(Constants.INTENT_EXTRA_URL_DATUM, urlDatum);
-        Request request = create(authority, path);
-        request.setDatum(datum);
-        return request;
+    public void pendingIntent(@NonNull Callback callback) {
+        pendingIntent(null, callback);
     }
+
+    public void pendingIntent(@Nullable Context context, @NonNull Callback callback) {
+        SRouter.pendingIntent(context, this, callback);
+    }
+
+    public ICall newPendingIntentCall() {
+        return newPendingIntentCall(null);
+    }
+
+    public ICall newPendingIntentCall(@Nullable Context context) {
+        return SRouter.newPendingIntentCall(context, this);
+    }
+
+    // ///////////////////////////////////// Get method. ///////////////////////////////////////////////////
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public Bundle getDatum() {
+        return datum;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public boolean isGreenChannel() {
+        return isGreenChannel;
+    }
+
+    public int getActivityFlags() {
+        return activityFlags;
+    }
+
+    public int getRequestCode() {
+        return requestCode;
+    }
+
+    public Bundle getActivityOptions() {
+        return activityOptions;
+    }
+
+    public List<IInterceptor> getInterceptors() {
+        return interceptors;
+    }
+
+    public List<String> getInterceptorURIs() {
+        return interceptorURIs;
+    }
+
+    public int getPendingIntentFlags() {
+        return pendingIntentFlags;
+    }
+
+    // ///////////////////////////////////// Set method. ///////////////////////////////////////////////////
 
     /**
      * Add interceptors for the request.
@@ -206,21 +309,26 @@ public final class Request {
     }
 
     /**
-     * Set Activity jump flags
+     * Set Activity jump activityFlags
      */
-    public Request setFlags(int flags) {
-        this.flags = flags;
+    public Request setActivityFlags(int activityFlags) {
+        this.activityFlags = activityFlags;
+        return this;
+    }
+
+    public Request setPendingIntentFlags(int pendingIntentFlags) {
+        this.pendingIntentFlags = pendingIntentFlags;
         return this;
     }
 
     /**
      * Add flag.
      */
-    public Request addFlag(@FlagInt int flag) {
-        if (this.flags != NON_FLAGS) {
-            this.flags |= flag;
+    public Request addActivityFlag(@FlagInt int flag) {
+        if (this.activityFlags != NON_FLAGS) {
+            this.activityFlags |= flag;
         } else {
-            this.flags = flag;
+            this.activityFlags = flag;
         }
         return this;
     }
@@ -241,74 +349,32 @@ public final class Request {
         return this;
     }
 
-    public String getAuthority() {
-        return authority;
-    }
+    // #############################  Follow api copy from #{Bundle}  ##############################
 
-    public String getPath() {
-        return path;
-    }
-
-    public Bundle getDatum() {
-        return datum;
-    }
-
-    public long getDelay() {
-        return delay;
-    }
-
-    public boolean isGreenChannel() {
-        return isGreenChannel;
-    }
-
-    public int getFlags() {
-        return flags;
-    }
-
-    public int getRequestCode() {
-        return requestCode;
-    }
-
-    public Bundle getActivityOptions() {
-        return activityOptions;
-    }
-
-    public List<IInterceptor> getInterceptors() {
-        return interceptors;
-    }
-
-    public List<String> getInterceptorURIs() {
-        return interceptorURIs;
-    }
-
-    /**
-     * Start navigation.
-     */
-    public void navigation() {
-        navigation(null, null);
-    }
-
-    public void navigation(@Nullable Context context) {
-        navigation(context, null);
-    }
-
-    public void navigation(@Nullable Callback callback) {
-        navigation(null, callback);
-    }
-
-    public void navigation(@Nullable Context context, @Nullable Callback callback) {
-        SRouter.navigation(context, this, callback);
-    }
-
-    /**
-     * Get an instance of navigation post
-     */
-    public ICall newCall() {
-        return newCall(null);
-    }
-
-    public ICall newCall(@Nullable Context context) {
-        return SRouter.newCall(context, this);
+    // ######################### annotation @FlagInt copy from #{Intent}  ##########################
+    @IntDef({
+            Intent.FLAG_ACTIVITY_SINGLE_TOP,
+            Intent.FLAG_ACTIVITY_NEW_TASK,
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+            Intent.FLAG_DEBUG_LOG_RESOLUTION,
+            Intent.FLAG_FROM_BACKGROUND,
+            Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT,
+            Intent.FLAG_ACTIVITY_CLEAR_TASK,
+            Intent.FLAG_ACTIVITY_CLEAR_TOP,
+            Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS,
+            Intent.FLAG_ACTIVITY_FORWARD_RESULT,
+            Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY,
+            Intent.FLAG_ACTIVITY_MULTIPLE_TASK,
+            Intent.FLAG_ACTIVITY_NO_ANIMATION,
+            Intent.FLAG_ACTIVITY_NO_USER_ACTION,
+            Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP,
+            Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED,
+            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT,
+            Intent.FLAG_ACTIVITY_TASK_ON_HOME,
+            Intent.FLAG_RECEIVER_REGISTERED_ONLY
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    @interface FlagInt {
     }
 
     /**
@@ -323,8 +389,6 @@ public final class Request {
         datum.putString(key, value);
         return this;
     }
-
-    // #############################  Follow api copy from #{Bundle}  ##############################
 
     /**
      * Inserts a Boolean key into the mapping of this Bundle, replacing
@@ -628,39 +692,13 @@ public final class Request {
         return this;
     }
 
-    // ######################### annotation @FlagInt copy from #{Intent}  ##########################
-    @IntDef({
-            Intent.FLAG_ACTIVITY_SINGLE_TOP,
-            Intent.FLAG_ACTIVITY_NEW_TASK,
-            Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
-            Intent.FLAG_DEBUG_LOG_RESOLUTION,
-            Intent.FLAG_FROM_BACKGROUND,
-            Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT,
-            Intent.FLAG_ACTIVITY_CLEAR_TASK,
-            Intent.FLAG_ACTIVITY_CLEAR_TOP,
-            Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS,
-            Intent.FLAG_ACTIVITY_FORWARD_RESULT,
-            Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY,
-            Intent.FLAG_ACTIVITY_MULTIPLE_TASK,
-            Intent.FLAG_ACTIVITY_NO_ANIMATION,
-            Intent.FLAG_ACTIVITY_NO_USER_ACTION,
-            Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP,
-            Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED,
-            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT,
-            Intent.FLAG_ACTIVITY_TASK_ON_HOME,
-            Intent.FLAG_RECEIVER_REGISTERED_ONLY
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    @interface FlagInt {
-    }
-
     @Override
     public String toString() {
         return "Request{" +
                 "authority='" + authority + '\'' +
                 ", path='" + path + '\'' +
                 ", delay=" + delay +
-                ", flags=" + flags +
+                ", activityFlags=" + activityFlags +
                 ", requestCode=" + requestCode +
                 ", isGreenChannel=" + isGreenChannel +
                 '}';

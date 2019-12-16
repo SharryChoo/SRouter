@@ -19,10 +19,10 @@ import java.util.List;
  */
 class SRouterImpl {
 
-    private static Context sContext;
+    static Context sAppContext;
 
     static synchronized boolean init(Application application) {
-        sContext = application;
+        sAppContext = application;
         Logger.i("Route initialize success.");
         return true;
     }
@@ -36,11 +36,11 @@ class SRouterImpl {
     }
 
     static void addGlobalInterceptor(IInterceptor interceptor) {
-        Warehouse.GLOBAL_INTERCEPTORS.add(interceptor);
+        DataSource.GLOBAL_INTERCEPTORS.add(interceptor);
     }
 
     static void addGlobalInterceptorUri(String interceptorUri) {
-        Warehouse.GLOBAL_INTERCEPTOR_URIS.add(interceptorUri);
+        DataSource.GLOBAL_INTERCEPTOR_URIS.add(interceptorUri);
     }
 
     static void addCallAdapter(ICallAdapter adapter) {
@@ -68,7 +68,7 @@ class SRouterImpl {
     }
 
     static void navigation(final Context context, final Request request, final Callback callback) {
-        newCall(context, request).post(new IInterceptor.ChainCallback() {
+        newNavigationCall(context, request).post(new IInterceptor.ChainCallback() {
             @Override
             public void onSuccess(@NonNull Response response) {
                 if (callback != null) {
@@ -88,7 +88,8 @@ class SRouterImpl {
         });
     }
 
-    static ICall newCall(final Context context, final Request request) {
+    @NonNull
+    static ICall newNavigationCall(final Context context, final Request request) {
         // 1. completion request.
         try {
             LogisticsCenter.completion(request);
@@ -109,19 +110,67 @@ class SRouterImpl {
             );
         }
         // 2.2 add global interceptors.
-        instantiateAndSortInterceptorUris(Warehouse.GLOBAL_INTERCEPTOR_URIS, interceptors);
-        interceptors.addAll(Warehouse.GLOBAL_INTERCEPTORS);
+        instantiateAndSortInterceptorUris(DataSource.GLOBAL_INTERCEPTOR_URIS, interceptors);
+        interceptors.addAll(DataSource.GLOBAL_INTERCEPTORS);
         // 2.3 Add finalize navigation Interceptor.
         interceptors.add(new NavigationInterceptor());
         // 3. Create call.
-        return RealCall.create(null == context ? sContext : context, request, interceptors);
+        return RealCall.create(null == context ? sAppContext : context, request, interceptors);
+    }
+
+    static void pendingIntent(final Context context, final Request request, final Callback callback) {
+        newPendingIntentCall(context, request).post(new IInterceptor.ChainCallback() {
+            @Override
+            public void onSuccess(@NonNull Response response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onFailed(Throwable throwable) {
+                Logger.e(throwable.getMessage(), throwable);
+            }
+
+            @Override
+            public void onCanceled() {
+                Logger.e("Dispatch canceled.");
+            }
+        });
+    }
+
+    @NonNull
+    static ICall newPendingIntentCall(Context context, Request request) {
+        // 1. completion request.
+        try {
+            LogisticsCenter.completion(request);
+        } catch (NoRouteFoundException e) {
+            Logger.e(e.getMessage(), e);
+            return ICall.DEFAULT;
+        }
+        // 2. completion interceptors.
+        final List<IInterceptor> interceptors = new ArrayList<>();
+        // 2.1 add user interceptors
+        if (request.isGreenChannel()) {
+            Logger.i("Request is green channel, ignore interceptors that not global.");
+        } else {
+            interceptors.addAll(request.getInterceptors());
+            instantiateAndSortInterceptorUris(
+                    Arrays.asList(request.getRouteMeta().getRouteInterceptorURIs()),
+                    interceptors
+            );
+        }
+        // 2.2 add global interceptors.
+        instantiateAndSortInterceptorUris(DataSource.GLOBAL_INTERCEPTOR_URIS, interceptors);
+        interceptors.addAll(DataSource.GLOBAL_INTERCEPTORS);
+        // 2.3 Add finalize pendingIntent Interceptor.
+        interceptors.add(new PendingIntentInterceptor());
+        return RealCall.create(null == context ? sAppContext : context, request, interceptors);
     }
 
     private static void instantiateAndSortInterceptorUris(List<String> sourceSet, List<IInterceptor> destSet) {
         // 3.1 Sort interceptor URIs by priority.
         final List<InterceptorMeta> orderedMetas = new LinkedList<>();
         for (String value : sourceSet) {
-            InterceptorMeta meta = Warehouse.TABLE_ROUTES_INTERCEPTORS.get(value);
+            InterceptorMeta meta = DataSource.TABLE_ROUTES_INTERCEPTORS.get(value);
             if (null == meta) {
                 continue;
             }

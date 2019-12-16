@@ -15,6 +15,7 @@ public class ActivityResult {
     public final int requestCode;
     public final int resultCode;
     public final Intent data;
+
     private ActivityResult(int requestCode, int resultCode, Intent data) {
         this.requestCode = requestCode;
         this.resultCode = resultCode;

@@ -17,7 +17,6 @@ import static com.sharry.srouter.support.ThreadMode.MAIN_THREAD;
  */
 public class RealCall implements ICall {
 
-
     /**
      * The factory method help U createApi instance.
      */
@@ -60,7 +59,7 @@ public class RealCall implements ICall {
     @NonNull
     public <T> T adaptTo(@NonNull Class<T> returnClass) {
         // Find adapter.
-        for (ICallAdapter callAdapter : Warehouse.CALL_ADAPTERS) {
+        for (ICallAdapter callAdapter : DataSource.CALL_ADAPTERS) {
             if (returnClass.getName().equals(callAdapter.adaptType().getName())) {
                 return (T) callAdapter.adapt(this);
             }

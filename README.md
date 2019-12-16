@@ -193,7 +193,7 @@ public interface RouteApi {
             Context context,
             @QueryParam(key = "content") String content,
             @RequestCode int requestCode,
-            @Flags int flags
+            @Flags int activityFlags
     );
 
 }
@@ -383,7 +383,7 @@ public interface RouteApi {
             Context context,
             @QueryParam(key = "content") String content,
             @RequestCode int requestCode,
-            @Flags int flags
+            @Flags int activityFlags
     );
 }
 ```
@@ -546,7 +546,7 @@ public interface RouteApi {
             Context context,
             @QueryParam(key = "content") String content,
             @RequestCode int requestCode,
-            @Flags int flags
+            @Flags int activityFlags
     );
 
 }

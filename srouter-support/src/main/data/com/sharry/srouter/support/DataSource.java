@@ -17,7 +17,7 @@ import java.util.Map;
  * @version 1.0
  * @since 2018/8/13
  */
-class Warehouse {
+class DataSource {
 
     /**
      * Key is path of the route request.{@link Route#path()}

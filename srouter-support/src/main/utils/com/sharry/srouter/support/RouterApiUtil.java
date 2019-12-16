@@ -75,7 +75,7 @@ class RouterApiUtil {
                 }
                 if (annotation instanceof Flags) {
                     if (value instanceof Integer) {
-                        request.setFlags((Integer) value);
+                        request.setActivityFlags((Integer) value);
                     } else {
                         throw new UnsupportedOperationException("@Flags annotation only support " +
                                 "marked on Integer parameter.");

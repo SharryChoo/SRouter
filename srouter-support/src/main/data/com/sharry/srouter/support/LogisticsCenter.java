@@ -33,7 +33,7 @@ class LogisticsCenter {
             String routesClassName = PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_ROUTERS + SEPARATOR + moduleName;
             try {
                 IRoute route = (IRoute) (Class.forName(routesClassName).getConstructor().newInstance());
-                route.loadInto(Warehouse.TABLE_ROUTES);
+                route.loadInto(DataSource.TABLE_ROUTES);
             } catch (Exception e) {
                 Logger.e(e.getMessage(), e);
             }
@@ -42,7 +42,7 @@ class LogisticsCenter {
             try {
                 IRouteInterceptor routeInterceptor = (IRouteInterceptor) (
                         Class.forName(interceptorsClassName).getConstructor().newInstance());
-                routeInterceptor.loadInto(Warehouse.TABLE_ROUTES_INTERCEPTORS);
+                routeInterceptor.loadInto(DataSource.TABLE_ROUTES_INTERCEPTORS);
             } catch (Exception e) {
                 Logger.e(e.getMessage());
             }
@@ -54,7 +54,7 @@ class LogisticsCenter {
      */
     static void unregisterModules(String[] names) {
         for (String moduleName : names) {
-            Map<String, RouteMeta> metas = Warehouse.TABLE_ROUTES.remove(moduleName);
+            Map<String, RouteMeta> metas = DataSource.TABLE_ROUTES.remove(moduleName);
             if (metas == null) {
                 Logger.i("Cannot find this module: " + moduleName);
             }
@@ -70,18 +70,18 @@ class LogisticsCenter {
         try {
             // 1. fetch constructor from cache.
             Class queryBindingClass = Class.forName(queryBindingClassName);
-            Constructor constructor = Warehouse.QUERY_BINDING_CONSTRUCTORS.get(queryBindingClassName);
+            Constructor constructor = DataSource.QUERY_BINDING_CONSTRUCTORS.get(queryBindingClassName);
             if (constructor == null) {
                 constructor = queryBindingClass.getConstructor();
-                Warehouse.QUERY_BINDING_CONSTRUCTORS.put(queryBindingClassName, constructor);
+                DataSource.QUERY_BINDING_CONSTRUCTORS.put(queryBindingClassName, constructor);
             }
             // 2. instantiate queryBinding.
             IQueryBinding queryBinding = (IQueryBinding) constructor.newInstance();
             // 3. fetch method from cache
-            Method bindMethod = Warehouse.QUERY_BINDING_METHOD_BINDS.get(queryBindingClassName);
+            Method bindMethod = DataSource.QUERY_BINDING_METHOD_BINDS.get(queryBindingClassName);
             if (bindMethod == null) {
                 bindMethod = queryBindingClass.getMethod(Constants.METHOD_NAME_OF_BIND, binderClass);
-                Warehouse.QUERY_BINDING_METHOD_BINDS.put(queryBindingClassName, bindMethod);
+                DataSource.QUERY_BINDING_METHOD_BINDS.put(queryBindingClassName, bindMethod);
             }
             // 4. invoke bind method.
             bindMethod.invoke(queryBinding, binder);
@@ -112,13 +112,13 @@ class LogisticsCenter {
                         if (args != null) {
                             for (Object arg : args) {
                                 if (arg instanceof Context) {
-                                    call = SRouter.newCall((Context) arg, request);
+                                    call = SRouter.newNavigationCall((Context) arg, request);
                                     break;
                                 }
                             }
                         }
                         if (call == null) {
-                            call = SRouter.newCall(null, request);
+                            call = SRouter.newNavigationCall(null, request);
                         }
                         // adapt 2 target type.
                         return call.adaptTo(method.getReturnType());
@@ -133,7 +133,7 @@ class LogisticsCenter {
     static void completion(Request request) throws NoRouteFoundException {
         // Fetch authority.
         String authority = request.getAuthority();
-        Map<String, RouteMeta> routeMetas = Warehouse.TABLE_ROUTES.get(authority);
+        Map<String, RouteMeta> routeMetas = DataSource.TABLE_ROUTES.get(authority);
         if (null == routeMetas) {
             throw new NoRouteFoundException("SRouter cannot found authority: " + authority);
         }
@@ -150,6 +150,6 @@ class LogisticsCenter {
     }
 
     public static void addCallAdapter(ICallAdapter adapter) {
-        Warehouse.CALL_ADAPTERS.add(adapter);
+        DataSource.CALL_ADAPTERS.add(adapter);
     }
 }

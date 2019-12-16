@@ -162,12 +162,37 @@ public class SRouter {
     /**
      * Build an instance of navigation post.
      */
-    public static ICall newCall(@Nullable Context context, @NonNull Request request) {
+    @NonNull
+    public static ICall newNavigationCall(@Nullable Context context, @NonNull Request request) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
         Preconditions.checkNotNull(request);
-        return SRouterImpl.newCall(context, request);
+        return SRouterImpl.newNavigationCall(context, request);
+    }
+
+    /**
+     * Get PendingIntent at Callback.
+     */
+    public static void pendingIntent(@Nullable Context context, @NonNull Request request, @NonNull Callback callback) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        Preconditions.checkNotNull(request);
+        Preconditions.checkNotNull(callback);
+        SRouterImpl.pendingIntent(context, request, callback);
+    }
+
+    /**
+     * Build an instance of pendingIntent post.
+     */
+    @NonNull
+    public static ICall newPendingIntentCall(@Nullable Context context, @NonNull Request request) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        Preconditions.checkNotNull(request);
+        return SRouterImpl.newPendingIntentCall(context, request);
     }
 
     /**
