@@ -147,21 +147,10 @@ class SRouterImpl {
             return ICall.DEFAULT;
         }
         // 2. completion interceptors.
-        final List<IInterceptor> interceptors = new ArrayList<>();
-        // 2.1 add user interceptors
-        if (request.isGreenChannel()) {
-            Logger.i("Request is green channel, ignore interceptors that not global.");
-        } else {
-            interceptors.addAll(request.getInterceptors());
-            instantiateAndSortInterceptorUris(
-                    Arrays.asList(request.getRouteMeta().getRouteInterceptorURIs()),
-                    interceptors
-            );
-        }
-        // 2.2 add global interceptors.
-        instantiateAndSortInterceptorUris(DataSource.GLOBAL_INTERCEPTOR_URIS, interceptors);
-        interceptors.addAll(DataSource.GLOBAL_INTERCEPTORS);
-        // 2.3 Add finalize pendingIntent Interceptor.
+        // 2.1 add global interceptors.
+        final List<IInterceptor> interceptors = new ArrayList<>(DataSource.GLOBAL_INTERCEPTORS);
+        // .... ignore other interceptor
+        // 2.2 Add finalize pendingIntent Interceptor.
         interceptors.add(new PendingIntentInterceptor());
         return RealCall.create(null == context ? sAppContext : context, request, interceptors);
     }

@@ -56,18 +56,20 @@ class PendingIntentInterceptor implements IInterceptor {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getActivityPendingIntentActual(
                     SRouterImpl.sAppContext,
+                    request.getRequestCode(),
                     intent,
-                    request.getActivityOptions(),
                     request.getPendingIntentFlags(),
+                    request.getActivityOptions(),
                     response,
                     callback
             );
         } else {
             getActivityPendingIntentActual(
                     activity,
+                    request.getRequestCode(),
                     intent,
-                    request.getActivityOptions(),
                     request.getPendingIntentFlags(),
+                    request.getActivityOptions(),
                     response,
                     callback
             );
@@ -78,14 +80,19 @@ class PendingIntentInterceptor implements IInterceptor {
      * Perform fetch PendingIntent actual.
      */
     private void getActivityPendingIntentActual(Context context,
+                                                int requestCode,
                                                 Intent intent,
-                                                Bundle activityOptions,
                                                 int pendingIntentFlags,
+                                                Bundle activityOptions,
                                                 Response response,
                                                 ChainCallback callback) {
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,
-                0, intent, pendingIntentFlags, activityOptions);
-        context.startActivity(intent, activityOptions);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                requestCode,
+                intent,
+                pendingIntentFlags,
+                activityOptions
+        );
         response.setPendingIntent(pendingIntent);
         callback.onSuccess(response);
     }

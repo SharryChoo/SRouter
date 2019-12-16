@@ -22,8 +22,10 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.sharry.srouter.annotation.compiler.Query
 import com.sharry.srouter.annotation.compiler.Route
 import com.sharry.srouter.module.base.ModuleConstants
+import com.sharry.srouter.support.SRouter
 import kotlinx.android.synthetic.main.app_activity_login.*
 import java.util.*
 
@@ -40,9 +42,26 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      */
     private var mAuthTask: UserLoginTask? = null
 
+    @Query(key = "email")
+    lateinit var emailContent: String
+
+    @Query(key = "password")
+    lateinit var passwordContent: String
+
+    init {
+        emailContent = ""
+        passwordContent = ""
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_activity_login)
+
+        // 注入参数
+        SRouter.bindQuery(this)
+        email.setText(emailContent)
+        password.setText(passwordContent)
+
         // Set up the login form.
         populateAutoComplete()
         password.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
@@ -67,7 +86,6 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         if (!mayRequestContacts()) {
             return
         }
-
         loaderManager.initLoader(0, null, this)
     }
 

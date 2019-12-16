@@ -51,7 +51,10 @@ public final class Request {
         Bundle datum = new Bundle();
         Bundle urlDatum = new Bundle();
         for (String queryParameterName : uri.getQueryParameterNames()) {
-            urlDatum.putString(queryParameterName, uri.getQueryParameter(queryParameterName));
+            String key = queryParameterName;
+            String value = uri.getQueryParameter(key);
+            Logger.d("key is: " + key + ", value is: " + value);
+            urlDatum.putString(key, value);
         }
         datum.putBundle(Constants.INTENT_EXTRA_URL_DATUM, urlDatum);
         Request request = create(authority, path);
