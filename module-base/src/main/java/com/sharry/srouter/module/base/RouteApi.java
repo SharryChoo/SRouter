@@ -19,8 +19,8 @@ public interface RouteApi {
             path = ModuleConstants.Found.FOUND_FRAGMENT
     )
     ResponseObservable foundFragment(
-            @QueryParam(key = "title") double title,
-            @QueryParam(key = "content") String content
+            @QueryParam(key = "title") String title,
+            @QueryParam(key = "amount") double content
     );
 
     /**
@@ -33,9 +33,9 @@ public interface RouteApi {
     )
     ResponseObservable personalCenter(
             Context context,
-            @QueryParam(key = "content") String content,
             @RequestCode int requestCode,
-            @Flags int flags
+            @Flags int flags,
+            @QueryParam(key = "content") String content
     );
 
 }

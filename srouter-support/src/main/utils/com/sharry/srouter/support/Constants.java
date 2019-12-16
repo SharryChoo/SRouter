@@ -16,7 +16,7 @@ public class Constants {
     static final String NAME_OF_ROUTERS = PROJECT + SEPARATOR + "Routes";
     static final String NAME_OF_INTERCEPTOR = PROJECT + SEPARATOR + "Interceptors";
     static final String PACKAGE_OF_GENERATE_FILE = "com.sharry.srouter.generate";
-    public static final String INTENT_EXTRA_URL_DATUM = "INTENT_EXTRA_URL_DATUM";
+    public static final String INTENT_EXTRA_URL_DATUM = "SROUTER_INTENT_EXTRA_URL_DATUM";
     static final String METHOD_NAME_OF_BIND = "bind";
 
 }

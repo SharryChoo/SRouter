@@ -148,7 +148,9 @@ class SRouterImpl {
         }
         // 2. completion interceptors.
         // 2.1 add global interceptors.
-        final List<IInterceptor> interceptors = new ArrayList<>(DataSource.GLOBAL_INTERCEPTORS);
+        final List<IInterceptor> interceptors = new ArrayList<>();
+        instantiateAndSortInterceptorUris(DataSource.GLOBAL_INTERCEPTOR_URIS, interceptors);
+        interceptors.addAll(DataSource.GLOBAL_INTERCEPTORS);
         // .... ignore other interceptor
         // 2.2 Add finalize pendingIntent Interceptor.
         interceptors.add(new PendingIntentInterceptor());

@@ -1,11 +1,12 @@
 package com.sharry.srouter.module.login
 
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import com.sharry.srouter.annotation.compiler.RouteInterceptor
 import com.sharry.srouter.module.base.ModuleConstants
 import com.sharry.srouter.module.base.ResponseObservable
-import com.sharry.srouter.support.SRouter
 import com.sharry.srouter.support.IInterceptor
+import com.sharry.srouter.support.SRouter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -18,18 +19,19 @@ import io.reactivex.schedulers.Schedulers
         value = ModuleConstants.Login.LOGIN_INTERCEPTOR,
         priority = 10
 )
+@SuppressLint("CheckResult")
 class LoginInterceptor : IInterceptor {
 
     override fun intercept(chain: IInterceptor.Chain) {
         val chainContext = chain.chainContext()
         // 若没有登录, 则先跳转到登录页面
         if (!ModuleConstants.Login.isLogin) {
-            val disposable = SRouter.request(ModuleConstants.Login.NAME, ModuleConstants.Login.LOGIN_ACTIVITY)
+            SRouter.request(ModuleConstants.Login.NAME, ModuleConstants.Login.LOGIN_ACTIVITY)
                     // 构建 Activity 相关配置
                     .setRequestCode(100)
                     .withString("email", "123456@Gmail.com")
                     .withString("password", "123456")
-                    .newNavigationCall(chainContext.baseContext)
+                    .newNavigationCall(chainContext)
                     // 将 ICall 转为 ResponseObservable
                     .adaptTo(ResponseObservable::class.java)
                     .subscribeOn(Schedulers.io())
