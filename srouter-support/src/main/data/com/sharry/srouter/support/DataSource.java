@@ -5,6 +5,7 @@ import android.util.SparseArray;
 import com.sharry.srouter.annotation.compiler.Route;
 import com.sharry.srouter.annotation.compiler.RouteInterceptor;
 
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -59,9 +60,9 @@ class DataSource {
 
     static final List<String> GLOBAL_INTERCEPTOR_URIS = new ArrayList<>();
 
-    static final SparseArray<PendingRunnable> PENDING_RUNNABLES = new SparseArray<>();
+    static final SparseArray<SoftReference<PendingRunnable>> PENDING_RUNNABLES = new SparseArray<>();
 
-    static AtomicInteger sNextPendingRunanbleKey = new AtomicInteger(0);
+    static AtomicInteger sNextPendingRunnableKey = new AtomicInteger(0);
 
     static {
         CALL_ADAPTERS.add(ICallAdapter.DEFAULT);

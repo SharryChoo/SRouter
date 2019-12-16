@@ -4,16 +4,14 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import static android.app.PendingIntent.FLAG_NO_CREATE;
 
 /**
  * Route feature's implementor.
@@ -126,10 +124,9 @@ class SRouterImpl {
     @NonNull
     static PendingIntent newPendingIntent(int flag, PendingRunnable pendingRunnable) {
         // build key for the pendingRunnable
-        int key = DataSource.sNextPendingRunanbleKey.addAndGet(1);
-        Log.e("TAG", "key = " + key);
+        int key = DataSource.sNextPendingRunnableKey.addAndGet(1);
         // add to cache
-        DataSource.PENDING_RUNNABLES.put(key, pendingRunnable);
+        DataSource.PENDING_RUNNABLES.put(key, new SoftReference<PendingRunnable>(pendingRunnable));
         // build intent for PendingIntent
         Intent intent = new Intent(sAppContext, PendingIntentActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

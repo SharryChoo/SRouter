@@ -71,30 +71,37 @@ public class FoundFragment extends Fragment {
     private static final String CHANNEL_ID = FoundFragment.class.getSimpleName();
     private static final String CHANNEL_NAME = "通知弹窗";
 
+    /**
+     * 该对象会添加到 static 集合, 虽然使用软引用保证 OOM 之前会被释放, 但生命周期依旧比较长
+     * <p>
+     * 请尽量不与外界 Context 关联, 减少内存泄漏
+     */
+    public static class MyPendingRunnable implements PendingRunnable {
+
+        @Override
+        public void run(@NonNull Activity hookActivity) {
+            SRouter.request("SRouter://login/login_activity?email=123456@Gmail.com&password=123456")
+                    .navigation();
+            hookActivity.finish();
+        }
+
+    }
+
     private void sendNotification() {
-        // 构建 PendingIntent
-        PendingIntent routerPendingIntent = SRouter.newPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT, new PendingRunnable() {
-
-            @Override
-            public void run(@NonNull Activity hookActivity) {
-                SRouter.request("SRouter://login/login_activity?email=123456@Gmail.com&password=123456")
-                        .navigation();
-                hookActivity.finish();
-            }
-
-        });
-
         // 构建 Notification
         Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)// 设置 Notification 在状态栏显示的优先级
-                .setDefaults(NotificationCompat.DEFAULT_ALL)// 根据手机情况默认设置Led灯, 震动, 和铃声
-                .setWhen(System.currentTimeMillis())// 该 Notification 被创建的时间
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.app_launcher)
                 .setAutoCancel(true)
                 .setTicker(CHANNEL_NAME)
                 .setContentTitle("SRouter pendingIntent 构建测试")
                 .setContentText("测试路由构建 PendingIntent")
-                .setContentIntent(routerPendingIntent)
+                // 构建 PendingIntent
+                .setContentIntent(
+                        SRouter.newPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT, new MyPendingRunnable())
+                )
                 .build();
         int notifyId = 566;
         getNotificationManager().notify(notifyId, notification);
