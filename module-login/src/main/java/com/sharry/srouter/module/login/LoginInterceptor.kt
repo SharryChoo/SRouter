@@ -31,7 +31,7 @@ class LoginInterceptor : IInterceptor {
                     .setRequestCode(100)
                     .withString("email", "123456@Gmail.com")
                     .withString("password", "123456")
-                    .newNavigationCall(chainContext)
+                    .newCall(chainContext)
                     // 将 ICall 转为 ResponseObservable
                     .adaptTo(ResponseObservable::class.java)
                     .subscribeOn(Schedulers.io())

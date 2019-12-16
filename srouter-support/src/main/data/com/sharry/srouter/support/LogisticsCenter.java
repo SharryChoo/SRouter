@@ -112,13 +112,13 @@ class LogisticsCenter {
                         if (args != null) {
                             for (Object arg : args) {
                                 if (arg instanceof Context) {
-                                    call = SRouter.newNavigationCall((Context) arg, request);
+                                    call = SRouter.newCall((Context) arg, request);
                                     break;
                                 }
                             }
                         }
                         if (call == null) {
-                            call = SRouter.newNavigationCall(null, request);
+                            call = SRouter.newCall(null, request);
                         }
                         // adapt 2 target type.
                         return call.adaptTo(method.getReturnType());

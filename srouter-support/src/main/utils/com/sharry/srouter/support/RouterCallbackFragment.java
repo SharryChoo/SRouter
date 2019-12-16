@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
  * @version 1.0
  * @since 2018/11/30 15:46
  */
-public class RouterCallbackFragment extends Fragment {
+public final class RouterCallbackFragment extends Fragment {
 
     public static final String TAG = RouterCallbackFragment.class.getSimpleName();
     private Callback mCallback;

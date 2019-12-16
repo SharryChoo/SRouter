@@ -1,10 +1,22 @@
 package com.sharry.srouter.support;
 
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+import static android.app.PendingIntent.FLAG_NO_CREATE;
+import static android.app.PendingIntent.FLAG_ONE_SHOT;
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 
 /**
  * Route facade.
@@ -163,36 +175,39 @@ public class SRouter {
      * Build an instance of navigation post.
      */
     @NonNull
-    public static ICall newNavigationCall(@Nullable Context context, @NonNull Request request) {
+    public static ICall newCall(@Nullable Context context, @NonNull Request request) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
         Preconditions.checkNotNull(request);
-        return SRouterImpl.newNavigationCall(context, request);
+        return SRouterImpl.newCall(context, request);
     }
 
-    /**
-     * Get PendingIntent at Callback.
-     */
-    public static void pendingIntent(@Nullable Context context, @NonNull Request request, @NonNull Callback callback) {
-        if (!sHasInit) {
-            throw new RouteUninitializedException();
-        }
-        Preconditions.checkNotNull(request);
-        Preconditions.checkNotNull(callback);
-        SRouterImpl.pendingIntent(context, request, callback);
+    @IntDef(flag = true,
+            value = {
+                    FLAG_ONE_SHOT,
+                    FLAG_NO_CREATE,
+                    FLAG_CANCEL_CURRENT,
+                    FLAG_UPDATE_CURRENT,
+                    FLAG_IMMUTABLE,
+
+                    Intent.FILL_IN_ACTION,
+                    Intent.FILL_IN_DATA,
+                    Intent.FILL_IN_CATEGORIES,
+                    Intent.FILL_IN_COMPONENT,
+                    Intent.FILL_IN_PACKAGE,
+                    Intent.FILL_IN_SOURCE_BOUNDS,
+                    Intent.FILL_IN_SELECTOR,
+                    Intent.FILL_IN_CLIP_DATA
+            })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Flags {
     }
 
-    /**
-     * Build an instance of pendingIntent post.
-     */
     @NonNull
-    public static ICall newPendingIntentCall(@Nullable Context context, @NonNull Request request) {
-        if (!sHasInit) {
-            throw new RouteUninitializedException();
-        }
-        Preconditions.checkNotNull(request);
-        return SRouterImpl.newPendingIntentCall(context, request);
+    public static PendingIntent newPendingIntent(@Flags int flag, @NonNull PendingRunnable pendingRunnable) {
+        Preconditions.checkNotNull(pendingRunnable);
+        return SRouterImpl.newPendingIntent(flag, pendingRunnable);
     }
 
     /**

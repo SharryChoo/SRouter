@@ -1,6 +1,5 @@
 package com.sharry.srouter.support;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -153,33 +152,12 @@ public final class Request {
         SRouter.navigation(context, this, callback);
     }
 
-    public ICall newNavigationCall() {
-        return newNavigationCall(null);
+    public ICall newCall() {
+        return newCall(null);
     }
 
-    public ICall newNavigationCall(@Nullable Context context) {
-        return SRouter.newNavigationCall(context, this);
-    }
-
-    /**
-     * Start fetch PendingIntent
-     */
-    public void pendingIntent(@PendingIntentFlags int pendingIntentFlags, @NonNull Callback callback) {
-        pendingIntent(null, pendingIntentFlags, callback);
-    }
-
-    public void pendingIntent(@Nullable Context context, @PendingIntentFlags int pendingIntentFlags, @NonNull Callback callback) {
-        this.pendingIntentFlags = pendingIntentFlags;
-        SRouter.pendingIntent(context, this, callback);
-    }
-
-    public ICall newPendingIntentCall(@PendingIntentFlags int pendingIntentFlags) {
-        return newPendingIntentCall(null, pendingIntentFlags);
-    }
-
-    public ICall newPendingIntentCall(@Nullable Context context, @PendingIntentFlags int pendingIntentFlags) {
-        this.pendingIntentFlags = pendingIntentFlags;
-        return SRouter.newPendingIntentCall(context, this);
+    public ICall newCall(@Nullable Context context) {
+        return SRouter.newCall(context, this);
     }
 
     // ///////////////////////////////////// Get method. ///////////////////////////////////////////////////
@@ -376,27 +354,6 @@ public final class Request {
     })
     @Retention(RetentionPolicy.SOURCE)
     @interface ActivityFlags {
-    }
-
-    @IntDef(flag = true,
-            value = {
-                    PendingIntent.FLAG_ONE_SHOT,
-                    PendingIntent.FLAG_NO_CREATE,
-                    PendingIntent.FLAG_CANCEL_CURRENT,
-                    PendingIntent.FLAG_UPDATE_CURRENT,
-                    PendingIntent.FLAG_IMMUTABLE,
-
-                    Intent.FILL_IN_ACTION,
-                    Intent.FILL_IN_DATA,
-                    Intent.FILL_IN_CATEGORIES,
-                    Intent.FILL_IN_COMPONENT,
-                    Intent.FILL_IN_PACKAGE,
-                    Intent.FILL_IN_SOURCE_BOUNDS,
-                    Intent.FILL_IN_SELECTOR,
-                    Intent.FILL_IN_CLIP_DATA
-            })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface PendingIntentFlags {
     }
 
     /**

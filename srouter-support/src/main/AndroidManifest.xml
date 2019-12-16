@@ -1,1 +1,12 @@
-<manifest package="com.sharry.srouter.support" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.sharry.srouter.support">
+
+    <application>
+
+        <activity
+            android:name=".PendingIntentActivity"
+            android:launchMode="standard" />
+
+    </application>
+
+</manifest>

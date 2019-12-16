@@ -1,7 +1,10 @@
 package com.sharry.srouter.support;
 
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -9,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import static android.app.PendingIntent.FLAG_NO_CREATE;
 
 /**
  * Route feature's implementor.
@@ -68,7 +73,7 @@ class SRouterImpl {
     }
 
     static void navigation(final Context context, final Request request, final Callback callback) {
-        newNavigationCall(context, request).post(new IInterceptor.ChainCallback() {
+        newCall(context, request).post(new IInterceptor.ChainCallback() {
             @Override
             public void onSuccess(@NonNull Response response) {
                 if (callback != null) {
@@ -89,7 +94,7 @@ class SRouterImpl {
     }
 
     @NonNull
-    static ICall newNavigationCall(final Context context, final Request request) {
+    static ICall newCall(final Context context, final Request request) {
         // 1. completion request.
         try {
             LogisticsCenter.completion(request);
@@ -118,43 +123,18 @@ class SRouterImpl {
         return RealCall.create(null == context ? sAppContext : context, request, interceptors);
     }
 
-    static void pendingIntent(final Context context, final Request request, final Callback callback) {
-        newPendingIntentCall(context, request).post(new IInterceptor.ChainCallback() {
-            @Override
-            public void onSuccess(@NonNull Response response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onFailed(Throwable throwable) {
-                Logger.e(throwable.getMessage(), throwable);
-            }
-
-            @Override
-            public void onCanceled() {
-                Logger.e("Dispatch canceled.");
-            }
-        });
-    }
-
     @NonNull
-    static ICall newPendingIntentCall(Context context, Request request) {
-        // 1. completion request.
-        try {
-            LogisticsCenter.completion(request);
-        } catch (NoRouteFoundException e) {
-            Logger.e(e.getMessage(), e);
-            return ICall.DEFAULT;
-        }
-        // 2. completion interceptors.
-        // 2.1 add global interceptors.
-        final List<IInterceptor> interceptors = new ArrayList<>();
-        instantiateAndSortInterceptorUris(DataSource.GLOBAL_INTERCEPTOR_URIS, interceptors);
-        interceptors.addAll(DataSource.GLOBAL_INTERCEPTORS);
-        // .... ignore other interceptor
-        // 2.2 Add finalize pendingIntent Interceptor.
-        interceptors.add(new PendingIntentInterceptor());
-        return RealCall.create(null == context ? sAppContext : context, request, interceptors);
+    static PendingIntent newPendingIntent(int flag, PendingRunnable pendingRunnable) {
+        // build key for the pendingRunnable
+        int key = DataSource.sNextPendingRunanbleKey.addAndGet(1);
+        Log.e("TAG", "key = " + key);
+        // add to cache
+        DataSource.PENDING_RUNNABLES.put(key, pendingRunnable);
+        // build intent for PendingIntent
+        Intent intent = new Intent(sAppContext, PendingIntentActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(PendingIntentActivity.EXTRA_INTENT_KEY, key);
+        return PendingIntent.getActivity(sAppContext, -1, intent, flag);
     }
 
     private static void instantiateAndSortInterceptorUris(List<String> sourceSet, List<IInterceptor> destSet) {

@@ -1,5 +1,7 @@
 package com.sharry.srouter.support;
 
+import android.util.SparseArray;
+
 import com.sharry.srouter.annotation.compiler.Route;
 import com.sharry.srouter.annotation.compiler.RouteInterceptor;
 
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Route data repository.
@@ -55,6 +58,10 @@ class DataSource {
     static final List<IInterceptor> GLOBAL_INTERCEPTORS = new ArrayList<>();
 
     static final List<String> GLOBAL_INTERCEPTOR_URIS = new ArrayList<>();
+
+    static final SparseArray<PendingRunnable> PENDING_RUNNABLES = new SparseArray<>();
+
+    static AtomicInteger sNextPendingRunanbleKey = new AtomicInteger(0);
 
     static {
         CALL_ADAPTERS.add(ICallAdapter.DEFAULT);
