@@ -17,7 +17,7 @@ public class LoggerGlobalInterceptor implements IInterceptor {
 
     @Override
     public void intercept(@NonNull Chain chain) {
-        Log.e(TAG, chain.chainContext().request.toString());
+        Log.e(TAG, chain.context().request.toString());
         chain.dispatch();
     }
 

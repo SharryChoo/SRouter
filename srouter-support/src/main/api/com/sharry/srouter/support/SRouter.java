@@ -1,22 +1,11 @@
 package com.sharry.srouter.support;
 
 import android.app.Application;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
-import static android.app.PendingIntent.FLAG_NO_CREATE;
-import static android.app.PendingIntent.FLAG_ONE_SHOT;
-import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 
 /**
  * Route facade.
@@ -42,6 +31,13 @@ public class SRouter {
         } else {
             Logger.i("Route already has been initialized.");
         }
+    }
+
+    /**
+     * @param debug if true open logger, false will close.
+     */
+    public static void isDebug(boolean debug) {
+        SRouterImpl.isDebug(debug);
     }
 
     /**
@@ -109,7 +105,7 @@ public class SRouter {
      * @param <T> the type of class.
      * @return an instance of Router template class.
      */
-    public static <T> T createApi(Class<T> templateClass) {
+    public static <T> T createApi(@NonNull Class<T> templateClass) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
@@ -133,12 +129,11 @@ public class SRouter {
     /**
      * Build router navigation path.
      */
-    public static Request request(@NonNull String authority, @NonNull String path) {
+    @NonNull
+    public static Request request(@Nullable String authority, @Nullable String path) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
-        Preconditions.checkNotEmpty(authority);
-        Preconditions.checkNotEmpty(path);
         return SRouterImpl.request(authority, path);
     }
 
@@ -148,12 +143,31 @@ public class SRouter {
      * the url query value will inject to Bundle.
      * the Bundle mapping special key is {@link Constants#INTENT_EXTRA_URL_DATUM}
      */
-    public static Request request(@NonNull String url) {
+    @NonNull
+    public static Request request(@Nullable String uri) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
-        Preconditions.checkNotEmpty(url);
-        return SRouterImpl.request(url);
+        return SRouterImpl.request(uri);
+    }
+
+    /**
+     * Build router navigation path.
+     */
+    @NonNull
+    public static Request request(@Nullable Intent proxyIntent) {
+        if (!sHasInit) {
+            throw new RouteUninitializedException();
+        }
+        return SRouterImpl.request(proxyIntent);
+    }
+
+    /**
+     * Create an instance of ProxyIntentBuilder
+     */
+    @NonNull
+    public static ProxyIntentBuilder proxyIntentBuilder() {
+        return SRouterImpl.proxyIntentBuilder();
     }
 
     /**
@@ -163,12 +177,12 @@ public class SRouter {
         navigation(context, request, null);
     }
 
-    public static void navigation(@Nullable Context context, @NonNull Request request, @Nullable Callback callback) {
+    public static void navigation(@Nullable Context context, @NonNull Request request, @Nullable LambdaCallback success) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
         Preconditions.checkNotNull(request);
-        SRouterImpl.navigation(context, request, callback);
+        SRouterImpl.navigation(context, request, success);
     }
 
     /**
@@ -183,37 +197,4 @@ public class SRouter {
         return SRouterImpl.newCall(context, request);
     }
 
-    @IntDef(flag = true,
-            value = {
-                    FLAG_ONE_SHOT,
-                    FLAG_NO_CREATE,
-                    FLAG_CANCEL_CURRENT,
-                    FLAG_UPDATE_CURRENT,
-                    FLAG_IMMUTABLE,
-
-                    Intent.FILL_IN_ACTION,
-                    Intent.FILL_IN_DATA,
-                    Intent.FILL_IN_CATEGORIES,
-                    Intent.FILL_IN_COMPONENT,
-                    Intent.FILL_IN_PACKAGE,
-                    Intent.FILL_IN_SOURCE_BOUNDS,
-                    Intent.FILL_IN_SELECTOR,
-                    Intent.FILL_IN_CLIP_DATA
-            })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Flags {
-    }
-
-    @NonNull
-    public static PendingIntent newPendingIntent(@Flags int flag, @NonNull PendingRunnable pendingRunnable) {
-        Preconditions.checkNotNull(pendingRunnable);
-        return SRouterImpl.newPendingIntent(flag, pendingRunnable);
-    }
-
-    /**
-     * @param debug if true open logger, false will close.
-     */
-    public static void isDebug(boolean debug) {
-        SRouterImpl.isDebug(debug);
-    }
 }

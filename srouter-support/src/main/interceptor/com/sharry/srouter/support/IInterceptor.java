@@ -3,6 +3,8 @@ package com.sharry.srouter.support;
 import androidx.annotation.NonNull;
 
 /**
+ * The Interceptor of SRouter
+ *
  * @author Sharry <a href="SharryChooCHN@Gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2018/8/13
@@ -16,19 +18,11 @@ public interface IInterceptor {
      */
     interface Chain {
 
-        ChainContext chainContext();
+        ChainContext context();
 
-        ChainCallback callback();
+        DispatchCallback callback();
 
         void dispatch();
-    }
-
-    interface ChainCallback {
-        void onSuccess(@NonNull Response response);
-
-        void onFailed(Throwable throwable);
-
-        void onCanceled();
     }
 
 }

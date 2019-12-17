@@ -11,14 +11,14 @@ android {
     sourceSets {
         main {
             java.srcDirs += 'src/main/api'
-            java.srcDirs += 'src/main/interceptors'
+            java.srcDirs += 'src/main/interceptor'
             java.srcDirs += 'src/main/service'
-            java.srcDirs += 'src/main/data'
+            java.srcDirs += 'src/main/model'
             java.srcDirs += 'src/main/call'
-            java.srcDirs += 'src/main/exceptions'
+            java.srcDirs += 'src/main/exception'
             java.srcDirs += 'src/main/scheduler'
-            java.srcDirs += 'src/main/templates'
-            java.srcDirs += 'src/main/utils'
+            java.srcDirs += 'src/main/template'
+            java.srcDirs += 'src/main/util'
         }
     }
 }

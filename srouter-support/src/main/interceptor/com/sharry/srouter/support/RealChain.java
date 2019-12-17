@@ -17,7 +17,7 @@ class RealChain implements IInterceptor.Chain {
      * Gat an instance of RealChain.
      */
     static RealChain create(@NonNull List<IInterceptor> handles, @NonNull ChainContext chainContext,
-                                   @NonNull IInterceptor.ChainCallback chainCallback) {
+                            @NonNull DispatchCallback chainCallback) {
         Preconditions.checkNotEmpty(handles);
         Preconditions.checkNotNull(chainContext);
         Preconditions.checkNotNull(chainCallback);
@@ -26,30 +26,30 @@ class RealChain implements IInterceptor.Chain {
 
     private final List<IInterceptor> handles;
     private final ChainContext chainContext;
-    private final IInterceptor.ChainCallback chainCallback;
+    private final DispatchCallback dispatchCallback;
     private int index = 0;
 
     private RealChain(List<IInterceptor> handles, ChainContext context,
-                      IInterceptor.ChainCallback chainCallback) {
+                      DispatchCallback dispatchCallback) {
         this.handles = handles;
         this.chainContext = context;
-        this.chainCallback = chainCallback;
+        this.dispatchCallback = dispatchCallback;
     }
 
     @Override
-    public ChainContext chainContext() {
+    public ChainContext context() {
         return chainContext;
     }
 
     @Override
-    public IInterceptor.ChainCallback callback() {
-        return chainCallback;
+    public DispatchCallback callback() {
+        return dispatchCallback;
     }
 
     @Override
     public void dispatch() {
         if (chainContext.cancelable.isCanceled()) {
-            chainCallback.onCanceled();
+            dispatchCallback.onCanceled();
             return;
         }
         handles.get(index++).intercept(this);

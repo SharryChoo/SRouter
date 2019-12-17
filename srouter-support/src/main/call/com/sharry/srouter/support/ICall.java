@@ -11,11 +11,12 @@ import androidx.annotation.NonNull;
  */
 public interface ICall {
 
-    ICall DEFAULT = new ICall() {
+    ICall FAILED = new ICall() {
 
         @Override
-        public ICancelable post(@NonNull IInterceptor.ChainCallback callback) {
-            return null;
+        public ICancelable post(@NonNull DispatchCallback callback) {
+            callback.onFailed(new NoRouteFoundException("Cannot find u want target."));
+            return ICancelable.DEFAULT;
         }
 
         @Override
@@ -27,9 +28,9 @@ public interface ICall {
     };
 
     /**
-     * Get response on Callback.(Recommend.)
+     * Get response on LambdaCallback.(Recommend.)
      */
-    ICancelable post(@NonNull IInterceptor.ChainCallback callback);
+    ICancelable post(@NonNull DispatchCallback callback);
 
     /**
      * Adapter ICall to target.

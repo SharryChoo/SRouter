@@ -23,7 +23,7 @@ import io.reactivex.schedulers.Schedulers
 class LoginInterceptor : IInterceptor {
 
     override fun intercept(chain: IInterceptor.Chain) {
-        val chainContext = chain.chainContext()
+        val chainContext = chain.context()
         // 若没有登录, 则先跳转到登录页面
         if (!ModuleConstants.Login.isLogin) {
             SRouter.request(ModuleConstants.Login.NAME, ModuleConstants.Login.LOGIN_ACTIVITY)

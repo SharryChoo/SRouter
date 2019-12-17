@@ -107,7 +107,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     }
 
     /**
-     * Callback received when a permissions request has been completed.
+     * LambdaCallback received when a permissions request has been completed.
      */
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {

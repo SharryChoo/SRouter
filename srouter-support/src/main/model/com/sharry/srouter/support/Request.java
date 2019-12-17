@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.SparseArray;
 
 import androidx.annotation.IntDef;
@@ -33,34 +34,74 @@ public final class Request {
     /**
      * U can get an instance of Request from this method.
      */
-    public static Request create(@NonNull String authority, @NonNull String path) {
-        return new Request(Preconditions.checkNotEmpty(authority), Preconditions.checkNotEmpty(path));
+    static Request create(String authority, String path) {
+        return new Request(
+                TextUtils.isEmpty(authority) ? "" : authority,
+                TextUtils.isEmpty(path) ? "" : path
+        );
     }
 
     /**
      * U can instant Request by parse URL
      */
-    public static Request parseFrom(@NonNull String url) {
-        Uri uri = Uri.parse(Preconditions.checkNotEmpty(url));
-        // Fetch authority.
-        String authority = Preconditions.checkNotEmpty(uri.getAuthority());
-        // Fetch path and remove '/' at start.
-        String path = Preconditions.checkNotEmpty(uri.getPath()).substring(1);
+    static Request parseUri(String uriStr) {
         // Fetch query items.
-        Bundle datum = new Bundle();
-        Bundle urlDatum = new Bundle();
-        for (String queryParameterName : uri.getQueryParameterNames()) {
-            String key = queryParameterName;
-            String value = uri.getQueryParameter(key);
-            Logger.d("key is: " + key + ", value is: " + value);
-            urlDatum.putString(key, value);
+        Request request;
+        try {
+            Uri uri = Uri.parse(TextUtils.isEmpty(uriStr) ? "" : uriStr);
+            // Fetch authority.
+            String authority = Preconditions.checkNotEmpty(uri.getAuthority());
+            // Fetch path and remove '/' at start.
+            String path = Preconditions.checkNotEmpty(uri.getPath()).substring(1);
+            // Fetch query items.
+            Bundle datum = new Bundle();
+            Bundle urlDatum = new Bundle();
+            for (String queryParameterName : uri.getQueryParameterNames()) {
+                String key = queryParameterName;
+                String value = uri.getQueryParameter(key);
+                urlDatum.putString(key, value);
+            }
+            datum.putBundle(Constants.INTENT_EXTRA_URL_DATUM, urlDatum);
+            request = create(authority, path);
+        } catch (Throwable throwable) {
+            Logger.e(throwable.getMessage(), throwable);
+            // Parse url failed.
+            request = Request.create(null, null);
         }
-        datum.putBundle(Constants.INTENT_EXTRA_URL_DATUM, urlDatum);
-        Request request = create(authority, path);
-        request.setDatum(datum);
         return request;
     }
 
+    /**
+     * U can instant Request by parse URL
+     */
+    static Request parseProxyIntent(Intent intent) {
+        Bundle targetInfo;
+        if (intent == null || (targetInfo = intent.getBundleExtra(
+                ProxyIntentBuilder.PROXY_EXTRA_TARGET_INFO)) == null) {
+            return Request.create(null, null);
+        }
+        // Build request
+        Request request;
+        if (targetInfo.containsKey(ProxyIntentBuilder.BUNDLE_EXTRA_URI)) {
+            request = Request.parseUri(targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_URI));
+            // remove key.
+            targetInfo.remove(ProxyIntentBuilder.BUNDLE_EXTRA_URI);
+        } else if (targetInfo.containsKey(targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_AUTHORITY)) &&
+                targetInfo.containsKey(targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_PATH))) {
+            request = Request.create(
+                    targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_AUTHORITY),
+                    targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_PATH)
+            );
+            // remove key.
+            targetInfo.remove(ProxyIntentBuilder.BUNDLE_EXTRA_AUTHORITY);
+            targetInfo.remove(ProxyIntentBuilder.BUNDLE_EXTRA_PATH);
+        } else {
+            request = Request.create(null, null);
+        }
+        // add other.
+        request.setDatum(targetInfo);
+        return request;
+    }
 
     /**
      * Navigation authority
@@ -144,12 +185,12 @@ public final class Request {
         navigation(context, null);
     }
 
-    public void navigation(@Nullable Callback callback) {
-        navigation(null, callback);
+    public void navigation(@Nullable LambdaCallback successCallback) {
+        navigation(null, successCallback);
     }
 
-    public void navigation(@Nullable Context context, @Nullable Callback callback) {
-        SRouter.navigation(context, this, callback);
+    public void navigation(@Nullable Context context, @Nullable LambdaCallback successCallback) {
+        SRouter.navigation(context, this, successCallback);
     }
 
     public ICall newCall() {

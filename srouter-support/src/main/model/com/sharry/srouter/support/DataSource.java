@@ -60,10 +60,6 @@ class DataSource {
 
     static final List<String> GLOBAL_INTERCEPTOR_URIS = new ArrayList<>();
 
-    static final SparseArray<SoftReference<PendingRunnable>> PENDING_RUNNABLES = new SparseArray<>();
-
-    static AtomicInteger sNextPendingRunnableKey = new AtomicInteger(0);
-
     static {
         CALL_ADAPTERS.add(ICallAdapter.DEFAULT);
     }

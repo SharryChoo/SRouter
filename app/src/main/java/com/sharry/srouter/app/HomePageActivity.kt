@@ -55,8 +55,4 @@ class HomePageActivity : AppCompatActivity() {
 
     }
 
-    private fun initData() {
-
-    }
-
 }

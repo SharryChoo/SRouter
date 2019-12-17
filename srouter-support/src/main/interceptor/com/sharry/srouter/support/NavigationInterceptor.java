@@ -21,7 +21,7 @@ class NavigationInterceptor implements IInterceptor {
 
     @Override
     public void intercept(@NonNull final Chain chain) {
-        ChainContext context = chain.chainContext();
+        ChainContext context = chain.context();
         Request request = context.request;
         Response response = new Response(request);
         RouteMeta meta = request.getRouteMeta();
@@ -85,7 +85,7 @@ class NavigationInterceptor implements IInterceptor {
      * Perform launch target activity.
      */
     private void performLaunchActivity(Context context, Intent intent, Request request,
-                                       Response response, IInterceptor.ChainCallback callback) {
+                                       Response response, DispatchCallback callback) {
         // Inject flags.
         if (Request.NON_FLAGS != request.getActivityFlags()) {
             intent.setFlags(request.getActivityFlags());
@@ -114,8 +114,8 @@ class NavigationInterceptor implements IInterceptor {
                                                final int requestCode,
                                                final Bundle activityOptions,
                                                final Response response,
-                                               final IInterceptor.ChainCallback callback) {
-        // Observer activity onActivityResult Callback.
+                                               final DispatchCallback callback) {
+        // Observer activity onActivityResult LambdaCallback.
         final RouterCallbackFragment callbackFragment = RouterCallbackFragment.getInstance(activity);
         callbackFragment.setCallback(new RouterCallbackFragment.Callback() {
             @Override
@@ -136,7 +136,7 @@ class NavigationInterceptor implements IInterceptor {
                                       Intent intent,
                                       Bundle activityOptions,
                                       Response response,
-                                      IInterceptor.ChainCallback callback) {
+                                      DispatchCallback callback) {
         context.startActivity(intent, activityOptions);
         callback.onSuccess(response);
     }

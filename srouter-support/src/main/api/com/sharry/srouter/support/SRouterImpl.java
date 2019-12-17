@@ -1,17 +1,27 @@
 package com.sharry.srouter.support;
 
 import android.app.Application;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
-import java.lang.ref.SoftReference;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import static com.sharry.srouter.support.Constants.DOT;
+import static com.sharry.srouter.support.Constants.NAME_OF_INTERCEPTOR;
+import static com.sharry.srouter.support.Constants.NAME_OF_ROUTERS;
+import static com.sharry.srouter.support.Constants.PACKAGE_OF_GENERATE_FILE;
+import static com.sharry.srouter.support.Constants.SEPARATOR;
+import static com.sharry.srouter.support.Constants.SUFFIX_OF_QUERY_BINDING;
 
 /**
  * Route feature's implementor.
@@ -24,19 +34,52 @@ class SRouterImpl {
 
     static Context sAppContext;
 
+    // /////////////////////////////////// initialize /////////////////////////////////////////
+
     static synchronized boolean init(Application application) {
         sAppContext = application;
         Logger.i("Route initialize success.");
         return true;
     }
 
+    static void isDebug(boolean debug) {
+        Logger.isDebug(debug);
+    }
+
+    // /////////////////////////////////// Module config /////////////////////////////////////////
+
     static void registerModules(String[] names) {
-        LogisticsCenter.registerModules(names);
+        for (String moduleName : names) {
+            // 加载根元素(com.sharry.srouter.generate.SRouter$$Routes$$XXX)
+            String routesClassName = PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_ROUTERS + SEPARATOR + moduleName;
+            try {
+                IRoute route = (IRoute) (Class.forName(routesClassName).getConstructor().newInstance());
+                route.loadInto(DataSource.TABLE_ROUTES);
+            } catch (Exception e) {
+                Logger.e(e.getMessage(), e);
+            }
+            // 加载拦截器标签元素(com.sharry.srouter.generate.SRouter$$Interceptors$$XXX)
+            String interceptorsClassName = PACKAGE_OF_GENERATE_FILE + DOT + NAME_OF_INTERCEPTOR + SEPARATOR + moduleName;
+            try {
+                IRouteInterceptor routeInterceptor = (IRouteInterceptor) (
+                        Class.forName(interceptorsClassName).getConstructor().newInstance());
+                routeInterceptor.loadInto(DataSource.TABLE_ROUTES_INTERCEPTORS);
+            } catch (Exception e) {
+                Logger.e(e.getMessage());
+            }
+        }
     }
 
     static void unregisterModules(String[] names) {
-        LogisticsCenter.unregisterModules(names);
+        for (String moduleName : names) {
+            Map<String, RouteMeta> metas = DataSource.TABLE_ROUTES.remove(moduleName);
+            if (metas == null) {
+                Logger.i("Cannot find this module: " + moduleName);
+            }
+        }
     }
+
+    // /////////////////////////////////// Interceptor /////////////////////////////////////////
 
     static void addGlobalInterceptor(IInterceptor interceptor) {
         DataSource.GLOBAL_INTERCEPTORS.add(interceptor);
@@ -46,36 +89,107 @@ class SRouterImpl {
         DataSource.GLOBAL_INTERCEPTOR_URIS.add(interceptorUri);
     }
 
+    // /////////////////////////////////// Adapter /////////////////////////////////////////
+
     static void addCallAdapter(ICallAdapter adapter) {
-        LogisticsCenter.addCallAdapter(adapter);
+        DataSource.CALL_ADAPTERS.add(adapter);
     }
 
-    static void isDebug(boolean debug) {
-        Logger.isDebug(debug);
-    }
+    // /////////////////////////////////// Query /////////////////////////////////////////
 
     static <T> void bindQuery(T binder) {
-        LogisticsCenter.bindQuery(binder);
+        Class binderClass = binder.getClass();
+        String queryBindingClassName = binderClass.getName() + SEPARATOR + SUFFIX_OF_QUERY_BINDING;
+        try {
+            // 1. fetch constructor from cache.
+            Class queryBindingClass = Class.forName(queryBindingClassName);
+            Constructor constructor = DataSource.QUERY_BINDING_CONSTRUCTORS.get(queryBindingClassName);
+            if (constructor == null) {
+                constructor = queryBindingClass.getConstructor();
+                DataSource.QUERY_BINDING_CONSTRUCTORS.put(queryBindingClassName, constructor);
+            }
+            // 2. instantiate queryBinding.
+            IQueryBinding queryBinding = (IQueryBinding) constructor.newInstance();
+            // 3. fetch method from cache
+            Method bindMethod = DataSource.QUERY_BINDING_METHOD_BINDS.get(queryBindingClassName);
+            if (bindMethod == null) {
+                bindMethod = queryBindingClass.getMethod(Constants.METHOD_NAME_OF_BIND, binderClass);
+                DataSource.QUERY_BINDING_METHOD_BINDS.put(queryBindingClassName, bindMethod);
+            }
+            // 4. invoke bind method.
+            bindMethod.invoke(queryBinding, binder);
+        } catch (Throwable e) {
+            Logger.e(e.getMessage() == null ? "" : e.getMessage(), e);
+        }
     }
+
+    // /////////////////////////////////// Request build /////////////////////////////////////////
 
     static Request request(String authority, String path) {
         return Request.create(authority, path);
     }
 
-    static Request request(String url) {
-        return Request.parseFrom(url);
+    static Request request(String uri) {
+        return Request.parseUri(uri);
     }
 
+    static Request request(Intent proxyIntent) {
+        return Request.parseProxyIntent(proxyIntent);
+    }
+
+    @SuppressWarnings("unchecked")
     public static <T> T createApi(Class<T> templateClass) {
-        return LogisticsCenter.createApi(templateClass);
+        if (!templateClass.isInterface()) {
+            throw new UnsupportedOperationException("Please ensure the template class "
+                    + templateClass.getSimpleName() + " is interface");
+        }
+        return (T) Proxy.newProxyInstance(
+                templateClass.getClassLoader(),
+                new Class[]{templateClass},
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        Request request = RouterApiUtil.parseMethod(method, args);
+                        if (request == null) {
+                            Logger.e("Cannot parse method to SRouter Request, method is: " + method.getName());
+                            return null;
+                        }
+                        // Get an instance of ICall.
+                        ICall call = null;
+                        if (args != null) {
+                            for (Object arg : args) {
+                                if (arg instanceof Context) {
+                                    call = SRouter.newCall((Context) arg, request);
+                                    break;
+                                }
+                            }
+                        }
+                        if (call == null) {
+                            call = SRouter.newCall(null, request);
+                        }
+                        // adapt 2 target type.
+                        return call.adaptTo(method.getReturnType());
+                    }
+                }
+        );
     }
 
-    static void navigation(final Context context, final Request request, final Callback callback) {
-        newCall(context, request).post(new IInterceptor.ChainCallback() {
+
+    // /////////////////////////////////// ProxyIntentBuilder /////////////////////////////////////////
+
+    static ProxyIntentBuilder proxyIntentBuilder() {
+        return new ProxyIntentBuilder();
+    }
+
+    // /////////////////////////////////// Start Navigation /////////////////////////////////////////
+
+    static void navigation(final Context context, final Request request, final LambdaCallback successCallback) {
+        newCall(context, request).post(new DispatchCallback() {
+
             @Override
             public void onSuccess(@NonNull Response response) {
-                if (callback != null) {
-                    callback.onSuccess(response);
+                if (successCallback != null) {
+                    successCallback.onDispatched(response);
                 }
             }
 
@@ -95,10 +209,10 @@ class SRouterImpl {
     static ICall newCall(final Context context, final Request request) {
         // 1. completion request.
         try {
-            LogisticsCenter.completion(request);
+            completion(request);
         } catch (NoRouteFoundException e) {
             Logger.e(e.getMessage(), e);
-            return ICall.DEFAULT;
+            return ICall.FAILED;
         }
         // 2. completion interceptors.
         final List<IInterceptor> interceptors = new ArrayList<>();
@@ -121,21 +235,8 @@ class SRouterImpl {
         return RealCall.create(null == context ? sAppContext : context, request, interceptors);
     }
 
-    @NonNull
-    static PendingIntent newPendingIntent(int flag, PendingRunnable pendingRunnable) {
-        // build key for the pendingRunnable
-        int key = DataSource.sNextPendingRunnableKey.addAndGet(1);
-        // add to cache
-        DataSource.PENDING_RUNNABLES.put(key, new SoftReference<PendingRunnable>(pendingRunnable));
-        // build intent for PendingIntent
-        Intent intent = new Intent(sAppContext, PendingIntentActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(PendingIntentActivity.EXTRA_INTENT_KEY, key);
-        return PendingIntent.getActivity(sAppContext, -1, intent, flag);
-    }
-
     private static void instantiateAndSortInterceptorUris(List<String> sourceSet, List<IInterceptor> destSet) {
-        // 3.1 Sort interceptor URIs by priority.
+        // 1. Sort interceptor URIs by priority.
         final List<InterceptorMeta> orderedMetas = new LinkedList<>();
         for (String value : sourceSet) {
             InterceptorMeta meta = DataSource.TABLE_ROUTES_INTERCEPTORS.get(value);
@@ -153,7 +254,7 @@ class SRouterImpl {
             }
             orderedMetas.add(insertIndex, meta);
         }
-        // 3.2 Put sorted metas to interceptors.
+        // 2. Put sorted metas to interceptors.
         for (InterceptorMeta meta : orderedMetas) {
             try {
                 IInterceptor interceptor = (IInterceptor) meta.getInterceptorClass().newInstance();
@@ -166,4 +267,27 @@ class SRouterImpl {
             }
         }
     }
+
+    /**
+     * Fetch data from warehouse and then inject to request.
+     */
+    private static void completion(Request request) throws NoRouteFoundException {
+        // Fetch authority.
+        String authority = request.getAuthority();
+        Map<String, RouteMeta> routeMetas = DataSource.TABLE_ROUTES.get(authority);
+        if (null == routeMetas) {
+            throw new NoRouteFoundException("SRouter cannot found authority: " + authority);
+        }
+        // Fetch path.
+        String path = request.getPath();
+        RouteMeta routeMeta = routeMetas.get(path);
+        if (null == routeMeta) {
+            throw new NoRouteFoundException("SRouter cannot found path: " + path);
+        }
+        // Load data to request before navigation
+        request.setRouteMeta(routeMeta);
+        // If Type is SERVICE, the request cannot be intercepted.
+        request.setGreenChannel(routeMeta.getType() == RouteMeta.Type.SERVICE);
+    }
+
 }

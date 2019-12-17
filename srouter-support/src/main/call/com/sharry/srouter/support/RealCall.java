@@ -40,7 +40,7 @@ public class RealCall implements ICall {
     }
 
     @Override
-    public ICancelable post(@NonNull final IInterceptor.ChainCallback callback) {
+    public ICancelable post(@NonNull final DispatchCallback callback) {
         Preconditions.checkNotNull(callback);
         IScheduler scheduler = SchedulerFactory.create(MAIN_THREAD);
         final ICancelable cancelable = new RealCancelable();

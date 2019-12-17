@@ -9,6 +9,18 @@ package com.sharry.srouter.support;
  */
 public interface ICancelable {
 
+    ICancelable DEFAULT = new ICancelable() {
+        @Override
+        public void cancel() {
+
+        }
+
+        @Override
+        public boolean isCanceled() {
+            return false;
+        }
+    };
+
     /**
      * Cancel the {@link ICall}.
      */

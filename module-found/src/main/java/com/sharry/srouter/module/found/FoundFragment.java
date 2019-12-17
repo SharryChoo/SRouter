@@ -1,12 +1,12 @@
 package com.sharry.srouter.module.found;
 
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,14 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import com.sharry.srouter.annotation.compiler.Query;
 import com.sharry.srouter.annotation.compiler.Route;
 import com.sharry.srouter.module.base.ModuleConstants;
-import com.sharry.srouter.support.PendingRunnable;
 import com.sharry.srouter.support.SRouter;
 
 
@@ -72,22 +70,23 @@ public class FoundFragment extends Fragment {
     private static final String CHANNEL_NAME = "通知弹窗";
 
     /**
-     * 该对象会添加到 static 集合, 虽然使用软引用保证 OOM 之前会被释放, 但生命周期依旧比较长
+     * 方案 1
+     * 交由用户指定一个 Hook Activity, 然后将参数通过 Intent 传入, 最终通过路由跳转
+     * 用户使用成本稍高, 需要在 HookActivity 中接收我们传入的参数, 没有内存泄漏的风险
      * <p>
-     * 请尽量不与外界 Context 关联, 减少内存泄漏
+     * 方案 2
+     * 自定义 Hook Activity, 使用静态集合记录用户的 PendingRunnable, PendingIntent 触发时, 在 HookActivity 中执行这个 PendingRunnable
+     * 优点: 使用方便, 用户对自己的操作可见
+     * 缺点:
+     * 因为使用的静态集合, 若是通知被移除, 则会导致 PendingRunnable 常驻在静态缓存中, 即使使用 SoftReference 依旧会导致 PendingRunnable 生存周期较长
+     * 进程被杀, 意味着静态集合被清空, 若是通知尚在, 点击便是无意义的操作
      */
-    public static class MyPendingRunnable implements PendingRunnable {
-
-        @Override
-        public void run(@NonNull Activity hookActivity) {
-            SRouter.request("SRouter://login/login_activity?email=123456@Gmail.com&password=123456")
-                    .navigation();
-            hookActivity.finish();
-        }
-
-    }
-
     private void sendNotification() {
+        Intent proxyIntent = SRouter.proxyIntentBuilder()
+                .uri("SRouter://login/login_activity?email=123456@Gmail.com&password=123456")
+                .build();
+        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(),
+                0, proxyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         // 构建 Notification
         Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -99,9 +98,7 @@ public class FoundFragment extends Fragment {
                 .setContentTitle("SRouter pendingIntent 构建测试")
                 .setContentText("测试路由构建 PendingIntent")
                 // 构建 PendingIntent
-                .setContentIntent(
-                        SRouter.newPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT, new MyPendingRunnable())
-                )
+                .setContentIntent(pendingIntent)
                 .build();
         int notifyId = 566;
         getNotificationManager().notify(notifyId, notification);
