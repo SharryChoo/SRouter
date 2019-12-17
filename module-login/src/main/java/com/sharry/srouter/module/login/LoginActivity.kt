@@ -42,16 +42,13 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      */
     private var mAuthTask: UserLoginTask? = null
 
+    @JvmField
     @Query(key = "email")
-    lateinit var emailContent: String
+    var emailContent: String? = ""
 
+    @JvmField
     @Query(key = "password")
-    lateinit var passwordContent: String
-
-    init {
-        emailContent = ""
-        passwordContent = ""
-    }
+    var passwordContent: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,18 +1,14 @@
 package com.sharry.srouter.support;
 
-import android.util.SparseArray;
-
 import com.sharry.srouter.annotation.compiler.Route;
 import com.sharry.srouter.annotation.compiler.RouteInterceptor;
 
-import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Route data repository.
@@ -21,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version 1.0
  * @since 2018/8/13
  */
-class DataSource {
+final class DataSource {
 
     /**
      * Key is path of the route request.{@link Route#path()}

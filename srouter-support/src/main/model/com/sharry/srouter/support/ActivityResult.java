@@ -10,7 +10,7 @@ import android.content.Intent;
  * @version 1.0
  * @since 5/6/2019 3:03 PM
  */
-public class ActivityResult {
+public final class ActivityResult {
 
     public final int requestCode;
     public final int resultCode;

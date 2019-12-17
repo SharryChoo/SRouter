@@ -59,10 +59,12 @@ public final class Request {
             for (String queryParameterName : uri.getQueryParameterNames()) {
                 String key = queryParameterName;
                 String value = uri.getQueryParameter(key);
+//                Log.e("TAG", "key = " + key + ", value = " + value);
                 urlDatum.putString(key, value);
             }
             datum.putBundle(Constants.INTENT_EXTRA_URL_DATUM, urlDatum);
             request = create(authority, path);
+            request.setDatum(datum);
         } catch (Throwable throwable) {
             Logger.e(throwable.getMessage(), throwable);
             // Parse url failed.
@@ -99,7 +101,7 @@ public final class Request {
             request = Request.create(null, null);
         }
         // add other.
-        request.setDatum(targetInfo);
+        request.addDatum(targetInfo);
         return request;
     }
 
@@ -306,9 +308,21 @@ public final class Request {
     /**
      * BE ATTENTION TO THIS METHOD WAS <P>SET, NOT ADD!</P>
      */
-    public Request setDatum(@Nullable Bundle datum) {
-        if (datum != null) {
-            this.datum = datum;
+    public Request setDatum(@Nullable Bundle newDatum) {
+        if (newDatum != null) {
+            this.datum = newDatum;
+        }
+        return this;
+    }
+
+    /**
+     * BE ATTENTION TO THIS METHOD WAS <P>ADD, NOT SET!</P>
+     */
+    public Request addDatum(@Nullable Bundle newDatum) {
+        if (datum == null) {
+            datum = newDatum;
+        } else if (newDatum != null) {
+            datum.putAll(newDatum);
         }
         return this;
     }

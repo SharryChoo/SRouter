@@ -1,6 +1,5 @@
 package com.sharry.srouter.support;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
@@ -12,13 +11,12 @@ import androidx.annotation.NonNull;
  * @version 1.0
  * @since 2/20/2019 10:41 AM
  */
-public class Response {
+final public class Response {
 
     private final Request request;
     private IService service;
     private Object fragment;
     private ActivityResult activityResult;
-    private PendingIntent pendingIntent;
 
     public Response(@NonNull Request request) {
         this.request = request;
@@ -59,14 +57,6 @@ public class Response {
         return service;
     }
 
-
-    /**
-     * Get An PendingIntent that route fetched.
-     */
-    public PendingIntent getPendingIntent() {
-        return pendingIntent;
-    }
-
     public void setFragment(Object fragment) {
         this.fragment = fragment;
     }
@@ -77,10 +67,6 @@ public class Response {
 
     public void setActivityResult(int requestCode, int resultCode, Intent data) {
         activityResult = ActivityResult.create(requestCode, resultCode, data);
-    }
-
-    public void setPendingIntent(PendingIntent pendingIntent) {
-        this.pendingIntent = pendingIntent;
     }
 
 }

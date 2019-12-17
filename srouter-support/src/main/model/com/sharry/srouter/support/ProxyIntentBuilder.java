@@ -48,8 +48,8 @@ public class ProxyIntentBuilder {
     /**
      * Add other data.
      */
-    public ProxyIntentBuilder putExtra(Bundle bundle) {
-        mTargetInfo.putAll(bundle);
+    public ProxyIntentBuilder addExtra(Bundle newDatum) {
+        mTargetInfo.putAll(newDatum);
         return this;
     }
 
