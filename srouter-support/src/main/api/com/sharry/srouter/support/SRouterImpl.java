@@ -3,6 +3,7 @@ package com.sharry.srouter.support;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
@@ -97,7 +98,7 @@ class SRouterImpl {
 
     // /////////////////////////////////// Query /////////////////////////////////////////
 
-    static <T> void bindQuery(T binder) {
+    static <T> void bindQuery(T binder, Bundle args) {
         Class binderClass = binder.getClass();
         String queryBindingClassName = binderClass.getName() + SEPARATOR + SUFFIX_OF_QUERY_BINDING;
         try {
@@ -110,14 +111,8 @@ class SRouterImpl {
             }
             // 2. instantiate queryBinding.
             IQueryBinding queryBinding = (IQueryBinding) constructor.newInstance();
-            // 3. fetch method from cache
-            Method bindMethod = DataSource.QUERY_BINDING_METHOD_BINDS.get(queryBindingClassName);
-            if (bindMethod == null) {
-                bindMethod = queryBindingClass.getMethod(Constants.METHOD_NAME_OF_BIND, binderClass);
-                DataSource.QUERY_BINDING_METHOD_BINDS.put(queryBindingClassName, bindMethod);
-            }
-            // 4. invoke bind method.
-            bindMethod.invoke(queryBinding, binder);
+            // 3. invoke bind method.
+            queryBinding.bind(binder, args);
         } catch (Throwable e) {
             Logger.e(e.getMessage() == null ? "" : e.getMessage(), e);
         }

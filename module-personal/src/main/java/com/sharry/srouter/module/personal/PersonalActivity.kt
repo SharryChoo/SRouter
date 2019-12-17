@@ -1,5 +1,6 @@
 package com.sharry.srouter.module.personal
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.sharry.srouter.annotation.compiler.Query
@@ -23,14 +24,22 @@ import kotlinx.android.synthetic.main.personal_activity_personal.*
 )
 class PersonalActivity : AppCompatActivity() {
 
+    @JvmField
     @Query(key = "content")
-    lateinit var content: String
+    var content: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.personal_activity_personal)
-        SRouter.bindQuery(this)
+        SRouter.bindQuery(this, intent.extras)
         tvPersonal.text = "${content} personal center"
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let {
+            SRouter.bindQuery(this, it.extras)
+        }
     }
 
 }

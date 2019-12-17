@@ -3,6 +3,7 @@ package com.sharry.srouter.support;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -118,12 +119,14 @@ public class SRouter {
      *
      * @param binder The intent holder.
      */
-    public static <T> void bindQuery(@NonNull T binder) {
+    public static <T> void bindQuery(@Nullable T binder, @Nullable Bundle args) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
-        Preconditions.checkNotNull(binder);
-        SRouterImpl.bindQuery(binder);
+        if (binder == null || args == null) {
+            return;
+        }
+        SRouterImpl.bindQuery(binder, args);
     }
 
     /**

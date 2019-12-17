@@ -46,7 +46,7 @@ public class FoundFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SRouter.bindQuery(this);
+        SRouter.bindQuery(this, getArguments());
     }
 
     @Override

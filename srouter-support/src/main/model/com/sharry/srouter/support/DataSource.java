@@ -45,13 +45,6 @@ final class DataSource {
      */
     static final Map<String, Constructor> QUERY_BINDING_CONSTRUCTORS = new HashMap<>();
 
-    /**
-     * Key is name of Class<XXX$$QueryBinding>
-     * <p>
-     * The key mapper special value is  <method> bind </method> of the class.
-     */
-    static final Map<String, Method> QUERY_BINDING_METHOD_BINDS = new HashMap<>();
-
     static final List<IInterceptor> GLOBAL_INTERCEPTORS = new ArrayList<>();
 
     static final List<String> GLOBAL_INTERCEPTOR_URIS = new ArrayList<>();

@@ -1,5 +1,7 @@
 package com.sharry.srouter.support;
 
+import android.os.Bundle;
+
 /**
  * 路由 query 注入模板定义
  *
@@ -9,6 +11,6 @@ package com.sharry.srouter.support;
  */
 public interface IQueryBinding<T> {
 
-    void bind(T target);
+    void bind(T target, Bundle data);
 
 }

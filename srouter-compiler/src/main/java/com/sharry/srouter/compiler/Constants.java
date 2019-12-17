@@ -79,5 +79,6 @@ class Constants {
     static final String SIMPLE_NAME_IQUERY_BINDING = "IQueryBinding";
     static final String METHOD_BIND = "bind";
     static final String METHOD_BIND_PARAMETER_NAME_TARGET = "target";
+    static final String METHOD_BIND_PARAMETER_NAME_DATA = "data";
 
 }

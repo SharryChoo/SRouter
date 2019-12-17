@@ -88,27 +88,18 @@ public class QueryCompiler extends BaseCompiler {
 
         // 1. Create method.
         /*
-           public void bind(FoundActivity target) {
+           public void bind(FoundActivity target, Bundle data) {
                ......
            }
         */
+        ClassName bundleClassName = ClassName.bestGuess(Constants.CLASS_NAME_BUNDLE);
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(Constants.METHOD_BIND)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(originClassName, Constants.METHOD_BIND_PARAMETER_NAME_TARGET);
+                .addParameter(originClassName, Constants.METHOD_BIND_PARAMETER_NAME_TARGET)
+                .addParameter(bundleClassName, Constants.METHOD_BIND_PARAMETER_NAME_DATA);
 
         // 2. Completion method.
-         /*
-            Bundle data = target.getArguments();
-         */
-        ClassName bundleClassName = ClassName.bestGuess(Constants.CLASS_NAME_BUNDLE);
-        if (isActivity) {
-            methodBuilder.addStatement("$T data = " + Constants.METHOD_BIND_PARAMETER_NAME_TARGET
-                    + ".getIntent().getExtras()", bundleClassName);
-        } else {
-            methodBuilder.addStatement("$T data = " + Constants.METHOD_BIND_PARAMETER_NAME_TARGET
-                    + ".getArguments()", bundleClassName);
-        }
         /*
            Bundle urlDatum = data.getBundle(Constants.INTENT_EXTRA_URL_DATUM)
          */

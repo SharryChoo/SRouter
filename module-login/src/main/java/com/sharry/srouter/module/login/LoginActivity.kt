@@ -7,6 +7,7 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.app.LoaderManager.LoaderCallbacks
 import android.content.CursorLoader
+import android.content.Intent
 import android.content.Loader
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -44,18 +45,18 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
 
     @JvmField
     @Query(key = "email")
-    var emailContent: String? = ""
+    var emailContent: String = ""
 
     @JvmField
     @Query(key = "password")
-    var passwordContent: String? = ""
+    var passwordContent: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_activity_login)
 
         // 注入参数
-        SRouter.bindQuery(this)
+        SRouter.bindQuery(this, intent.extras)
         email.setText(emailContent)
         password.setText(passwordContent)
 
@@ -70,6 +71,13 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         })
 
         email_sign_in_button.setOnClickListener { attemptLogin() }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let {
+            SRouter.bindQuery(this, it.extras)
+        }
     }
 
     override fun finish() {
