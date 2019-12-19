@@ -13,6 +13,7 @@ SRouter 是一款对 Android 端的**提供渐进式组件化服务的路由框�
 - **支持回调获取目标页面的 ActivityResult**
 - **支持通过路由获取 原生/AppCompat/AndroidX 包下的 Fragment**
 - **支持添加寻址回调适配器, 可实现与 RxJava 无缝衔接**
+- **支持为 PendingIntent 构建转发 Intent, 可通过路由转发到目标页面**
 
 ## 安装指南
 ![New Version](https://jitpack.io/v/SharryChoo/SRouter.svg)
