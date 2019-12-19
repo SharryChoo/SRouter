@@ -128,8 +128,8 @@ class SRouterImpl {
         return Request.parseUri(uri);
     }
 
-    static Request request(Intent proxyIntent) {
-        return Request.parseProxyIntent(proxyIntent);
+    static Request request(Intent forwardIntent) {
+        return Request.parseForwardIntent(forwardIntent);
     }
 
     @SuppressWarnings("unchecked")
@@ -170,10 +170,10 @@ class SRouterImpl {
     }
 
 
-    // /////////////////////////////////// ProxyIntentBuilder /////////////////////////////////////////
+    // /////////////////////////////////// ForwardIntentBuilder /////////////////////////////////////////
 
-    static ProxyIntentBuilder proxyIntentBuilder() {
-        return new ProxyIntentBuilder();
+    static ForwardIntentBuilder forwardIntentBuilder() {
+        return new ForwardIntentBuilder();
     }
 
     // /////////////////////////////////// Start Navigation /////////////////////////////////////////

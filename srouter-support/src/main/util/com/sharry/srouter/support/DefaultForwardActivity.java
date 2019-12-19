@@ -8,11 +8,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
+ * The default forward activity to forward route request.
+ *
  * @author Sharry <a href="sharrychoochn@gmail.com">Contact me.</a>
  * @version 1.0
  * @since 2019-12-16
  */
-public final class DefaultProxyActivity extends Activity {
+public final class DefaultForwardActivity extends Activity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

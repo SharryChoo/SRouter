@@ -76,27 +76,27 @@ public final class Request {
     /**
      * U can instant Request by parse URL
      */
-    static Request parseProxyIntent(Intent intent) {
+    static Request parseForwardIntent(Intent forwardIntent) {
         Bundle targetInfo;
-        if (intent == null || (targetInfo = intent.getBundleExtra(
-                ProxyIntentBuilder.PROXY_EXTRA_TARGET_INFO)) == null) {
+        if (forwardIntent == null || (targetInfo = forwardIntent.getBundleExtra(
+                ForwardIntentBuilder.EXTRA_TARGET_INFO)) == null) {
             return Request.create(null, null);
         }
         // Build request
         Request request;
-        if (targetInfo.containsKey(ProxyIntentBuilder.BUNDLE_EXTRA_URI)) {
-            request = Request.parseUri(targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_URI));
+        if (targetInfo.containsKey(ForwardIntentBuilder.BUNDLE_EXTRA_URI)) {
+            request = Request.parseUri(targetInfo.getString(ForwardIntentBuilder.BUNDLE_EXTRA_URI));
             // remove key.
-            targetInfo.remove(ProxyIntentBuilder.BUNDLE_EXTRA_URI);
-        } else if (targetInfo.containsKey(targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_AUTHORITY)) &&
-                targetInfo.containsKey(targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_PATH))) {
+            targetInfo.remove(ForwardIntentBuilder.BUNDLE_EXTRA_URI);
+        } else if (targetInfo.containsKey(targetInfo.getString(ForwardIntentBuilder.BUNDLE_EXTRA_AUTHORITY)) &&
+                targetInfo.containsKey(targetInfo.getString(ForwardIntentBuilder.BUNDLE_EXTRA_PATH))) {
             request = Request.create(
-                    targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_AUTHORITY),
-                    targetInfo.getString(ProxyIntentBuilder.BUNDLE_EXTRA_PATH)
+                    targetInfo.getString(ForwardIntentBuilder.BUNDLE_EXTRA_AUTHORITY),
+                    targetInfo.getString(ForwardIntentBuilder.BUNDLE_EXTRA_PATH)
             );
             // remove key.
-            targetInfo.remove(ProxyIntentBuilder.BUNDLE_EXTRA_AUTHORITY);
-            targetInfo.remove(ProxyIntentBuilder.BUNDLE_EXTRA_PATH);
+            targetInfo.remove(ForwardIntentBuilder.BUNDLE_EXTRA_AUTHORITY);
+            targetInfo.remove(ForwardIntentBuilder.BUNDLE_EXTRA_PATH);
         } else {
             request = Request.create(null, null);
         }

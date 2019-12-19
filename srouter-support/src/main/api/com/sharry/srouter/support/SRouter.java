@@ -158,19 +158,19 @@ public class SRouter {
      * Build router navigation path.
      */
     @NonNull
-    public static Request request(@Nullable Intent proxyIntent) {
+    public static Request request(@Nullable Intent forwardIntent) {
         if (!sHasInit) {
             throw new RouteUninitializedException();
         }
-        return SRouterImpl.request(proxyIntent);
+        return SRouterImpl.request(forwardIntent);
     }
 
     /**
-     * Create an instance of ProxyIntentBuilder
+     * Create an instance of ForwardIntentBuilder
      */
     @NonNull
-    public static ProxyIntentBuilder proxyIntentBuilder() {
-        return SRouterImpl.proxyIntentBuilder();
+    public static ForwardIntentBuilder forwardIntentBuilder() {
+        return SRouterImpl.forwardIntentBuilder();
     }
 
     /**

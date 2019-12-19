@@ -82,11 +82,11 @@ public class FoundFragment extends Fragment {
      * 进程被杀, 意味着静态集合被清空, 若是通知尚在, 点击便是无意义的操作
      */
     private void sendNotification() {
-        Intent proxyIntent = SRouter.proxyIntentBuilder()
+        Intent forwardIntent = SRouter.forwardIntentBuilder()
                 .uri("SRouter://login/login_activity?email=123456@Gmail.com&password=123456")
                 .build();
         PendingIntent pendingIntent = PendingIntent.getActivity(getContext(),
-                0, proxyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                0, forwardIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         // 构建 Notification
         Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
