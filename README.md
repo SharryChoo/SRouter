@@ -44,7 +44,7 @@ dependencies {
 
 #### Java module
 ```
-apply plugin: 'com.android.library'
+apply com.sharry.srouter.plugin: 'com.android.library'
 
 android {
     ......
@@ -70,10 +70,10 @@ dependencies {
 
 #### Kotlin module
 ```
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+apply com.sharry.srouter.plugin: 'com.android.library'
+apply com.sharry.srouter.plugin: 'kotlin-android'
+apply com.sharry.srouter.plugin: 'kotlin-android-extensions'
+apply com.sharry.srouter.plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion

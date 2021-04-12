@@ -5,7 +5,6 @@ import com.android.build.gradle.internal.pipeline.TransformManager
 
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
-import com.sharry.srouter.plugin.util.Logger
 
 /**
  * 用来处理文件扫描的 Base Transform
@@ -21,7 +20,7 @@ abstract class BaseFileScanTransform extends Transform {
     }
 
     /**
-     * The plugin will scan all classes in the project
+     * The com.sharry.srouter.plugin will scan all classes in the project
      * @return
      */
     @Override

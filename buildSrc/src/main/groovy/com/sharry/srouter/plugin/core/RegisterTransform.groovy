@@ -3,14 +3,12 @@ package com.sharry.srouter.plugin.core
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.sharry.srouter.plugin.base.BaseFileScanTransform
-import com.sharry.srouter.plugin.base.CodeGenerator
 import com.sharry.srouter.plugin.util.ScanSetting
+import jdk.internal.org.objectweb.asm.ClassReader
+import jdk.internal.org.objectweb.asm.ClassVisitor
+import jdk.internal.org.objectweb.asm.ClassWriter
+import jdk.internal.org.objectweb.asm.Opcodes
 import org.gradle.api.Project
-import com.sharry.srouter.plugin.util.Logger
-import org.jetbrains.org.objectweb.asm.ClassReader
-import org.jetbrains.org.objectweb.asm.ClassVisitor
-import org.jetbrains.org.objectweb.asm.ClassWriter
-import org.jetbrains.org.objectweb.asm.Opcodes
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -49,7 +47,7 @@ class RegisterTransform extends BaseFileScanTransform {
     }
 
     /**
-     * The plugin will scan all classes in the project
+     * The com.sharry.srouter.plugin will scan all classes in the project
      * @return
      */
     @Override
