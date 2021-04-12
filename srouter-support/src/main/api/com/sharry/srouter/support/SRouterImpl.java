@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -48,6 +49,40 @@ class SRouterImpl {
     }
 
     // /////////////////////////////////// Module config /////////////////////////////////////////
+
+    /**
+     * AMS inflate method.
+     */
+    static void loadRouterMap() {
+        // AMS write start.
+        // register(com.sharry.srouter.generate.SRouter$$Routes$$XXX)
+        // register(com.sharry.srouter.generate.SRouter$$Interceptors$$XXX)
+        // AMS write end.
+    }
+
+    /**
+     * register by class name
+     * Sacrificing a bit of efficiency to solve
+     * the problem that the main dex file size is too large
+     */
+    private static void register(String className) {
+        if (!TextUtils.isEmpty(className)) {
+            try {
+                Class<?> clazz = Class.forName(className);
+                Object obj = clazz.getConstructor().newInstance();
+                if (obj instanceof IRoute) {
+                    ((IRoute) obj).loadInto(DataSource.TABLE_ROUTES);
+                } else if (obj instanceof IRouteInterceptor) {
+                    ((IRouteInterceptor) obj).loadInto(DataSource.TABLE_ROUTES_INTERCEPTORS);
+                } else {
+                    Logger.i("register failed, class name: " + className
+                            + " should implements one of IRouteRoot/IProviderGroup/IInterceptorGroup.");
+                }
+            } catch (Exception e) {
+                Logger.e("register class error:" + className, e);
+            }
+        }
+    }
 
     static void registerModules(String[] names) {
         for (String moduleName : names) {

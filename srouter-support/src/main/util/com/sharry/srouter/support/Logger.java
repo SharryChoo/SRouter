@@ -13,7 +13,7 @@ import java.lang.reflect.Proxy;
  */
 class Logger {
 
-    private static final String TAG_DEFAULT = Logger.class.getSimpleName();
+    private static final String TAG_DEFAULT = "SRouter";
     private static boolean isDebug = false;
     private static final ILoggerEngine REAL_ENGINE = new ILoggerEngine.DefaultEngine();
     private static final ILoggerEngine PROXY_ENGINE = (ILoggerEngine) Proxy.newProxyInstance(
@@ -133,15 +133,7 @@ class Logger {
     }
 
     private static String defaultTag() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        // 获取线程任务栈中深度为 4 的元素信息
-        StackTraceElement log = stackTrace[4];
-        String className = log.getClassName();
-        if (className.isEmpty()) {
-            return TAG_DEFAULT;
-        }
-        // 截取最后一个位置的信息
-        int subIndex = className.lastIndexOf(".") + 1;
-        return className.substring(subIndex);
+        return TAG_DEFAULT;
     }
+
 }
