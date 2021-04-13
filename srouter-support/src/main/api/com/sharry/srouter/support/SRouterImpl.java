@@ -40,8 +40,8 @@ class SRouterImpl {
 
     static synchronized boolean init(Application application) {
         sAppContext = application;
-        Logger.i("Route initialize success.");
         loadRouterMap();
+        Logger.i("Route initialize success.");
         return true;
     }
 
@@ -52,7 +52,7 @@ class SRouterImpl {
     // /////////////////////////////////// Module config /////////////////////////////////////////
 
     /**
-     * AMS inflate method.
+     * AMS auto inflate.
      */
     static void loadRouterMap() {
         // AMS write start.

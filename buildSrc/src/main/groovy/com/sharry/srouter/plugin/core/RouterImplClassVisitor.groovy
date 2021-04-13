@@ -2,11 +2,13 @@ package com.sharry.srouter.plugin.core
 
 import com.sharry.srouter.plugin.base.ClassVisitorFactory
 import com.sharry.srouter.plugin.util.ScanSetting
-import org.objectweb.asm.*
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes
 
 class RouterImplClassVisitor extends ClassVisitor {
 
-    ScanSetting extension
+    final ScanSetting extension
 
     RouterImplClassVisitor(int api, ClassVisitor cv, ScanSetting extension) {
         super(api, cv)
@@ -63,7 +65,7 @@ class RouterImplClassVisitor extends ClassVisitor {
 
     static class Factory implements ClassVisitorFactory {
 
-        ScanSetting extension
+        final ScanSetting extension
 
         Factory(ScanSetting extension) {
             this.extension = extension
@@ -71,8 +73,9 @@ class RouterImplClassVisitor extends ClassVisitor {
 
         @Override
         ClassVisitor create(int api, ClassVisitor cv) {
-            return RouterImplClassVisitor(api, cv, extension)
+            return new RouterImplClassVisitor(api, cv, extension)
         }
+
     }
 
 }

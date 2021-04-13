@@ -85,7 +85,7 @@ class RegisterTransform extends BaseFileScanTransform {
                         CodeGenerator.insertInitCodeTo(
                                 fileContainsGenerateToClass,
                                 ScanSetting.GENERATE_TO_CLASS_FILE_NAME,
-                                RouterImplClassVisitor.Factory(ext)
+                                new RouterImplClassVisitor.Factory(ext)
                         )
                     }
                 }
