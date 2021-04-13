@@ -41,6 +41,7 @@ class SRouterImpl {
     static synchronized boolean init(Application application) {
         sAppContext = application;
         Logger.i("Route initialize success.");
+        loadRouterMap();
         return true;
     }
 

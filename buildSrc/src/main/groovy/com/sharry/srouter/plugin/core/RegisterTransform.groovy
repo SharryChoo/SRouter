@@ -25,8 +25,8 @@ import java.util.jar.JarFile
  */
 class RegisterTransform extends BaseFileScanTransform {
 
-    final Project project
     final ArrayList<ScanSetting> registerList
+    final Project project
     File fileContainsGenerateToClass;
 
     RegisterTransform(Project project, ArrayList<ScanSetting> registerList) {
@@ -70,6 +70,7 @@ class RegisterTransform extends BaseFileScanTransform {
                    boolean isIncremental
     ) throws IOException, TransformException, InterruptedException {
         super.transform(context, inputs, referencedInputs, outputProvider, isIncremental)
+        long startTime = System.currentTimeMillis()
         if (fileContainsGenerateToClass) {
             registerList.each { ext ->
                 Logger.i('Insert register code to file ' + fileContainsGenerateToClass.absolutePath)
@@ -82,17 +83,16 @@ class RegisterTransform extends BaseFileScanTransform {
                     }
                     if (ext != null && !ext.classList.isEmpty()) {
                         CodeGenerator.insertInitCodeTo(
-                                ext,
                                 fileContainsGenerateToClass,
                                 ScanSetting.GENERATE_TO_CLASS_FILE_NAME,
-                                MyClassVisitor.Factory(ext)
+                                RouterImplClassVisitor.Factory(ext)
                         )
                     }
                 }
             }
         }
 
-        Logger.i("Generate code finish, current cost time: " + (System.currentTimeMillis() - startTime) + "ms")
+        Logger.i("Generate code finish, cost time: " + (System.currentTimeMillis() - startTime) + "ms")
     }
 
     @Override
@@ -106,12 +106,14 @@ class RegisterTransform extends BaseFileScanTransform {
                 // 如果是 com/sharry/srouter/generate 这个文件, 则找寻其内部生成的路由文件
                 if (entryName.startsWith(ScanSetting.ROUTER_CLASS_PACKAGE_NAME)) {
                     InputStream inputStream = file.getInputStream(jarEntry)
-                    scanClass(inputStream)
+                    scanClassInputStream(inputStream)
                     inputStream.close()
+                    Logger.i("find target entryName: " + entryName)
                 }
                 // 如果是 SRouterImpl 文件的 jar 包, 则先暂存一下, 后续会使用
                 else if (ScanSetting.GENERATE_TO_CLASS_FILE_NAME == entryName) {
                     fileContainsGenerateToClass = destFile
+                    Logger.i("find contains generate class file: " + fileContainsGenerateToClass.absolutePath)
                 }
             }
             file.close()
@@ -121,15 +123,15 @@ class RegisterTransform extends BaseFileScanTransform {
     @Override
     void scanClass(File classFile, String path) {
         if (shouldProcessClass(path)) {
-            scanClass(new FileInputStream(file))
+            scanClassInputStream(new FileInputStream(file))
         }
     }
 
-    static boolean shouldProcessClass(String entryName) {
+    private boolean shouldProcessClass(String entryName) {
         return entryName != null && entryName.startsWith(ScanSetting.ROUTER_CLASS_PACKAGE_NAME)
     }
 
-    static void scanClass(InputStream inputStream) {
+    private void scanClassInputStream(InputStream inputStream) {
         ClassReader cr = new ClassReader(inputStream)
         ClassWriter cw = new ClassWriter(cr, 0)
         ScanClassVisitor cv = new ScanClassVisitor(Opcodes.ASM5, cw)
@@ -137,7 +139,7 @@ class RegisterTransform extends BaseFileScanTransform {
         inputStream.close()
     }
 
-    static class ScanClassVisitor extends ClassVisitor {
+    private class ScanClassVisitor extends ClassVisitor {
 
         ScanClassVisitor(int api, ClassVisitor cv) {
             super(api, cv)

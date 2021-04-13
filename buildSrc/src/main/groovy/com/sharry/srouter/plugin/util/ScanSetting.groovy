@@ -12,7 +12,7 @@ class ScanSetting {
     /**
      * The register code is generated into this class
      */
-    static final String GENERATE_TO_CLASS_NAME = 'com/support/srouter/support/SRouterImpl'
+    static final String GENERATE_TO_CLASS_NAME = 'com/sharry/srouter/support/SRouterImpl'
 
     /**
      * you know. this is the class file(or entry in jar file) name
@@ -32,7 +32,7 @@ class ScanSetting {
     /**
      * The package name of the interfaces
      */
-    private static final INTERFACE_PACKAGE_NAME = 'com/support/srouter/support'
+    private static final INTERFACE_PACKAGE_NAME = 'com/sharry/srouter/support/'
 
     /**
      * register method name in class: {@link #GENERATE_TO_CLASS_NAME}

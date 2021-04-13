@@ -6,8 +6,7 @@ import org.gradle.api.Project
  * Format log
  *
  * @author zhilong <a href="mailto:zhilong.lzl@alibaba-inc.com">Contact me.</a>
- * @version 1.0
- * @since 2017/12/18 下午2:43
+ * @version 1.0* @since 2017/12/18 下午2:43
  */
 class Logger {
 
@@ -19,19 +18,19 @@ class Logger {
 
     static void i(String info) {
         if (null != info && null != logger) {
-            logger.info("ARouter::Register >>> " + info)
+            println("SRouter::AutoRegister >>> " + info)
         }
     }
 
     static void e(String error) {
         if (null != error && null != logger) {
-            logger.error("ARouter::Register >>> " + error)
+            println("SRouter::AutoRegister >>> " + error)
         }
     }
 
     static void w(String warning) {
         if (null != warning && null != logger) {
-            logger.warn("ARouter::Register >>> " + warning)
+            println("SRouter::AutoRegister >>> " + warning)
         }
     }
 }

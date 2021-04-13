@@ -21,12 +21,6 @@ public class BaseApplication extends Application {
         SRouter.init(this);
         // 是否开启调试日志打印
         SRouter.isDebug(BuildConfig.DEBUG);
-        // 注册模块
-        SRouter.registerModules(
-                ModuleConstants.Login.NAME,
-                ModuleConstants.Found.NAME,
-                ModuleConstants.Personal.NAME
-        );
         // 添加回调适配器
         SRouter.addCallAdapter(new RxJavaAdapter());
         // 添加全局拦截器

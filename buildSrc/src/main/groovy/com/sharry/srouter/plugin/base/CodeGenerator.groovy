@@ -1,6 +1,5 @@
 package com.sharry.srouter.plugin.base
 
-import com.sharry.srouter.plugin.util.Logger
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.*
 import java.util.jar.JarEntry
@@ -15,7 +14,11 @@ import com.sharry.srouter.plugin.util.Logger
  */
 class CodeGenerator {
 
-    static void insertInitCodeTo(File fileContainsInitClass, String targetClassName, ClassVisitorFactory factory) {
+    static void insertInitCodeTo(
+            File fileContainsInitClass,
+            String targetClassName,
+            ClassVisitorFactory factory
+    ) {
         File file = fileContainsInitClass
         if (file.getName().endsWith('.jar')) {
             insertInitCodeIntoJarFile(file, targetClassName, factory)

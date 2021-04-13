@@ -4,11 +4,11 @@ import com.sharry.srouter.plugin.base.ClassVisitorFactory
 import com.sharry.srouter.plugin.util.ScanSetting
 import org.objectweb.asm.*
 
-class MyClassVisitor extends ClassVisitor {
+class RouterImplClassVisitor extends ClassVisitor {
 
     ScanSetting extension
 
-    MyClassVisitor(int api, ClassVisitor cv, ScanSetting extension) {
+    RouterImplClassVisitor(int api, ClassVisitor cv, ScanSetting extension) {
         super(api, cv)
         this.extension = extension
     }
@@ -43,11 +43,13 @@ class MyClassVisitor extends ClassVisitor {
                     name = name.replaceAll("/", ".")
                     mv.visitLdcInsn(name)//类名
                     // generate invoke register method into LogisticsCenter.loadRouterMap()
-                    mv.visitMethodInsn(Opcodes.INVOKESTATIC
-                            , ScanSetting.GENERATE_TO_CLASS_NAME
-                            , ScanSetting.REGISTER_METHOD_NAME
-                            , "(Ljava/lang/String;)V"
-                            , false)
+                    mv.visitMethodInsn(
+                            Opcodes.INVOKESTATIC,
+                            ScanSetting.GENERATE_TO_CLASS_NAME,
+                            ScanSetting.REGISTER_METHOD_NAME,
+                            "(Ljava/lang/String;)V",
+                            false
+                    )
                 }
             }
             super.visitInsn(opcode)
@@ -69,7 +71,7 @@ class MyClassVisitor extends ClassVisitor {
 
         @Override
         ClassVisitor create(int api, ClassVisitor cv) {
-            return MyClassVisitor(api, cv, extension)
+            return RouterImplClassVisitor(api, cv, extension)
         }
     }
 
