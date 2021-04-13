@@ -1,7 +1,6 @@
 apply plugin: 'java-library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply from: '../install.gradle'
 
-group = 'com.github.SharryChoo'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // google support annotation service
@@ -11,11 +10,3 @@ dependencies {
     // api frouter-annotation module
     api project(path: ':srouter-annotation')
 }
-
-// 用于支持中文显示
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
-sourceCompatibility = "7"
-targetCompatibility = "7"

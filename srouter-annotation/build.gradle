@@ -1,10 +1,6 @@
 apply plugin: 'java-library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply from: '../install.gradle'
 
-group = 'com.github.SharryChoo'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
-
-sourceCompatibility = "7"
-targetCompatibility = "7"

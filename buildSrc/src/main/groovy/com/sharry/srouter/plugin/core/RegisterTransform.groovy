@@ -3,12 +3,14 @@ package com.sharry.srouter.plugin.core
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.sharry.srouter.plugin.base.BaseFileScanTransform
+import com.sharry.srouter.plugin.base.CodeGenerator
 import com.sharry.srouter.plugin.util.ScanSetting
 import jdk.internal.org.objectweb.asm.ClassReader
 import jdk.internal.org.objectweb.asm.ClassVisitor
 import jdk.internal.org.objectweb.asm.ClassWriter
 import jdk.internal.org.objectweb.asm.Opcodes
 import org.gradle.api.Project
+import com.sharry.srouter.plugin.util.Logger
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -23,9 +25,9 @@ import java.util.jar.JarFile
  */
 class RegisterTransform extends BaseFileScanTransform {
 
-    ArrayList<ScanSetting> registerList
+    final Project project
+    final ArrayList<ScanSetting> registerList
     File fileContainsGenerateToClass;
-    Project project
 
     RegisterTransform(Project project, ArrayList<ScanSetting> registerList) {
         this.project = project
@@ -145,7 +147,7 @@ class RegisterTransform extends BaseFileScanTransform {
                    String superName, String[] interfaces) {
             super.visit(version, access, name, signature, superName, interfaces)
             // 将符合条件的 class 文件名保存到 ScanSetting 的 classList 中, 方便后续在代码中添加 register(xxx).
-            RegisterTransform.registerList.each { ext ->
+            registerList.each { ext ->
                 if (ext.interfaceName && interfaces != null) {
                     interfaces.each { itName ->
                         if (itName == ext.interfaceName) {

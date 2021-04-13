@@ -2,7 +2,7 @@ package com.sharry.srouter.plugin.base
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
-
+import com.sharry.srouter.plugin.util.Logger
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 

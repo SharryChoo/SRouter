@@ -1,0 +1,8 @@
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.github.SharryChoo'
+
+// 用于支持中文显示
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}

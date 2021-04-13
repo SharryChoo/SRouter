@@ -7,6 +7,7 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
+import com.sharry.srouter.plugin.util.Logger
 
 /**
  * generate register code into LogisticsCenter.class

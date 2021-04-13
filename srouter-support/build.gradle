@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+apply from: '../install.gradle'
 
-group = 'com.github.SharryChoo'
 android {
     compileSdkVersion rootProject.compileSdkVersion
     defaultConfig {
@@ -28,13 +27,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.0'
     // 依赖 srouter-annotation 模块
     api project(path: ':srouter-annotation')
-}
-
-//---------------------------------------------
-
-// 指定编码
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
 }
 
 // 打包源码
