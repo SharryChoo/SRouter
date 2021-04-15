@@ -62,6 +62,8 @@ class SRouterImpl {
     }
 
     /**
+     * Only for ASM
+     *
      * register by class name
      * Sacrificing a bit of efficiency to solve
      * the problem that the main dex file size is too large

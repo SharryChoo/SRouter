@@ -22,12 +22,14 @@ class RouterImplClassVisitor(api: Int, cv: ClassVisitor?, val extension: ScanSet
     }
 
     internal inner class RouteMethodVisitor(api: Int, mv: MethodVisitor?) : MethodVisitor(api, mv) {
+
         override fun visitInsn(opcode: Int) {
             //generate code before return
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
                 extension.classList.forEach { name ->
-                    val name = name.replace("/", ".")
-                    mv.visitLdcInsn(name) //类名
+                    // 类名
+                    val replacedName = name.replace("/", ".")
+                    mv.visitLdcInsn(replacedName)
                     // generate invoke register method into LogisticsCenter.loadRouterMap()
                     mv.visitMethodInsn(
                             Opcodes.INVOKESTATIC,
