@@ -32,6 +32,7 @@ internal class RegisterTransform(
         val registerList: ArrayList<ScanSetting>
 ) : BaseFileScanTransform() {
 
+    private var mIsJarFile: Boolean? = null
     private var mGenerateToClass: File? = null
 
     /**
@@ -58,47 +59,59 @@ internal class RegisterTransform(
         return false
     }
 
-    override fun onScanJar(jarFile: File, destFile: File) {
-        val file = JarFile(jarFile)
-        val enumeration: Enumeration<*> = file.entries()
-        while (enumeration.hasMoreElements()) {
-            val jarEntry = enumeration.nextElement() as JarEntry
-            val entryName = jarEntry.name
-            when {
-                // 1. 如果是 com/sharry/srouter/generate 这个文件, 则找寻其内部生成的路由文件
-                entryName.startsWith(ScanSetting.ROUTER_CLASS_PACKAGE_NAME) -> {
-                    val inputStream: InputStream = file.getInputStream(jarEntry)
-                    scanClassInputStream(inputStream)
-                    inputStream.close()
-                    Logger.i("find target entryName: $entryName")
-                }
-                // 2. 如果是 com/sharry/srouter/support/SRouterImpl.class 这个文件, 则记录一下说明是需要插入代码的目标文件
-                ScanSetting.GENERATE_TO_CLASS_FILE_NAME == entryName -> {
-                    mGenerateToClass = destFile
-                    Logger.i("find contains generate class file: " + mGenerateToClass!!.absolutePath)
-                }
+    override fun onScanJarEntry(file: File, jarFile: JarFile, jarEntry: JarEntry) {
+        val classFilePath = jarEntry.name
+        when {
+            // 1. 如果是 com/sharry/srouter/generate 这个文件, 则找寻其内部生成的路由文件
+            classFilePath.startsWith(ScanSetting.ROUTER_CLASS_PACKAGE_NAME) -> {
+                val inputStream: InputStream = jarFile.getInputStream(jarEntry)
+                scanClassInputStream(inputStream)
+                inputStream.close()
+                Logger.i("find target entryName: $classFilePath")
+            }
+            // 2. 如果是 com/sharry/srouter/support/SRouterImpl.class 这个文件, 则记录一下说明是需要插入代码的目标文件
+            ScanSetting.GENERATE_TO_CLASS_FILE_NAME == classFilePath -> {
+                mGenerateToClass = file
+                mIsJarFile = true
+                Logger.i("find contains generate jar file: " + file.absolutePath)
             }
         }
-        file.close()
     }
 
-    override fun onScanClass(classFile: File, path: String) {
-        if (shouldProcessClass(path)) {
-            scanClassInputStream(FileInputStream(classFile))
+    override fun onScanClass(classFile: File, classFilePath: String) {
+        when {
+            // 1. 如果是 com/sharry/srouter/generate 这个文件, 则找寻其内部生成的路由文件
+            classFilePath.startsWith(ScanSetting.ROUTER_CLASS_PACKAGE_NAME) -> {
+                scanClassInputStream(FileInputStream(classFile))
+                Logger.i("find target entryName: $classFilePath")
+            }
+            // 2. 如果是 com/sharry/srouter/support/SRouterImpl.class 这个文件, 则记录一下说明是需要插入代码的目标文件
+            ScanSetting.GENERATE_TO_CLASS_FILE_NAME == classFilePath -> {
+                mGenerateToClass = classFile
+                mIsJarFile = false
+                Logger.i("find contains generate class file: " + classFile.absolutePath)
+            }
         }
     }
 
     override fun onProcess() {
-        mGenerateToClass?.let { fileContainsGenerateToClass ->
-            registerList.forEach { ext ->
-                Logger.i("Insert register code to file " + fileContainsGenerateToClass.absolutePath)
-                if (ext.classList.isEmpty()) {
-                    Logger.e("No class implements found for interface:" + ext.interfaceName)
-                } else {
-                    ext.classList.forEach { Logger.i(it) }
-                    CodeGenerator.insertInitCodeTo(
-                            fileContainsGenerateToClass,
+        val fileContainsClass = mGenerateToClass ?: return
+        val isJarFile = mIsJarFile ?: return
+        registerList.forEach { ext ->
+            Logger.i("Insert register code to file " + fileContainsClass.absolutePath)
+            if (ext.classList.isEmpty()) {
+                Logger.e("No class implements found for interface:" + ext.interfaceName)
+            } else {
+                ext.classList.forEach { Logger.i(it) }
+                if (isJarFile) {
+                    CodeGenerator.insertCodeToJar(
+                            fileContainsClass,
                             ScanSetting.GENERATE_TO_CLASS_FILE_NAME,
+                            RouterImplClassVisitor.Factory(ext)
+                    )
+                } else {
+                    CodeGenerator.insertCodeToClass(
+                            fileContainsClass,
                             RouterImplClassVisitor.Factory(ext)
                     )
                 }
@@ -109,10 +122,6 @@ internal class RegisterTransform(
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Utils method.
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private fun shouldProcessClass(entryName: String?): Boolean {
-        return entryName != null && entryName.startsWith(ScanSetting.ROUTER_CLASS_PACKAGE_NAME)
-    }
 
     private fun scanClassInputStream(inputStream: InputStream) {
         val cr = ClassReader(inputStream)

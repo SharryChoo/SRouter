@@ -1,11 +1,12 @@
 package com.sharry.srouter.plugin.base
 
-import com.sharry.srouter.plugin.util.Logger
+import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.*
@@ -18,23 +19,33 @@ import java.util.zip.ZipEntry
  * generate register code into LogisticsCenter.class
  * @author billy.qi email: qiyilike@163.com
  */
-internal object CodeGenerator {
-    fun insertInitCodeTo(
-            fileContainsInitClass: File,
-            targetClassName: String,
-            factory: ClassVisitorFactory
-    ) {
-        if (fileContainsInitClass.name.endsWith(".jar")) {
-            insertInitCodeIntoJarFile(fileContainsInitClass, targetClassName, factory)
+object CodeGenerator {
+
+
+    /**
+     * generate code into jar file
+     *
+     * @param jarFile the jar file which contains targetEntryName
+     */
+    fun insertCodeToClass(classFile: File, factory: ClassVisitorFactory) {
+        if (!classFile.name.endsWith(".class")) {
+            return
         }
+        FileUtils.writeByteArrayToFile(
+                classFile,
+                referHackWhenInit(FileInputStream(classFile), factory)
+        )
     }
 
     /**
      * generate code into jar file
-     * @param jarFile the jar file which contains LogisticsCenter.class
-     * @return
+     *
+     * @param jarFile the jar file which contains targetEntryName
      */
-    private fun insertInitCodeIntoJarFile(jarFile: File, targetClassName: String, factory: ClassVisitorFactory): File {
+    fun insertCodeToJar(jarFile: File, targetEntryName: String, factory: ClassVisitorFactory) {
+        if (!jarFile.name.endsWith(".jar")) {
+            return
+        }
         val optJar = File(jarFile.parent, jarFile.name.toString() + ".opt")
         if (optJar.exists()) {
             optJar.delete()
@@ -48,7 +59,7 @@ internal object CodeGenerator {
             val zipEntry = ZipEntry(entryName)
             val inputStream: InputStream = file.getInputStream(jarEntry)
             jarOutputStream.putNextEntry(zipEntry)
-            if (targetClassName == entryName) {
+            if (targetEntryName == entryName) {
                 val bytes = referHackWhenInit(inputStream, factory)
                 jarOutputStream.write(bytes)
             } else {
@@ -63,7 +74,6 @@ internal object CodeGenerator {
             jarFile.delete()
         }
         optJar.renameTo(jarFile)
-        return jarFile
     }
 
     //refer hack class when object init

@@ -8,6 +8,9 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.FileNotFoundException
+import java.util.*
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
 
 /**
  * 用来处理文件扫描的 Base Transform
@@ -37,11 +40,12 @@ abstract class BaseFileScanTransform : Transform() {
         super.transform(context, inputs, referencedInputs, outputProvider, isIncremental)
         Logger.i("|---------------------Transform start---------------------|")
         outputProvider?.deleteAll()
+        // 1. 扫描文件
         Logger.i("|---------- Start scan file ----------|")
         var startTime = System.currentTimeMillis()
         val leftSlash = File.separator == "/"
         inputs?.forEach { input ->
-            // 1. 从 jar 包中找寻目标文件
+            // 1.1 从 jar 包中找寻目标文件
             input.jarInputs.forEach { jarInput ->
                 var destName = jarInput.name
                 // rename jar files
@@ -53,50 +57,65 @@ abstract class BaseFileScanTransform : Transform() {
                 val src = jarInput.file
                 // output file
                 outputProvider?.getContentLocation(destName + "_" + hexName, jarInput.contentTypes, jarInput.scopes, Format.JAR)?.let {
-                    // 1.1 扫描 jar 包, 找寻目标文件
-                    if (shouldProcessPreDexJar(src.absolutePath)) {
-                        onScanJar(src, it)
+                    // 扫描 jar 包, 找寻目标文件
+                    if (canScanJarFile(src.absolutePath)) {
+                        val jarFile = JarFile(src)
+                        val enumeration: Enumeration<*> = jarFile.entries()
+                        while (enumeration.hasMoreElements()) {
+                            val jarEntry = enumeration.nextElement() as JarEntry
+                            onScanJarEntry(src, jarFile, jarEntry)
+                        }
+                        jarFile.close()
                     }
                     FileUtils.copyFile(src, it)
                 }
             }
-            // 2. 从 Class 文件中找寻目标文件
+            // 1.2 从 Class 文件中找寻目标文件
             input.directoryInputs.forEach { directoryInput ->
-                val dest = outputProvider?.getContentLocation(directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
                 var root = directoryInput.file.absolutePath
                 if (!root.endsWith(File.separator)) {
                     root += File.separator
                 }
                 directoryInput.file.eachFileRecurse(FileType.ANY) { file ->
-                    var path = file.absolutePath.replace(root, "")
+                    var filePath = file.absolutePath.replace(root, "")
                     if (!leftSlash) {
-                        path = path.replace("\\\\", "/")
+                        filePath = filePath.replace("\\\\", "/")
                     }
-                    // 2.1 扫描 class 文件, 找寻目标文件
-                    if (file.isFile) {
-                        onScanClass(file, path)
+                    if (file.isFile && canScanClassFile(filePath)) {
+                        onScanClass(file, filePath)
                     }
                 }
                 // copy to dest
+                val dest = outputProvider?.getContentLocation(directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
                 FileUtils.copyDirectory(directoryInput.file, dest)
             }
         }
         Logger.i("|---------- Scan finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms ----------|")
-        // 3. 回调外界扫描完成了
+        // 2. 处理扫描的文件
         startTime = System.currentTimeMillis()
         Logger.i("|---------- Start process ----------|")
         onProcess()
         Logger.i("|---------- Process finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms ----------|")
     }
 
-    abstract fun onScanJar(jarFile: File, destFile: File)
+    /**
+     * 扫描 Jar 包中的 JarEntry
+     */
+    abstract fun onScanJarEntry(file: File, jarFile: JarFile, jarEntry: JarEntry)
 
-    abstract fun onScanClass(classFile: File, path: String)
+    /**
+     * 扫描 .class 文件
+     */
+    abstract fun onScanClass(classFile: File, classFilePath: String)
 
     abstract fun onProcess()
 
-    private fun shouldProcessPreDexJar(path: String): Boolean {
+    private fun canScanJarFile(path: String): Boolean {
         return !path.contains("com.android.support") && !path.contains("/android/m2repository")
+    }
+
+    private fun canScanClassFile(filePath: String): Boolean {
+        return filePath.endsWith(".class") && !filePath.startsWith("R\$") && "R.class" != filePath && "BuildConfig.class" != filePath
     }
 
 }
