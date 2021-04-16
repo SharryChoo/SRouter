@@ -40,7 +40,6 @@ abstract class BaseFileScanTransform : Transform() {
                            isIncremental: Boolean) {
         super.transform(context, inputs, referencedInputs, outputProvider, isIncremental)
         Logger.print("|---------------------Transform start---------------------|")
-        outputProvider?.deleteAll()
         // 1. 扫描文件
         Logger.print("|---------- Start scan file ----------|")
         var startTime = System.currentTimeMillis()
@@ -53,38 +52,38 @@ abstract class BaseFileScanTransform : Transform() {
                 if (destName.endsWith(".jar")) {
                     destName = destName.substring(0, destName.length - 4)
                 }
-                // input file
-                val src = jarInput.file
-                // output file
-                outputProvider?.getContentLocation(destName + "_" + hexName, jarInput.contentTypes, jarInput.scopes, Format.JAR)?.let {
-                    // 扫描 jar 包, 找寻目标文件
-                    if (canScanJarFile(src.absolutePath)) {
-                        val jarFile = JarFile(src)
+                outputProvider?.getContentLocation(destName + "_" + hexName, jarInput.contentTypes, jarInput.scopes, Format.JAR)?.let { destJarFile ->
+                    // 拷贝到目标文件 destJarFile
+                    FileUtils.copyFile(jarInput.file, destJarFile)
+                    // 扫描 destJar File 中的 Entry
+                    if (canScanJarFile(destJarFile.absolutePath)) {
+                        val jarFile = JarFile(destJarFile)
                         val enumeration: Enumeration<*> = jarFile.entries()
                         while (enumeration.hasMoreElements()) {
                             val jarEntry = enumeration.nextElement() as JarEntry
-                            onScanJarEntry(src, jarFile, jarEntry)
+                            onScanJarEntry(destJarFile, jarFile, jarEntry)
                         }
                         jarFile.close()
                     }
-                    FileUtils.copyFile(src, it)
                 }
             }
             // 1.2 从 Class 文件中找寻目标文件
             input.directoryInputs.forEach { directoryInput ->
-                var root = directoryInput.file.absolutePath
-                if (!root.endsWith(File.separator)) {
-                    root += File.separator
-                }
-                directoryInput.file.eachFileRecurse(FileType.ANY) { file ->
-                    val filePath = file.absolutePath.replace(root, "").toLeftSlash()
-                    if (file.isFile && canScanClassFile(filePath)) {
-                        onScanClass(file, filePath)
+                outputProvider?.getContentLocation(directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)?.let { destFile ->
+                    // 拷贝到目标文件 destFile
+                    FileUtils.copyDirectory(directoryInput.file, destFile)
+                    var root = destFile.absolutePath
+                    if (!root.endsWith(File.separator)) {
+                        root += File.separator
+                    }
+                    // 遍历子文件
+                    destFile.eachFileRecurse(FileType.ANY) { file ->
+                        val filePath = file.absolutePath.replace(root, "").toLeftSlash()
+                        if (file.isFile && canScanClassFile(filePath)) {
+                            onScanClass(file, filePath)
+                        }
                     }
                 }
-                // copy to dest
-                val dest = outputProvider?.getContentLocation(directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
-                FileUtils.copyDirectory(directoryInput.file, dest)
             }
         }
         Logger.print("|---------- Scan finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms ----------|")
