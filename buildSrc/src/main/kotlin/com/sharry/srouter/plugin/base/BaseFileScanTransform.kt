@@ -35,8 +35,10 @@ abstract class BaseFileScanTransform : Transform() {
                            outputProvider: TransformOutputProvider?,
                            isIncremental: Boolean) {
         super.transform(context, inputs, referencedInputs, outputProvider, isIncremental)
-        Logger.i("Start scan jar file.")
-        val startTime = System.currentTimeMillis()
+        Logger.i("|---------------------Transform start---------------------|")
+        outputProvider?.deleteAll()
+        Logger.i("|---------- Start scan file ----------|")
+        var startTime = System.currentTimeMillis()
         val leftSlash = File.separator == "/"
         inputs?.forEach { input ->
             // 1. 从 jar 包中找寻目标文件
@@ -79,16 +81,19 @@ abstract class BaseFileScanTransform : Transform() {
                 FileUtils.copyDirectory(directoryInput.file, dest)
             }
         }
-        Logger.i("Scan finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms")
+        Logger.i("|---------- Scan finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms ----------|")
         // 3. 回调外界扫描完成了
-        onScanCompleted()
+        startTime = System.currentTimeMillis()
+        Logger.i("|---------- Start process ----------|")
+        onProcess()
+        Logger.i("|---------- Process finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms ----------|")
     }
 
     abstract fun onScanJar(jarFile: File, destFile: File)
 
     abstract fun onScanClass(classFile: File, path: String)
 
-    abstract fun onScanCompleted()
+    abstract fun onProcess()
 
     private fun shouldProcessPreDexJar(path: String): Boolean {
         return !path.contains("com.android.support") && !path.contains("/android/m2repository")

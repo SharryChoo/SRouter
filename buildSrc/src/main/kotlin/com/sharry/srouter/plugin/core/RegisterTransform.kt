@@ -88,8 +88,7 @@ internal class RegisterTransform(
         }
     }
 
-    override fun onScanCompleted() {
-        val startTime = System.currentTimeMillis()
+    override fun onProcess() {
         mGenerateToClass?.let { fileContainsGenerateToClass ->
             registerList.forEach { ext ->
                 Logger.i("Insert register code to file " + fileContainsGenerateToClass.absolutePath)
@@ -105,7 +104,6 @@ internal class RegisterTransform(
                 }
             }
         }
-        Logger.i("Generate code finish, cost time: " + (System.currentTimeMillis() - startTime) + "ms")
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -49,7 +49,6 @@ internal object CodeGenerator {
             val inputStream: InputStream = file.getInputStream(jarEntry)
             jarOutputStream.putNextEntry(zipEntry)
             if (targetClassName == entryName) {
-                Logger.i("Insert init code to class >> $entryName")
                 val bytes = referHackWhenInit(inputStream, factory)
                 jarOutputStream.write(bytes)
             } else {
