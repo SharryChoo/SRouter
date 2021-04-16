@@ -1,11 +1,12 @@
 package com.sharry.srouter.plugin.base
 
-import com.sharry.srouter.plugin.util.Logger
+import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.*
@@ -13,58 +14,82 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
+import com.sharry.srouter.plugin.util.Logger
 
 /**
- * generate register code into LogisticsCenter.class
- * @author billy.qi email: qiyilike@163.com
+ * Generate code into target file.
+ *
+ * @author zhuxiaoyu <a href="zhuxiaoyu.sharry@bytedance.com">Contact me.</a>
+ * @version 1.0
+ * @since 4/16/21
  */
-internal object CodeGenerator {
-    fun insertInitCodeTo(
-            fileContainsInitClass: File,
-            targetClassName: String,
-            factory: ClassVisitorFactory
-    ) {
-        if (fileContainsInitClass.name.endsWith(".jar")) {
-            insertInitCodeIntoJarFile(fileContainsInitClass, targetClassName, factory)
+object CodeGenerator {
+
+
+    /**
+     * generate code into jar file
+     *
+     * @param jarFile the jar file which contains targetEntryName
+     */
+    fun insertCodeToClass(classFile: File, factory: ClassVisitorFactory) {
+        if (!classFile.name.endsWith(".class")) {
+            return
         }
+        val inputStream = FileInputStream(classFile)
+        FileUtils.writeByteArrayToFile(
+                classFile,
+                referHackWhenInit(inputStream, factory)
+        )
+        inputStream.close()
     }
 
     /**
      * generate code into jar file
-     * @param jarFile the jar file which contains LogisticsCenter.class
-     * @return
+     *
+     * @param jarFile the jar file which contains targetEntryName
      */
-    private fun insertInitCodeIntoJarFile(jarFile: File, targetClassName: String, factory: ClassVisitorFactory): File {
+    fun insertCodeToJar(jarFile: File, targetEntryName: String, factory: ClassVisitorFactory) {
+        if (!jarFile.name.endsWith(".jar")) {
+            return
+        }
+        // 1. 创建新的 JarFile 文件
         val optJar = File(jarFile.parent, jarFile.name.toString() + ".opt")
         if (optJar.exists()) {
             optJar.delete()
         }
-        val file = JarFile(jarFile)
-        val enumeration: Enumeration<*> = file.entries()
-        val jarOutputStream = JarOutputStream(FileOutputStream(optJar))
-        while (enumeration.hasMoreElements()) {
-            val jarEntry = enumeration.nextElement() as JarEntry
-            val entryName = jarEntry.name
-            val zipEntry = ZipEntry(entryName)
-            val inputStream: InputStream = file.getInputStream(jarEntry)
-            jarOutputStream.putNextEntry(zipEntry)
-            if (targetClassName == entryName) {
-                Logger.i("Insert init code to class >> $entryName")
-                val bytes = referHackWhenInit(inputStream, factory)
-                jarOutputStream.write(bytes)
-            } else {
-                jarOutputStream.write(IOUtils.toByteArray(inputStream))
+        // 2. 将原先的 JarFile 写入 optJar 中
+        JarFile(jarFile).let { originJarFile ->
+            val enumeration: Enumeration<*> = originJarFile.entries()
+            val optJarFileOutputStream = JarOutputStream(FileOutputStream(optJar))
+            while (enumeration.hasMoreElements()) {
+                val jarEntry = enumeration.nextElement() as JarEntry
+                val entryInputStream: InputStream = originJarFile.getInputStream(jarEntry)
+                optJarFileOutputStream.apply {
+                    // 2.1 为 optJar 文件添加一个 entry
+                    val entryName = jarEntry.name
+                    putNextEntry(ZipEntry(entryName))
+                    // 2.2 写入 entry 的数据
+                    write(
+                            if (targetEntryName == entryName) {
+                                Logger.print("write to $targetEntryName")
+                                referHackWhenInit(entryInputStream, factory)
+                            } else {
+                                IOUtils.toByteArray(entryInputStream)
+                            }
+                    )
+                    // 2.3 标记写 entry 终止
+                    closeEntry()
+                }
+                entryInputStream.close()
             }
-            inputStream.close()
-            jarOutputStream.closeEntry()
+            optJarFileOutputStream.close()
+            originJarFile.close()
         }
-        jarOutputStream.close()
-        file.close()
+        // 3. 用 opt 的 Jar file 替换原始的 Jar file
         if (jarFile.exists()) {
             jarFile.delete()
         }
         optJar.renameTo(jarFile)
-        return jarFile
     }
 
     //refer hack class when object init

@@ -13,12 +13,14 @@ buildscript {
     repositories {
         maven { setUrl("https://jitpack.io") }
     }
+
     /**
      * 编译脚本代码依赖
      */
     dependencies {
         classpath("com.github.dcendents:android-maven-gradle-plugin:2.1")
     }
+
 }
 
 /**
@@ -34,4 +36,9 @@ repositories {
  */
 dependencies {
     implementation("com.android.tools.build:gradle:3.2.1")
+}
+
+sourceSets {
+    // 链接到子 module 的编译目录中
+    add(getAt("../srouter-autoregister-plugin/src"))
 }

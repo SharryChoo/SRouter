@@ -5,6 +5,8 @@ import com.sharry.srouter.plugin.util.ScanSetting
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
+import com.sharry.srouter.plugin.util.Logger
+
 
 class RouterImplClassVisitor(api: Int, cv: ClassVisitor?, val extension: ScanSetting) : ClassVisitor(api, cv) {
 
@@ -28,9 +30,9 @@ class RouterImplClassVisitor(api: Int, cv: ClassVisitor?, val extension: ScanSet
             if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
                 extension.classList.forEach { name ->
                     // 类名
-                    val replacedName = name.replace("/", ".")
-                    mv.visitLdcInsn(replacedName)
-                    // generate invoke register method into LogisticsCenter.loadRouterMap()
+                    val className = name.replace("/", ".")
+                    mv.visitLdcInsn(className)
+                    // generate invoke register method into SRouterImpl.loadRouterMap()
                     mv.visitMethodInsn(
                             Opcodes.INVOKESTATIC,
                             ScanSetting.GENERATE_TO_CLASS_NAME,
@@ -38,6 +40,7 @@ class RouterImplClassVisitor(api: Int, cv: ClassVisitor?, val extension: ScanSet
                             "(Ljava/lang/String;)V",
                             false
                     )
+                    Logger.print("visitIns $className")
                 }
             }
             super.visitInsn(opcode)

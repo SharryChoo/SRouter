@@ -8,16 +8,8 @@ package com.sharry.srouter.plugin.util
  */
 object Logger {
 
-    fun i(info: String) {
+    fun print(info: String) {
         println("SRouter::AutoRegister >>> $info")
-    }
-
-    fun e(error: String) {
-        println("SRouter::AutoRegister >>> $error")
-    }
-
-    fun w(warning: String) {
-        println("SRouter::AutoRegister >>> $warning")
     }
 
 }
