@@ -81,6 +81,7 @@ class SRouterImpl {
                     Logger.i("register failed, class name: " + className
                             + " should implements one of IRouteRoot/IProviderGroup/IInterceptorGroup.");
                 }
+                Logger.i("register success, class name: " + className);
             } catch (Exception e) {
                 Logger.e("register class error:" + className, e);
             }

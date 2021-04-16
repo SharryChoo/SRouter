@@ -2,7 +2,7 @@ package com.sharry.srouter.plugin
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
-import com.sharry.srouter.plugin.core.RegisterTransform
+import com.sharry.srouter.plugin.core.SRouterAutoRegisterTransform
 import com.sharry.srouter.plugin.util.Logger
 import com.sharry.srouter.plugin.util.ScanSetting
 import org.gradle.api.Plugin
@@ -21,7 +21,7 @@ class SRouterAutoRegisterPlugin : Plugin<Project> {
         val isApp = project.plugins.hasPlugin(AppPlugin::class.java)
         // only application module needs this com.sharry.srouter.plugin to generate register code
         if (isApp) {
-            Logger.i("Project enable arouter-register com.sharry.srouter.plugin")
+            Logger.print("Project enable arouter-register com.sharry.srouter.plugin")
             // init srouter-auto-register settings
             val scanSettingList = ArrayList<ScanSetting>(2).apply {
                 add(ScanSetting("IRoute"))
@@ -30,7 +30,7 @@ class SRouterAutoRegisterPlugin : Plugin<Project> {
             // register this com.sharry.srouter.plugin
             val android = project.extensions.getByType(AppExtension::class.java)
             android.registerTransform(
-                    RegisterTransform(project, scanSettingList)
+                    SRouterAutoRegisterTransform(project, scanSettingList)
             )
         }
     }

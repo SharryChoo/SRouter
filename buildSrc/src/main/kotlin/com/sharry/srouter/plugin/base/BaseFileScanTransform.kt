@@ -3,11 +3,12 @@ package com.sharry.srouter.plugin.base
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.sharry.srouter.plugin.util.Logger
+import com.sharry.srouter.plugin.util.eachFileRecurse
+import com.sharry.srouter.plugin.util.toLeftSlash
 import groovy.io.FileType
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import java.io.File
-import java.io.FileNotFoundException
 import java.util.*
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -38,12 +39,11 @@ abstract class BaseFileScanTransform : Transform() {
                            outputProvider: TransformOutputProvider?,
                            isIncremental: Boolean) {
         super.transform(context, inputs, referencedInputs, outputProvider, isIncremental)
-        Logger.i("|---------------------Transform start---------------------|")
+        Logger.print("|---------------------Transform start---------------------|")
         outputProvider?.deleteAll()
         // 1. 扫描文件
-        Logger.i("|---------- Start scan file ----------|")
+        Logger.print("|---------- Start scan file ----------|")
         var startTime = System.currentTimeMillis()
-        val leftSlash = File.separator == "/"
         inputs?.forEach { input ->
             // 1.1 从 jar 包中找寻目标文件
             input.jarInputs.forEach { jarInput ->
@@ -77,10 +77,7 @@ abstract class BaseFileScanTransform : Transform() {
                     root += File.separator
                 }
                 directoryInput.file.eachFileRecurse(FileType.ANY) { file ->
-                    var filePath = file.absolutePath.replace(root, "")
-                    if (!leftSlash) {
-                        filePath = filePath.replace("\\\\", "/")
-                    }
+                    val filePath = file.absolutePath.replace(root, "").toLeftSlash()
                     if (file.isFile && canScanClassFile(filePath)) {
                         onScanClass(file, filePath)
                     }
@@ -90,12 +87,12 @@ abstract class BaseFileScanTransform : Transform() {
                 FileUtils.copyDirectory(directoryInput.file, dest)
             }
         }
-        Logger.i("|---------- Scan finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms ----------|")
+        Logger.print("|---------- Scan finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms ----------|")
         // 2. 处理扫描的文件
         startTime = System.currentTimeMillis()
-        Logger.i("|---------- Start process ----------|")
+        Logger.print("|---------- Start process ----------|")
         onProcess()
-        Logger.i("|---------- Process finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms ----------|")
+        Logger.print("|---------- Process finish, current cost time " + (System.currentTimeMillis() - startTime) + "ms ----------|")
     }
 
     /**
@@ -118,33 +115,4 @@ abstract class BaseFileScanTransform : Transform() {
         return filePath.endsWith(".class") && !filePath.startsWith("R\$") && "R.class" != filePath && "BuildConfig.class" != filePath
     }
 
-}
-
-@Throws(FileNotFoundException::class, IllegalArgumentException::class)
-fun File.eachFileRecurse(fileType: FileType, closure: (file: File) -> Unit) {
-    checkDir()
-    val files = this.listFiles()
-    if (files != null) {
-        val var5 = files.size
-        for (var6 in 0 until var5) {
-            val file = files[var6]
-            if (file.isDirectory) {
-                if (fileType != FileType.FILES) {
-                    closure(file)
-                }
-                file.eachFileRecurse(fileType, closure)
-            } else if (fileType != FileType.DIRECTORIES) {
-                closure(file)
-            }
-        }
-    }
-}
-
-@Throws(FileNotFoundException::class, java.lang.IllegalArgumentException::class)
-fun File.checkDir() {
-    if (!exists()) {
-        throw FileNotFoundException(absolutePath)
-    } else if (!isDirectory) {
-        throw java.lang.IllegalArgumentException("The provided File object is not a directory: $absolutePath")
-    }
 }

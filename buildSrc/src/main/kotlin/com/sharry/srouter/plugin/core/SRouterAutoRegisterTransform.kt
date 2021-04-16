@@ -27,7 +27,7 @@ import java.util.jar.JarFile
  * @author billy.qi email: qiyilike@163.com
  * @since 17/3/21 11:48
  */
-internal class RegisterTransform(
+internal class SRouterAutoRegisterTransform(
         val project: Project,
         val registerList: ArrayList<ScanSetting>
 ) : BaseFileScanTransform() {
@@ -67,13 +67,13 @@ internal class RegisterTransform(
                 val inputStream: InputStream = jarFile.getInputStream(jarEntry)
                 scanClassInputStream(inputStream)
                 inputStream.close()
-                Logger.i("find target entryName: $classFilePath")
+                Logger.print("find target entryName: $classFilePath")
             }
             // 2. 如果是 com/sharry/srouter/support/SRouterImpl.class 这个文件, 则记录一下说明是需要插入代码的目标文件
             ScanSetting.GENERATE_TO_CLASS_FILE_NAME == classFilePath -> {
                 mGenerateToClass = file
                 mIsJarFile = true
-                Logger.i("find contains generate jar file: " + file.absolutePath)
+                Logger.print("find contains generate jar file: " + file.absolutePath)
             }
         }
     }
@@ -82,14 +82,16 @@ internal class RegisterTransform(
         when {
             // 1. 如果是 com/sharry/srouter/generate 这个文件, 则找寻其内部生成的路由文件
             classFilePath.startsWith(ScanSetting.ROUTER_CLASS_PACKAGE_NAME) -> {
-                scanClassInputStream(FileInputStream(classFile))
-                Logger.i("find target entryName: $classFilePath")
+                val inputStream = FileInputStream(classFile)
+                scanClassInputStream(inputStream)
+                inputStream.close()
+                Logger.print("find target entryName: $classFilePath")
             }
             // 2. 如果是 com/sharry/srouter/support/SRouterImpl.class 这个文件, 则记录一下说明是需要插入代码的目标文件
             ScanSetting.GENERATE_TO_CLASS_FILE_NAME == classFilePath -> {
                 mGenerateToClass = classFile
                 mIsJarFile = false
-                Logger.i("find contains generate class file: " + classFile.absolutePath)
+                Logger.print("find generate class file: " + classFile.absolutePath)
             }
         }
     }
@@ -98,11 +100,11 @@ internal class RegisterTransform(
         val fileContainsClass = mGenerateToClass ?: return
         val isJarFile = mIsJarFile ?: return
         registerList.forEach { ext ->
-            Logger.i("Insert register code to file " + fileContainsClass.absolutePath)
+            Logger.print("Insert register code to file " + fileContainsClass.absolutePath)
             if (ext.classList.isEmpty()) {
-                Logger.e("No class implements found for interface:" + ext.interfaceName)
+                Logger.print("No class implements found for interface:" + ext.interfaceName)
             } else {
-                ext.classList.forEach { Logger.i(it) }
+                ext.classList.forEach { Logger.print(it) }
                 if (isJarFile) {
                     CodeGenerator.insertCodeToJar(
                             fileContainsClass,
@@ -143,8 +145,8 @@ internal class RegisterTransform(
             super.visit(version, access, name, signature, superName, interfaces)
             // 将符合条件的 class 文件名保存到 ScanSetting 的 classList 中, 方便后续在代码中添加 register(xxx).
             registerList.forEach { ext ->
-                interfaces.forEach { itName ->
-                    if (itName == ext.interfaceName) {
+                interfaces.forEach { interfaceName ->
+                    if (interfaceName == ext.interfaceName) {
                         // fix repeated inject init code when Multi-channel packaging
                         if (!ext.classList.contains(name)) {
                             ext.classList.add(name)
