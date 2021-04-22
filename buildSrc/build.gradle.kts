@@ -1,3 +1,4 @@
+// 编译时期脚本的插件, 输出一个 gradle 插件的 aar 包
 plugins {
     `kotlin-dsl`
 }
@@ -8,7 +9,7 @@ apply(from = "../install.gradle")
  */
 buildscript {
     /**
-     * 编译脚本代码仓库
+     * 编译时期脚本代码的仓库
      */
     repositories {
         maven { setUrl("https://jitpack.io") }
@@ -24,7 +25,7 @@ buildscript {
 }
 
 /**
- * 工程的代码仓库
+ * 工程代码依赖的仓库
  */
 repositories {
     jcenter()
@@ -36,9 +37,4 @@ repositories {
  */
 dependencies {
     implementation("com.android.tools.build:gradle:3.2.1")
-}
-
-sourceSets {
-    // 链接到子 module 的编译目录中
-    add(getAt("../srouter-autoregister-plugin/src"))
 }
