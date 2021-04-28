@@ -100,7 +100,6 @@ internal class SRouterAutoRegisterTransform(
         val fileContainsClass = mGenerateToClass ?: return
         val isJarFile = mIsJarFile ?: return
         registerList.forEach { ext ->
-            Logger.print("Insert register code to file " + fileContainsClass.absolutePath)
             if (ext.classList.isEmpty()) {
                 Logger.print("No class implements found for interface:" + ext.interfaceName)
             } else {
