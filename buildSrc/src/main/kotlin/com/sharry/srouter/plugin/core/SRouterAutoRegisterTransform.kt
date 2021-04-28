@@ -128,9 +128,8 @@ internal class SRouterAutoRegisterTransform(
     private fun scanClassInputStream(inputStream: InputStream) {
         val cr = ClassReader(inputStream)
         val cw = ClassWriter(cr, 0)
-        val cv = ScanClassVisitor(Opcodes.ASM5, cw)
-        cr.accept(cv, ClassReader.EXPAND_FRAMES)
-        inputStream.close()
+        val scanClassVisitor = ScanClassVisitor(Opcodes.ASM5, cw)
+        cr.accept(scanClassVisitor, ClassReader.EXPAND_FRAMES)
     }
 
     private inner class ScanClassVisitor internal constructor(api: Int, cv: ClassVisitor?) : ClassVisitor(api, cv) {
